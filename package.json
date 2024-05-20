@@ -1,0 +1,22 @@
+{
+  "name": "com.matcha-soft.face-emote-control",
+  "version": "1.0.0",
+  "displayName": "Face Emote Control",
+  "description": "",
+  "unity": "2019.1",
+  "unityRelease": "0b5",
+  "documentationUrl": "",
+  "changelogUrl": "",
+  "licensesUrl": "",
+  "vpmDependencies": {
+    "com.vrchat.avatars": ">=3.4.0",
+    "nadena.dev.ndmf": ">=1.4.1",
+    "nadena.dev.modular-avatar": ">=1.9.13"
+  },
+  "keywords": [],
+  "author": {
+    "name": "MitarashiDango",
+    "email": "mitarashi_dango@mail.matcha-soft.com",
+    "url": "https://matcha-soft.com"
+  }
+}
