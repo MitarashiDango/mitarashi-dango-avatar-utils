@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parameters:
-  - nameOrPrefix: FaceEmoteLockContactReceiverEnabled
+  - nameOrPrefix: FaceEmoteLockerEnabled
     remapTo: 
     internalParameter: 0
     isPrefix: 0
@@ -273,6 +273,16 @@ MonoBehaviour:
     isPrefix: 0
     syncType: 1
     localOnly: 0
+    defaultValue: 0
+    saved: 1
+    hasExplicitDefaultValue: 1
+    m_overrideAnimatorDefaults: 0
+  - nameOrPrefix: FaceEmoteLockerAutoDisableOnSit
+    remapTo: 
+    internalParameter: 0
+    isPrefix: 0
+    syncType: 3
+    localOnly: 1
     defaultValue: 0
     saved: 1
     hasExplicitDefaultValue: 1

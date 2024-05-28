@@ -23,11 +23,21 @@ MonoBehaviour:
     subMenu: {fileID: 0}
     subParameters: []
     labels: []
-  - name: "\u8868\u60C5\u30ED\u30C3\u30AF\u7528\u30EC\u30B7\u30FC\u30D0\u30FCON"
+  - name: "\u8868\u60C5\u30ED\u30C3\u30AF\u7528Contact Receiver ON"
     icon: {fileID: 0}
     type: 102
     parameter:
-      name: FaceEmoteLockContactReceiverEnabled
+      name: FaceEmoteLockerEnabled
+    value: 1
+    style: 0
+    subMenu: {fileID: 0}
+    subParameters: []
+    labels: []
+  - name: "Sit\u5224\u5B9A\u6642\u306BContact Receiver\u3092\u81EA\u52D5OFF"
+    icon: {fileID: 0}
+    type: 102
+    parameter:
+      name: FaceEmoteLockerAutoDisableOnSit
     value: 1
     style: 0
     subMenu: {fileID: 0}
