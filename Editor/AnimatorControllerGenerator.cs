@@ -507,7 +507,6 @@ namespace MitarashiDango.FaceEmoteControl
             addStateAndTransition(leftHandStateMachine, "HandGun", Parameters.FEC_SELECTED_GESTURE_LEFT, 6, 6, new Vector3(400, 300, 0));
             addStateAndTransition(leftHandStateMachine, "ThumbsUp", Parameters.FEC_SELECTED_GESTURE_LEFT, 7, 7, new Vector3(400, 360, 0));
 
-
             var rightHandStateMachine = layer.stateMachine.AddStateMachine("Right Hand", new Vector3(500, 120, 0));
 
             var initialToRightHandTransition1 = initialState.AddTransition(rightHandStateMachine);
@@ -518,14 +517,13 @@ namespace MitarashiDango.FaceEmoteControl
 
             layer.stateMachine.AddStateMachineExitTransition(rightHandStateMachine);
 
-            addStateAndTransition(rightHandStateMachine, "Fist", Parameters.FEC_SELECTED_GESTURE_RIGHT, 1, 1, new Vector3(400, 00, 0));
-            addStateAndTransition(rightHandStateMachine, "HandOpen", Parameters.FEC_SELECTED_GESTURE_RIGHT, 2, 2, new Vector3(400, 60, 0));
-            addStateAndTransition(rightHandStateMachine, "FingerPoint", Parameters.FEC_SELECTED_GESTURE_RIGHT, 3, 3, new Vector3(400, 120, 0));
-            addStateAndTransition(rightHandStateMachine, "Victory", Parameters.FEC_SELECTED_GESTURE_RIGHT, 4, 4, new Vector3(400, 180, 0));
-            addStateAndTransition(rightHandStateMachine, "RockNRoll", Parameters.FEC_SELECTED_GESTURE_RIGHT, 5, 5, new Vector3(400, 240, 0));
-            addStateAndTransition(rightHandStateMachine, "HandGun", Parameters.FEC_SELECTED_GESTURE_RIGHT, 6, 6, new Vector3(400, 300, 0));
-            addStateAndTransition(rightHandStateMachine, "ThumbsUp", Parameters.FEC_SELECTED_GESTURE_RIGHT, 7, 7, new Vector3(400, 360, 0));
-
+            addStateAndTransition(rightHandStateMachine, "Fist", Parameters.FEC_SELECTED_GESTURE_RIGHT, 1, 8, new Vector3(400, 00, 0));
+            addStateAndTransition(rightHandStateMachine, "HandOpen", Parameters.FEC_SELECTED_GESTURE_RIGHT, 2, 9, new Vector3(400, 60, 0));
+            addStateAndTransition(rightHandStateMachine, "FingerPoint", Parameters.FEC_SELECTED_GESTURE_RIGHT, 3, 10, new Vector3(400, 120, 0));
+            addStateAndTransition(rightHandStateMachine, "Victory", Parameters.FEC_SELECTED_GESTURE_RIGHT, 4, 11, new Vector3(400, 180, 0));
+            addStateAndTransition(rightHandStateMachine, "RockNRoll", Parameters.FEC_SELECTED_GESTURE_RIGHT, 5, 12, new Vector3(400, 240, 0));
+            addStateAndTransition(rightHandStateMachine, "HandGun", Parameters.FEC_SELECTED_GESTURE_RIGHT, 6, 13, new Vector3(400, 300, 0));
+            addStateAndTransition(rightHandStateMachine, "ThumbsUp", Parameters.FEC_SELECTED_GESTURE_RIGHT, 7, 14, new Vector3(400, 360, 0));
 
             var fixedFaceEmotesStateMachine = layer.stateMachine.AddStateMachine("Fixed Face Emotes", new Vector3(500, 180, 0));
             fixedFaceEmotesStateMachine.entryPosition = new Vector3(0, 0, 0);
