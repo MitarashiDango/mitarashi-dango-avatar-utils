@@ -234,8 +234,6 @@ MonoBehaviour:
   rightThumbsUpAnimationClip: {fileID: 0}
   rightThumbsUpRadialMenuIcon: {fileID: 0}
   additionalFaceAnimationClips: []
-  coreAnimatorController: {fileID: 9100000, guid: 2706a32e228ccb547b5a111db96920d0,
-    type: 2}
 --- !u!1 &7436773913391988845
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,10 +279,8 @@ ParentConstraint:
   m_Weight: 1
   m_TranslationAtRest: {x: 0, y: 0, z: 0}
   m_RotationAtRest: {x: 0, y: 0, z: 0}
-  m_TranslationOffsets:
-  - {x: 0, y: 0, z: 0}
-  m_RotationOffsets:
-  - {x: 0, y: 0, z: 0}
+  m_TranslationOffsets: []
+  m_RotationOffsets: []
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
@@ -293,6 +289,4 @@ ParentConstraint:
   m_AffectRotationZ: 1
   m_Active: 1
   m_IsLocked: 1
-  m_Sources:
-  - sourceTransform: {fileID: 0}
-    weight: 1
+  m_Sources: []

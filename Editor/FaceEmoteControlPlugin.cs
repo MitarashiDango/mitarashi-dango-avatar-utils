@@ -3,6 +3,7 @@ using MitarashiDango.FaceEmoteControl;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
 using UnityEngine;
+using UnityEngine.Animations;
 
 [assembly: ExportsPlugin(typeof(FaceEmoteControlPlugin))]
 
@@ -25,6 +26,7 @@ namespace MitarashiDango.FaceEmoteControl
             var faceEmoteControl = ctx.AvatarRootObject.GetComponentInChildren<FaceEmoteControl>();
             if (faceEmoteControl != null)
             {
+                SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
                 AddParameters(faceEmoteControl.gameObject);
                 AddRadialMenus(faceEmoteControl.gameObject, faceEmoteControl);
                 AddAnimatorController(faceEmoteControl.gameObject, faceEmoteControl);
@@ -53,6 +55,19 @@ namespace MitarashiDango.FaceEmoteControl
             mergeAnimator.layerType = VRC.SDK3.Avatars.Components.VRCAvatarDescriptor.AnimLayerType.FX;
             mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
             mergeAnimator.matchAvatarWriteDefaults = true;
+        }
+
+        private void SetupFaceEmoteLockIndicator(FaceEmoteControl faceEmoteControl, GameObject avatarRootObject)
+        {
+            var faceEmoteLockIndicator = faceEmoteControl.transform.Find("FaceEmoteLockIndicator");
+            var faceEmoteLockIndicatorParentConstraint = faceEmoteLockIndicator.GetComponent<ParentConstraint>();
+            var headGameObject = avatarRootObject.transform.Find("Armature/Hips/Spine/Chest/Neck/Head");
+            var constraintSource = new ConstraintSource
+            {
+                sourceTransform = headGameObject,
+                weight = 1
+            };
+            faceEmoteLockIndicatorParentConstraint.AddSource(constraintSource);
         }
     }
 #endif
