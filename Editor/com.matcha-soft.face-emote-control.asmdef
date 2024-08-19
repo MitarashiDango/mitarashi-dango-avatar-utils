@@ -1,0 +1,21 @@
+{
+    "name": "com.matcha-soft.face-emote-control",
+    "rootNamespace": "",
+    "references": [
+        "com.matcha-soft.face-emote-control.runtime",
+        "nadena.dev.ndmf",
+        "nadena.dev.ndmf.runtime",
+        "nadena.dev.modular-avatar.core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
