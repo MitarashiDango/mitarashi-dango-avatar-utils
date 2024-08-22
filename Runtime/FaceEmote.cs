@@ -11,11 +11,13 @@ namespace MitarashiDango.FaceEmoteControl
     public class FaceEmote
     {
         [HideInInspector]
-        public string name = "";
+        public string faceEmoteName = "";
+
         [HideInInspector]
         public AnimationClip faceEmote;
+
         [HideInInspector]
-        public Texture2D menuIcon;
+        public Texture2D icon;
     }
 #endif
 }

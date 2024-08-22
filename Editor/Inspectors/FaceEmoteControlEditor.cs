@@ -1,5 +1,6 @@
 
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace MitarashiDango.FaceEmoteControl
@@ -40,6 +41,7 @@ namespace MitarashiDango.FaceEmoteControl
         private SerializedProperty additionalFaceEmotes;
         private SerializedProperty additionalFaceRadialMenuIcons;
 
+        private ReorderableList reorderableList;
         private bool isLeftHandFieldsOpen;
         private bool isRightHandFieldsOpen;
 
@@ -90,6 +92,18 @@ namespace MitarashiDango.FaceEmoteControl
             rightThumbsUpRadialMenuIcon = serializedObject.FindProperty("rightThumbsUpRadialMenuIcon");
 
             additionalFaceEmotes = serializedObject.FindProperty("additionalFaceEmotes");
+
+            reorderableList = new ReorderableList(serializedObject, additionalFaceEmotes)
+            {
+                drawElementCallback = (rect, index, active, focused) =>
+                {
+                    var additionalFaceEmote = additionalFaceEmotes.GetArrayElementAtIndex(index);
+                    EditorGUI.PropertyField(rect, additionalFaceEmote);
+                },
+                drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "Additional Face Emotes"),
+                elementHeightCallback = index => EditorGUI.GetPropertyHeight(additionalFaceEmotes.GetArrayElementAtIndex(index))
+            };
+
         }
 
         public override void OnInspectorGUI()
@@ -126,7 +140,8 @@ namespace MitarashiDango.FaceEmoteControl
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
-            EditorGUILayout.PropertyField(additionalFaceEmotes, new GUIContent("Additional faces"), true);
+            reorderableList.DoLayoutList();
+            // EditorGUILayout.PropertyField(additionalFaceEmotes, new GUIContent("Additional faces"), true);
 
             if (EditorApplication.isPlaying)
             {
