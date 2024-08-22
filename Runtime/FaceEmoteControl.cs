@@ -9,95 +9,95 @@ namespace MitarashiDango.FaceEmoteControl
     [DisallowMultipleComponent]
     public class FaceEmoteControl : MonoBehaviour, IEditorOnly
     {
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip defaultFaceAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip leftFistAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D leftFistRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip leftHandOpenAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D leftHandOpenRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip leftFingerPointAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D leftFingerPointRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip leftVictoryAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D leftVictoryRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip leftRockNRollAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D leftRockNRollRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip leftHandGunAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D leftHandGunRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip leftThumbsUpAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D leftThumbsUpRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip rightFistAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D rightFistRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip rightHandOpenAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D rightHandOpenRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip rightFingerPointAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D rightFingerPointRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip rightVictoryAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D rightVictoryRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip rightRockNRollAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D rightRockNRollRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip rightHandGunAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D rightHandGunRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public AnimationClip rightThumbsUpAnimationClip;
 
-        [SerializeField, HideInInspector]
+        [HideInInspector]
         public Texture2D rightThumbsUpRadialMenuIcon;
 
-        [SerializeField, HideInInspector]
-        public List<AnimationClip> additionalFaceAnimationClips = new List<AnimationClip>();
+        [HideInInspector]
+        public List<FaceEmote> additionalFaceEmotes = new List<FaceEmote>();
 
         public bool IsLeftGestureAvailable
         {

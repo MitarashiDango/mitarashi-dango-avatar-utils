@@ -563,7 +563,7 @@ namespace MitarashiDango.FaceEmoteControl
             }
 
             // 追加の表情用ステートを追加する
-            for (var i = 0; i < faceEmoteControl.additionalFaceAnimationClips.Count; i++)
+            for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
             {
                 addFixedFaceEmoteState(fixedFaceEmotesStateMachine, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(400, 60 * (i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER), 0));
             }
@@ -808,12 +808,12 @@ namespace MitarashiDango.FaceEmoteControl
             var statePosition = new Vector3(500, 0, 0);
             AnimatorStateMachine currentStateMachine = null;
 
-            for (var i = 0; i < faceEmoteControl.additionalFaceAnimationClips.Count; i++)
+            for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
             {
                 if (i % 10 == 0)
                 {
                     var start = i + 1;
-                    var end = Math.Min(start + 9, faceEmoteControl.additionalFaceAnimationClips.Count);
+                    var end = Math.Min(start + 9, faceEmoteControl.additionalFaceEmotes.Count);
                     currentStateMachine = stateMachine.AddStateMachine($"Additional Face Emotes ({start} ~ {end})", stateMachinePosition);
 
                     var fromEntryTransition1 = stateMachine.AddEntryTransition(currentStateMachine);
@@ -828,7 +828,7 @@ namespace MitarashiDango.FaceEmoteControl
                 }
 
                 var faceEmoteNumber = i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER;
-                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceAnimationClips[i], statePosition);
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].faceEmote, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }

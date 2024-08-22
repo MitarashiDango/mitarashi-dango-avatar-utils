@@ -37,7 +37,7 @@ namespace MitarashiDango.FaceEmoteControl
         private SerializedProperty rightHandGunRadialMenuIcon;
         private SerializedProperty rightThumbsUpAnimationClip;
         private SerializedProperty rightThumbsUpRadialMenuIcon;
-        private SerializedProperty additionalFaces;
+        private SerializedProperty additionalFaceEmotes;
         private SerializedProperty additionalFaceRadialMenuIcons;
 
         private bool isLeftHandFieldsOpen;
@@ -89,7 +89,7 @@ namespace MitarashiDango.FaceEmoteControl
             rightThumbsUpAnimationClip = serializedObject.FindProperty("rightThumbsUpAnimationClip");
             rightThumbsUpRadialMenuIcon = serializedObject.FindProperty("rightThumbsUpRadialMenuIcon");
 
-            additionalFaces = serializedObject.FindProperty("additionalFaceAnimationClips");
+            additionalFaceEmotes = serializedObject.FindProperty("additionalFaceEmotes");
         }
 
         public override void OnInspectorGUI()
@@ -126,7 +126,7 @@ namespace MitarashiDango.FaceEmoteControl
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
-            EditorGUILayout.PropertyField(additionalFaces, new GUIContent("Additional faces"), true);
+            EditorGUILayout.PropertyField(additionalFaceEmotes, new GUIContent("Additional faces"), true);
 
             if (EditorApplication.isPlaying)
             {

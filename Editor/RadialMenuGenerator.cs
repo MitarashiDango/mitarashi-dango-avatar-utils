@@ -202,7 +202,7 @@ namespace MitarashiDango.FaceEmoteControl
 
         private GameObject GenerateAdditionalFaceEmoteMenu(FaceEmoteControl faceEmoteControl)
         {
-            if (faceEmoteControl.additionalFaceAnimationClips.Count == 0)
+            if (faceEmoteControl.additionalFaceEmotes.Count == 0)
             {
                 return null;
             }
@@ -210,7 +210,7 @@ namespace MitarashiDango.FaceEmoteControl
             var subMenu = GenerateSubMenu("追加の表情", null);
             var subMenuItems = new List<GameObject>();
 
-            for (var i = 0; i < faceEmoteControl.additionalFaceAnimationClips.Count; i++)
+            for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
             {
                 subMenuItems.Add(GenerateToggleMenuItem($"表情{i + 1}", null, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER));
             }
