@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using VRC.SDKBase;
 
 namespace MitarashiDango.FaceEmoteControl
 {
@@ -11,10 +8,10 @@ namespace MitarashiDango.FaceEmoteControl
     public class FaceEmote
     {
         [HideInInspector]
-        public string faceEmoteName = "";
+        public string name = "";
 
         [HideInInspector]
-        public AnimationClip faceEmote;
+        public AnimationClip animationClip;
 
         [HideInInspector]
         public Texture2D icon;

@@ -99,6 +99,9 @@ namespace MitarashiDango.FaceEmoteControl
         [HideInInspector]
         public List<FaceEmote> additionalFaceEmotes = new List<FaceEmote>();
 
+        [HideInInspector]
+        public FaceEmote leftFist = new FaceEmote();
+
         public bool IsLeftGestureAvailable
         {
             get

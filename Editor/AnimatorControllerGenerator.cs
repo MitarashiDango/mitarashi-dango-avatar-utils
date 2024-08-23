@@ -828,7 +828,7 @@ namespace MitarashiDango.FaceEmoteControl
                 }
 
                 var faceEmoteNumber = i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER;
-                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].faceEmote, statePosition);
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].animationClip, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }

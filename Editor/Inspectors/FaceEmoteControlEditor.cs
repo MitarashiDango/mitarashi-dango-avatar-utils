@@ -41,6 +41,9 @@ namespace MitarashiDango.FaceEmoteControl
         private SerializedProperty additionalFaceEmotes;
         private SerializedProperty additionalFaceRadialMenuIcons;
 
+
+        private SerializedProperty leftFist;
+
         private ReorderableList reorderableList;
         private bool isLeftHandFieldsOpen;
         private bool isRightHandFieldsOpen;
@@ -93,12 +96,18 @@ namespace MitarashiDango.FaceEmoteControl
 
             additionalFaceEmotes = serializedObject.FindProperty("additionalFaceEmotes");
 
+            leftFist = serializedObject.FindProperty("leftFist");
+
             reorderableList = new ReorderableList(serializedObject, additionalFaceEmotes)
             {
                 drawElementCallback = (rect, index, active, focused) =>
                 {
                     var additionalFaceEmote = additionalFaceEmotes.GetArrayElementAtIndex(index);
-                    EditorGUI.PropertyField(rect, additionalFaceEmote);
+                    var position = new Rect(rect)
+                    {
+                        y = rect.y + EditorGUIUtility.singleLineHeight,
+                    };
+                    EditorGUI.PropertyField(position, additionalFaceEmote);
                 },
                 drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "Additional Face Emotes"),
                 elementHeightCallback = index => EditorGUI.GetPropertyHeight(additionalFaceEmotes.GetArrayElementAtIndex(index))
@@ -139,6 +148,8 @@ namespace MitarashiDango.FaceEmoteControl
                 RenderGestureFaceEmoteItem("Thumbs Up", rightThumbsUpAnimationClip, rightThumbsUpRadialMenuIcon);
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
+
+            EditorGUILayout.PropertyField(leftFist, new GUIContent("Left Fist"), false);
 
             reorderableList.DoLayoutList();
             // EditorGUILayout.PropertyField(additionalFaceEmotes, new GUIContent("Additional faces"), true);

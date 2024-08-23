@@ -14,28 +14,28 @@ namespace MitarashiDango.FaceEmoteControl
         {
             using (new EditorGUI.PropertyScope(position, label, property))
             {
-                var faceEmoteNameProperty = property.FindPropertyRelative("faceEmoteName");
-                var faceEmoteProperty = property.FindPropertyRelative("faceEmote");
+                var nameProperty = property.FindPropertyRelative("name");
+                var animationClipProperty = property.FindPropertyRelative("animationClip");
                 var iconProperty = property.FindPropertyRelative("icon");
 
-                var faceEmoteNameRect = new Rect(position)
+                var nameRect = new Rect(position)
                 {
-                    y = position.y + EditorGUIUtility.singleLineHeight + PADDING_HEIGHT,
+                    y = position.y + PADDING_HEIGHT,
                     height = EditorGUIUtility.singleLineHeight,
                     width = iconProperty.objectReferenceValue != null ? position.width - 68f : position.width
                 };
-                EditorGUI.PropertyField(faceEmoteNameRect, faceEmoteNameProperty, new GUIContent("表情名"));
+                EditorGUI.PropertyField(nameRect, nameProperty, new GUIContent("表情名"));
 
-                var faceEmoteRect = new Rect(faceEmoteNameRect)
+                var animationClipRect = new Rect(nameRect)
                 {
-                    y = faceEmoteNameRect.y + EditorGUIUtility.singleLineHeight + PADDING_HEIGHT,
+                    y = nameRect.y + EditorGUIUtility.singleLineHeight + PADDING_HEIGHT,
                     height = EditorGUIUtility.singleLineHeight
                 };
-                EditorGUI.PropertyField(faceEmoteRect, faceEmoteProperty, new GUIContent("表情アニメーション"));
+                EditorGUI.PropertyField(animationClipRect, animationClipProperty, new GUIContent("表情アニメーション"));
 
-                var iconRect = new Rect(faceEmoteRect)
+                var iconRect = new Rect(animationClipRect)
                 {
-                    y = faceEmoteRect.y + EditorGUIUtility.singleLineHeight + PADDING_HEIGHT,
+                    y = animationClipRect.y + EditorGUIUtility.singleLineHeight + PADDING_HEIGHT,
                     height = EditorGUIUtility.singleLineHeight
                 };
                 EditorGUI.PropertyField(iconRect, iconProperty, new GUIContent("アイコン"));
@@ -47,7 +47,7 @@ namespace MitarashiDango.FaceEmoteControl
                         height = 64f,
                         width = 64f,
                         x = position.x + position.width - 64f,
-                        y = position.y + EditorGUIUtility.singleLineHeight + PADDING_HEIGHT,
+                        y = position.y + PADDING_HEIGHT,
                     };
                     GUI.Box(iconViewRect, new GUIContent((Texture2D)iconProperty.objectReferenceValue));
                 }
