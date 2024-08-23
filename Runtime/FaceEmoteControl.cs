@@ -16,16 +16,25 @@ namespace MitarashiDango.FaceEmoteControl
         public AnimationClip leftFistAnimationClip;
 
         [HideInInspector]
+        public FaceEmote leftFist;
+
+        [HideInInspector]
         public Texture2D leftFistRadialMenuIcon;
 
         [HideInInspector]
         public AnimationClip leftHandOpenAnimationClip;
 
         [HideInInspector]
+        public FaceEmote leftHandOpen;
+
+        [HideInInspector]
         public Texture2D leftHandOpenRadialMenuIcon;
 
         [HideInInspector]
         public AnimationClip leftFingerPointAnimationClip;
+
+        [HideInInspector]
+        public FaceEmote leftFingerPoint;
 
         [HideInInspector]
         public Texture2D leftFingerPointRadialMenuIcon;
@@ -97,10 +106,7 @@ namespace MitarashiDango.FaceEmoteControl
         public Texture2D rightThumbsUpRadialMenuIcon;
 
         [HideInInspector]
-        public List<FaceEmote> additionalFaceEmotes = new List<FaceEmote>();
-
-        [HideInInspector]
-        public FaceEmote leftFist = new FaceEmote();
+        public List<FaceEmote> additionalFaceEmotes;
 
         public bool IsLeftGestureAvailable
         {
