@@ -10,39 +10,21 @@ namespace MitarashiDango.FaceEmoteControl
     public class FaceEmoteControlEditor : Editor
     {
         private SerializedProperty defaultFaceAnimationClip;
-        private SerializedProperty leftFistAnimationClip;
-        private SerializedProperty leftFistRadialMenuIcon;
-        private SerializedProperty leftHandOpenAnimationClip;
-        private SerializedProperty leftHandOpenRadialMenuIcon;
-        private SerializedProperty leftFingerPointAnimationClip;
-        private SerializedProperty leftFingerPointRadialMenuIcon;
-        private SerializedProperty leftVictoryAnimationClip;
-        private SerializedProperty leftVictoryRadialMenuIcon;
-        private SerializedProperty leftRockNRollAnimationClip;
-        private SerializedProperty leftRockNRollRadialMenuIcon;
-        private SerializedProperty leftHandGunAnimationClip;
-        private SerializedProperty leftHandGunRadialMenuIcon;
-        private SerializedProperty leftThumbsUpAnimationClip;
-        private SerializedProperty leftThumbsUpRadialMenuIcon;
-        private SerializedProperty rightFistAnimationClip;
-        private SerializedProperty rightFistRadialMenuIcon;
-        private SerializedProperty rightHandOpenAnimationClip;
-        private SerializedProperty rightHandOpenRadialMenuIcon;
-        private SerializedProperty rightFingerPointAnimationClip;
-        private SerializedProperty rightFingerPointRadialMenuIcon;
-        private SerializedProperty rightVictoryAnimationClip;
-        private SerializedProperty rightVictoryRadialMenuIcon;
-        private SerializedProperty rightRockNRollAnimationClip;
-        private SerializedProperty rightRockNRollRadialMenuIcon;
-        private SerializedProperty rightHandGunAnimationClip;
-        private SerializedProperty rightHandGunRadialMenuIcon;
-        private SerializedProperty rightThumbsUpAnimationClip;
-        private SerializedProperty rightThumbsUpRadialMenuIcon;
-        private SerializedProperty additionalFaceEmotes;
-        private SerializedProperty additionalFaceRadialMenuIcons;
-
-
         private SerializedProperty leftFist;
+        private SerializedProperty leftHandOpen;
+        private SerializedProperty leftFingerPoint;
+        private SerializedProperty leftVictory;
+        private SerializedProperty leftRockNRoll;
+        private SerializedProperty leftHandGun;
+        private SerializedProperty leftThumbsUp;
+        private SerializedProperty rightFist;
+        private SerializedProperty rightHandOpen;
+        private SerializedProperty rightFingerPoint;
+        private SerializedProperty rightVictory;
+        private SerializedProperty rightRockNRoll;
+        private SerializedProperty rightHandGun;
+        private SerializedProperty rightThumbsUp;
+        private SerializedProperty additionalFaceEmotes;
 
         private ReorderableList reorderableList;
         private bool isLeftHandFieldsOpen;
@@ -52,51 +34,23 @@ namespace MitarashiDango.FaceEmoteControl
         {
             defaultFaceAnimationClip = serializedObject.FindProperty("defaultFaceAnimationClip");
 
-            leftFistAnimationClip = serializedObject.FindProperty("leftFistAnimationClip");
-            leftFistRadialMenuIcon = serializedObject.FindProperty("leftFistRadialMenuIcon");
+            leftFist = serializedObject.FindProperty("leftFist");
+            leftHandOpen = serializedObject.FindProperty("leftHandOpen");
+            leftFingerPoint = serializedObject.FindProperty("leftFingerPoint");
+            leftVictory = serializedObject.FindProperty("leftVictory");
+            leftRockNRoll = serializedObject.FindProperty("leftRockNRoll");
+            leftHandGun = serializedObject.FindProperty("leftHandGun");
+            leftThumbsUp = serializedObject.FindProperty("leftThumbsUp");
 
-            leftHandOpenAnimationClip = serializedObject.FindProperty("leftHandOpenAnimationClip");
-            leftHandOpenRadialMenuIcon = serializedObject.FindProperty("leftHandOpenRadialMenuIcon");
-
-            leftFingerPointAnimationClip = serializedObject.FindProperty("leftFingerPointAnimationClip");
-            leftFingerPointRadialMenuIcon = serializedObject.FindProperty("leftFingerPointRadialMenuIcon");
-
-            leftVictoryAnimationClip = serializedObject.FindProperty("leftVictoryAnimationClip");
-            leftVictoryRadialMenuIcon = serializedObject.FindProperty("leftVictoryRadialMenuIcon");
-
-            leftRockNRollAnimationClip = serializedObject.FindProperty("leftRockNRollAnimationClip");
-            leftRockNRollRadialMenuIcon = serializedObject.FindProperty("leftRockNRollRadialMenuIcon");
-
-            leftHandGunAnimationClip = serializedObject.FindProperty("leftHandGunAnimationClip");
-            leftHandGunRadialMenuIcon = serializedObject.FindProperty("leftHandGunRadialMenuIcon");
-
-            leftThumbsUpAnimationClip = serializedObject.FindProperty("leftThumbsUpAnimationClip");
-            leftThumbsUpRadialMenuIcon = serializedObject.FindProperty("leftThumbsUpRadialMenuIcon");
-
-            rightFistAnimationClip = serializedObject.FindProperty("rightFistAnimationClip");
-            rightFistRadialMenuIcon = serializedObject.FindProperty("rightFistRadialMenuIcon");
-
-            rightHandOpenAnimationClip = serializedObject.FindProperty("rightHandOpenAnimationClip");
-            rightHandOpenRadialMenuIcon = serializedObject.FindProperty("rightHandOpenRadialMenuIcon");
-
-            rightFingerPointAnimationClip = serializedObject.FindProperty("rightFingerPointAnimationClip");
-            rightFingerPointRadialMenuIcon = serializedObject.FindProperty("rightFingerPointRadialMenuIcon");
-
-            rightVictoryAnimationClip = serializedObject.FindProperty("rightVictoryAnimationClip");
-            rightVictoryRadialMenuIcon = serializedObject.FindProperty("rightVictoryRadialMenuIcon");
-
-            rightRockNRollAnimationClip = serializedObject.FindProperty("rightRockNRollAnimationClip");
-            rightRockNRollRadialMenuIcon = serializedObject.FindProperty("rightRockNRollRadialMenuIcon");
-
-            rightHandGunAnimationClip = serializedObject.FindProperty("rightHandGunAnimationClip");
-            rightHandGunRadialMenuIcon = serializedObject.FindProperty("rightHandGunRadialMenuIcon");
-
-            rightThumbsUpAnimationClip = serializedObject.FindProperty("rightThumbsUpAnimationClip");
-            rightThumbsUpRadialMenuIcon = serializedObject.FindProperty("rightThumbsUpRadialMenuIcon");
+            rightFist = serializedObject.FindProperty("rightFist");
+            rightHandOpen = serializedObject.FindProperty("rightHandOpen");
+            rightFingerPoint = serializedObject.FindProperty("rightFingerPoint");
+            rightVictory = serializedObject.FindProperty("rightVictory");
+            rightRockNRoll = serializedObject.FindProperty("rightRockNRoll");
+            rightHandGun = serializedObject.FindProperty("rightHandGun");
+            rightThumbsUp = serializedObject.FindProperty("rightThumbsUp");
 
             additionalFaceEmotes = serializedObject.FindProperty("additionalFaceEmotes");
-
-            leftFist = serializedObject.FindProperty("leftFist");
 
             reorderableList = new ReorderableList(serializedObject, additionalFaceEmotes)
             {
@@ -105,12 +59,12 @@ namespace MitarashiDango.FaceEmoteControl
                     var additionalFaceEmote = additionalFaceEmotes.GetArrayElementAtIndex(index);
                     var position = new Rect(rect)
                     {
-                        y = rect.y + EditorGUIUtility.singleLineHeight,
+                        y = rect.y + EditorGUIUtility.standardVerticalSpacing
                     };
                     EditorGUI.PropertyField(position, additionalFaceEmote);
                 },
                 drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "Additional Face Emotes"),
-                elementHeightCallback = index => EditorGUI.GetPropertyHeight(additionalFaceEmotes.GetArrayElementAtIndex(index))
+                elementHeightCallback = index => EditorGUI.GetPropertyHeight(additionalFaceEmotes.GetArrayElementAtIndex(index)) + EditorGUIUtility.standardVerticalSpacing * 2
             };
 
         }
@@ -126,33 +80,30 @@ namespace MitarashiDango.FaceEmoteControl
             isLeftHandFieldsOpen = EditorGUILayout.BeginFoldoutHeaderGroup(isLeftHandFieldsOpen, "Left hand");
             if (isLeftHandFieldsOpen)
             {
-                RenderGestureFaceEmoteItem("Fist", leftFistAnimationClip, leftFistRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Hand Open", leftHandOpenAnimationClip, leftHandOpenRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Finger Point", leftFingerPointAnimationClip, leftFingerPointRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Victory", leftVictoryAnimationClip, leftVictoryRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Rock N Roll", leftRockNRollAnimationClip, leftRockNRollRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Hand Gun", leftHandGunAnimationClip, leftHandGunRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Thumbs Up", leftThumbsUpAnimationClip, leftThumbsUpRadialMenuIcon);
+                RenderGestureFaceEmoteItem("Fist", leftFist);
+                RenderGestureFaceEmoteItem("Hand Open", leftHandOpen);
+                RenderGestureFaceEmoteItem("Finger Point", leftFingerPoint);
+                RenderGestureFaceEmoteItem("Victory", leftVictory);
+                RenderGestureFaceEmoteItem("Rock N Roll", leftRockNRoll);
+                RenderGestureFaceEmoteItem("Hand Gun", leftHandGun);
+                RenderGestureFaceEmoteItem("Thumbs Up", leftThumbsUp);
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
             isRightHandFieldsOpen = EditorGUILayout.BeginFoldoutHeaderGroup(isRightHandFieldsOpen, "Right hand");
             if (isRightHandFieldsOpen)
             {
-                RenderGestureFaceEmoteItem("Fist", rightFistAnimationClip, rightFistRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Hand Open", rightHandOpenAnimationClip, rightHandOpenRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Finger Point", rightFingerPointAnimationClip, rightFingerPointRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Victory", rightVictoryAnimationClip, rightVictoryRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Rock N Roll", rightRockNRollAnimationClip, rightRockNRollRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Hand Gun", rightHandGunAnimationClip, rightHandGunRadialMenuIcon);
-                RenderGestureFaceEmoteItem("Thumbs Up", rightThumbsUpAnimationClip, rightThumbsUpRadialMenuIcon);
+                RenderGestureFaceEmoteItem("Fist", rightFist);
+                RenderGestureFaceEmoteItem("Hand Open", rightHandOpen);
+                RenderGestureFaceEmoteItem("Finger Point", rightFingerPoint);
+                RenderGestureFaceEmoteItem("Victory", rightVictory);
+                RenderGestureFaceEmoteItem("Rock N Roll", rightRockNRoll);
+                RenderGestureFaceEmoteItem("Hand Gun", rightHandGun);
+                RenderGestureFaceEmoteItem("Thumbs Up", rightThumbsUp);
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
-            EditorGUILayout.PropertyField(leftFist, new GUIContent("Left Fist"), false);
-
             reorderableList.DoLayoutList();
-            // EditorGUILayout.PropertyField(additionalFaceEmotes, new GUIContent("Additional faces"), true);
 
             if (EditorApplication.isPlaying)
             {
@@ -162,25 +113,16 @@ namespace MitarashiDango.FaceEmoteControl
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void RenderGestureFaceEmoteItem(string gestureName, SerializedProperty animationClip, SerializedProperty icon)
+        private void RenderGestureFaceEmoteItem(string gestureName, SerializedProperty faceEmote)
         {
             using (new EditorGUILayout.VerticalScope("Helpbox"))
             {
-                using (new EditorGUILayout.HorizontalScope())
+                using (new EditorGUILayout.VerticalScope())
                 {
-                    using (new EditorGUILayout.VerticalScope())
+                    EditorGUILayout.LabelField(new GUIContent(gestureName));
+                    using (new EditorGUI.IndentLevelScope())
                     {
-                        EditorGUILayout.LabelField(new GUIContent(gestureName));
-                        using (new EditorGUI.IndentLevelScope())
-                        {
-                            EditorGUILayout.PropertyField(animationClip, new GUIContent("Animation Clip"));
-                            EditorGUILayout.PropertyField(icon, new GUIContent("Icon"));
-                        }
-                    }
-
-                    if (icon.objectReferenceValue != null)
-                    {
-                        GUILayout.Box(new GUIContent((Texture2D)icon.objectReferenceValue), GUILayout.Height(64), GUILayout.Width(64));
+                        EditorGUILayout.PropertyField(faceEmote, false);
                     }
                 }
             }

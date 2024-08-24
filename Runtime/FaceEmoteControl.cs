@@ -13,97 +13,46 @@ namespace MitarashiDango.FaceEmoteControl
         public AnimationClip defaultFaceAnimationClip;
 
         [HideInInspector]
-        public AnimationClip leftFistAnimationClip;
-
-        [HideInInspector]
         public FaceEmote leftFist;
-
-        [HideInInspector]
-        public Texture2D leftFistRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip leftHandOpenAnimationClip;
 
         [HideInInspector]
         public FaceEmote leftHandOpen;
 
         [HideInInspector]
-        public Texture2D leftHandOpenRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip leftFingerPointAnimationClip;
-
-        [HideInInspector]
         public FaceEmote leftFingerPoint;
 
         [HideInInspector]
-        public Texture2D leftFingerPointRadialMenuIcon;
+        public FaceEmote leftVictory;
 
         [HideInInspector]
-        public AnimationClip leftVictoryAnimationClip;
+        public FaceEmote leftRockNRoll;
 
         [HideInInspector]
-        public Texture2D leftVictoryRadialMenuIcon;
+        public FaceEmote leftHandGun;
 
         [HideInInspector]
-        public AnimationClip leftRockNRollAnimationClip;
+        public FaceEmote leftThumbsUp;
 
         [HideInInspector]
-        public Texture2D leftRockNRollRadialMenuIcon;
+        public FaceEmote rightFist;
 
         [HideInInspector]
-        public AnimationClip leftHandGunAnimationClip;
+        public FaceEmote rightHandOpen;
 
         [HideInInspector]
-        public Texture2D leftHandGunRadialMenuIcon;
+        public FaceEmote rightFingerPoint;
 
         [HideInInspector]
-        public AnimationClip leftThumbsUpAnimationClip;
+        public FaceEmote rightVictory;
 
         [HideInInspector]
-        public Texture2D leftThumbsUpRadialMenuIcon;
+        public FaceEmote rightRockNRoll;
 
         [HideInInspector]
-        public AnimationClip rightFistAnimationClip;
+        public FaceEmote rightHandGun;
 
         [HideInInspector]
-        public Texture2D rightFistRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip rightHandOpenAnimationClip;
-
-        [HideInInspector]
-        public Texture2D rightHandOpenRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip rightFingerPointAnimationClip;
-
-        [HideInInspector]
-        public Texture2D rightFingerPointRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip rightVictoryAnimationClip;
-
-        [HideInInspector]
-        public Texture2D rightVictoryRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip rightRockNRollAnimationClip;
-
-        [HideInInspector]
-        public Texture2D rightRockNRollRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip rightHandGunAnimationClip;
-
-        [HideInInspector]
-        public Texture2D rightHandGunRadialMenuIcon;
-
-        [HideInInspector]
-        public AnimationClip rightThumbsUpAnimationClip;
-
-        [HideInInspector]
-        public Texture2D rightThumbsUpRadialMenuIcon;
+        public FaceEmote rightThumbsUp;
 
         [HideInInspector]
         public List<FaceEmote> additionalFaceEmotes;
@@ -112,13 +61,13 @@ namespace MitarashiDango.FaceEmoteControl
         {
             get
             {
-                return leftFingerPointAnimationClip != null
-                  || leftFistAnimationClip != null
-                  || leftHandGunAnimationClip != null
-                  || leftHandOpenAnimationClip != null
-                  || leftRockNRollAnimationClip != null
-                  || leftThumbsUpAnimationClip != null
-                  || leftVictoryAnimationClip != null;
+                return (leftFist != null && leftFist.animationClip != null)
+                  || (leftHandOpen != null && leftHandOpen.animationClip != null)
+                  || (leftFingerPoint != null && leftFingerPoint.animationClip != null)
+                  || (leftVictory != null && leftVictory.animationClip != null)
+                  || (leftRockNRoll != null && leftRockNRoll.animationClip != null)
+                  || (leftHandGun != null && leftHandGun.animationClip != null)
+                  || (leftThumbsUp != null && leftThumbsUp.animationClip != null);
             }
         }
 
@@ -126,13 +75,13 @@ namespace MitarashiDango.FaceEmoteControl
         {
             get
             {
-                return rightFingerPointAnimationClip != null
-                  || rightFistAnimationClip != null
-                  || rightHandGunAnimationClip != null
-                  || rightHandOpenAnimationClip != null
-                  || rightRockNRollAnimationClip != null
-                  || rightThumbsUpAnimationClip != null
-                  || rightVictoryAnimationClip != null;
+                return (rightFist != null && rightFist.animationClip != null)
+                  || (rightHandOpen != null && rightHandOpen.animationClip != null)
+                  || (rightFingerPoint != null && rightFingerPoint.animationClip != null)
+                  || (rightVictory != null && rightVictory.animationClip != null)
+                  || (rightRockNRoll != null && rightRockNRoll.animationClip != null)
+                  || (rightHandGun != null && rightHandGun.animationClip != null)
+                  || (rightThumbsUp != null && rightThumbsUp.animationClip != null);
             }
         }
     }
