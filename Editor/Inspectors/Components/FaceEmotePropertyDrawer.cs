@@ -47,7 +47,6 @@ namespace MitarashiDango.FaceEmoteControl
                         y = position.y,
                     };
 
-
                     GUI.Box(iconViewRect, new GUIContent((Texture2D)iconProperty.objectReferenceValue));
                     return;
                 }

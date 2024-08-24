@@ -27,8 +27,6 @@ namespace MitarashiDango.FaceEmoteControl
         private SerializedProperty additionalFaceEmotes;
 
         private ReorderableList reorderableList;
-        private bool isLeftHandFieldsOpen;
-        private bool isRightHandFieldsOpen;
 
         private void OnEnable()
         {
@@ -63,10 +61,9 @@ namespace MitarashiDango.FaceEmoteControl
                     };
                     EditorGUI.PropertyField(position, additionalFaceEmote);
                 },
-                drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "Additional Face Emotes"),
+                drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "Additional Face Emotes", EditorStyles.boldLabel),
                 elementHeightCallback = index => EditorGUI.GetPropertyHeight(additionalFaceEmotes.GetArrayElementAtIndex(index)) + EditorGUIUtility.standardVerticalSpacing * 2
             };
-
         }
 
         public override void OnInspectorGUI()
@@ -77,31 +74,29 @@ namespace MitarashiDango.FaceEmoteControl
 
             EditorGUILayout.PropertyField(defaultFaceAnimationClip, new GUIContent("Default Face"), false);
 
-            isLeftHandFieldsOpen = EditorGUILayout.BeginFoldoutHeaderGroup(isLeftHandFieldsOpen, "Left hand");
-            if (isLeftHandFieldsOpen)
-            {
-                RenderGestureFaceEmoteItem("Fist", leftFist);
-                RenderGestureFaceEmoteItem("Hand Open", leftHandOpen);
-                RenderGestureFaceEmoteItem("Finger Point", leftFingerPoint);
-                RenderGestureFaceEmoteItem("Victory", leftVictory);
-                RenderGestureFaceEmoteItem("Rock N Roll", leftRockNRoll);
-                RenderGestureFaceEmoteItem("Hand Gun", leftHandGun);
-                RenderGestureFaceEmoteItem("Thumbs Up", leftThumbsUp);
-            }
-            EditorGUILayout.EndFoldoutHeaderGroup();
+            EditorGUILayout.Space();
 
-            isRightHandFieldsOpen = EditorGUILayout.BeginFoldoutHeaderGroup(isRightHandFieldsOpen, "Right hand");
-            if (isRightHandFieldsOpen)
-            {
-                RenderGestureFaceEmoteItem("Fist", rightFist);
-                RenderGestureFaceEmoteItem("Hand Open", rightHandOpen);
-                RenderGestureFaceEmoteItem("Finger Point", rightFingerPoint);
-                RenderGestureFaceEmoteItem("Victory", rightVictory);
-                RenderGestureFaceEmoteItem("Rock N Roll", rightRockNRoll);
-                RenderGestureFaceEmoteItem("Hand Gun", rightHandGun);
-                RenderGestureFaceEmoteItem("Thumbs Up", rightThumbsUp);
-            }
-            EditorGUILayout.EndFoldoutHeaderGroup();
+            EditorGUILayout.LabelField("Left hand", EditorStyles.boldLabel);
+            RenderGestureFaceEmoteItem("Left Fist", leftFist);
+            RenderGestureFaceEmoteItem("Left Hand Open", leftHandOpen);
+            RenderGestureFaceEmoteItem("Left Finger Point", leftFingerPoint);
+            RenderGestureFaceEmoteItem("Left Victory", leftVictory);
+            RenderGestureFaceEmoteItem("Left Rock N Roll", leftRockNRoll);
+            RenderGestureFaceEmoteItem("Left Hand Gun", leftHandGun);
+            RenderGestureFaceEmoteItem("Left Thumbs Up", leftThumbsUp);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Right hand", EditorStyles.boldLabel);
+            RenderGestureFaceEmoteItem("Right Fist", rightFist);
+            RenderGestureFaceEmoteItem("Right Hand Open", rightHandOpen);
+            RenderGestureFaceEmoteItem("Right Finger Point", rightFingerPoint);
+            RenderGestureFaceEmoteItem("Right Victory", rightVictory);
+            RenderGestureFaceEmoteItem("Right Rock N Roll", rightRockNRoll);
+            RenderGestureFaceEmoteItem("Right Hand Gun", rightHandGun);
+            RenderGestureFaceEmoteItem("Right Thumbs Up", rightThumbsUp);
+
+            EditorGUILayout.Space();
 
             reorderableList.DoLayoutList();
 
