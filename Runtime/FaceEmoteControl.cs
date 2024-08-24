@@ -5,7 +5,6 @@ using VRC.SDKBase;
 
 namespace MitarashiDango.FaceEmoteControl
 {
-#if UNITY_EDITOR
     [DisallowMultipleComponent]
     public class FaceEmoteControl : MonoBehaviour, IEditorOnly
     {
@@ -85,5 +84,4 @@ namespace MitarashiDango.FaceEmoteControl
             }
         }
     }
-#endif
 }

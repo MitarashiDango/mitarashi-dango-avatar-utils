@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace MitarashiDango.FaceEmoteControl
 {
-#if UNITY_EDITOR
     [Serializable]
     public class FaceEmote
     {
@@ -16,5 +15,4 @@ namespace MitarashiDango.FaceEmoteControl
         [HideInInspector]
         public Texture2D icon;
     }
-#endif
 }

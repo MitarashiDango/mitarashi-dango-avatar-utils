@@ -30,8 +30,8 @@ namespace MitarashiDango.FaceEmoteControl
             }
 
             animatorController.AddLayer(GenerateFaceEmoteGestureLockLayer());
-            animatorController.AddLayer(GenerateLeftHandGestureLayer());
-            animatorController.AddLayer(GenerateRightHandGestureLayer());
+            animatorController.AddLayer(GenerateHandGestureLayer("FEC_LEFT_HAND_GESTURE", Parameters.FEC_SELECTED_GESTURE_LEFT, Parameters.GESTURE_LEFT));
+            animatorController.AddLayer(GenerateHandGestureLayer("FEC_RIGHT_HAND_GESTURE", Parameters.FEC_SELECTED_GESTURE_RIGHT, Parameters.GESTURE_RIGHT));
             animatorController.AddLayer(GenerateSetFaceEmoteTypeLayer(faceEmoteControl));
             animatorController.AddLayer(GenerateFaceEmoteLockIndicatorControlLayer());
             animatorController.AddLayer(GenerateDefaultFaceEmoteLayer(faceEmoteControl));
@@ -118,23 +118,6 @@ namespace MitarashiDango.FaceEmoteControl
                     type = AnimatorControllerParameterType.Int,
                     defaultInt = 0,
                 },
-            };
-        }
-
-        private VRCAvatarParameterDriver GenerateVRCAvatarParameterLocalSetDriver(string parameterName, float value)
-        {
-            return new VRCAvatarParameterDriver
-            {
-                localOnly = true,
-                parameters = new List<VRC_AvatarParameterDriver.Parameter>
-                {
-                    new VRC_AvatarParameterDriver.Parameter
-                    {
-                        type = VRC_AvatarParameterDriver.ChangeType.Set,
-                        name = parameterName,
-                        value = value,
-                    }
-                }
             };
         }
 
@@ -272,16 +255,6 @@ namespace MitarashiDango.FaceEmoteControl
             unlockToLockSleepToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKER_CONTACT);
 
             return layer;
-        }
-
-        private AnimatorControllerLayer GenerateLeftHandGestureLayer()
-        {
-            return GenerateHandGestureLayer("FEC_LEFT_HAND_GESTURE", Parameters.FEC_SELECTED_GESTURE_LEFT, Parameters.GESTURE_LEFT);
-        }
-
-        private AnimatorControllerLayer GenerateRightHandGestureLayer()
-        {
-            return GenerateHandGestureLayer("FEC_RIGHT_HAND_GESTURE", Parameters.FEC_SELECTED_GESTURE_RIGHT, Parameters.GESTURE_RIGHT);
         }
 
         private AnimatorControllerLayer GenerateHandGestureLayer(string layerName, string selectedGestureParameterName, string gestureParameterName)
@@ -573,39 +546,9 @@ namespace MitarashiDango.FaceEmoteControl
 
         private AnimatorControllerLayer GenerateFaceEmoteLockIndicatorControlLayer()
         {
-            var hideLockIndicatorAnimationCurve = new AnimationCurve();
-            hideLockIndicatorAnimationCurve.AddKey(0, 0);
-            var hideLockIndicatorAnimationClip = new AnimationClip
-            {
-                name = "LockIndicator_OFF",
-                frameRate = 60
-            };
-            hideLockIndicatorAnimationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", hideLockIndicatorAnimationCurve);
-
-            var showLockIndicatorAnimationCurve = new AnimationCurve();
-            showLockIndicatorAnimationCurve.AddKey(0, 1);
-            var showLockIndicatorAnimationClip = new AnimationClip
-            {
-                name = "LockIndicator_ON",
-                frameRate = 60
-            };
-            showLockIndicatorAnimationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", showLockIndicatorAnimationCurve);
-
-            var flashLockIndicatorAnimationCurve = new AnimationCurve();
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(0, 0, float.PositiveInfinity, float.PositiveInfinity));
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(0, 0, float.PositiveInfinity, float.PositiveInfinity));
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(0.16666667f, 1, float.PositiveInfinity, float.PositiveInfinity));
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(0.33333334f, 0, float.PositiveInfinity, float.PositiveInfinity));
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(0.5f, 1, float.PositiveInfinity, float.PositiveInfinity));
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(0.6666667f, 0, float.PositiveInfinity, float.PositiveInfinity));
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(0.8333333f, 1, float.PositiveInfinity, float.PositiveInfinity));
-            flashLockIndicatorAnimationCurve.AddKey(new Keyframe(1, 0, float.PositiveInfinity, float.PositiveInfinity));
-            var flashLockIndicatorAnimationClip = new AnimationClip
-            {
-                name = "LockIndicator_FLASH",
-                frameRate = 60
-            };
-            flashLockIndicatorAnimationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", flashLockIndicatorAnimationCurve);
+            var hideLockIndicatorAnimationClip = GenerateHideLockIndicatorAnimationClip();
+            var showLockIndicatorAnimationClip = GenerateShowLockIndicatorAnimationClip();
+            var flashLockIndicatorAnimationClip = GenerateFlashLockIndicatorAnimationClip();
 
             var layer = new AnimatorControllerLayer
             {
@@ -888,6 +831,23 @@ namespace MitarashiDango.FaceEmoteControl
             toExitTransition2.AddCondition(AnimatorConditionMode.If, 0, Parameters.AFK);
         }
 
+        private VRCAvatarParameterDriver GenerateVRCAvatarParameterLocalSetDriver(string parameterName, float value)
+        {
+            return new VRCAvatarParameterDriver
+            {
+                localOnly = true,
+                parameters = new List<VRC_AvatarParameterDriver.Parameter>
+                {
+                    new VRC_AvatarParameterDriver.Parameter
+                    {
+                        type = VRC_AvatarParameterDriver.ChangeType.Set,
+                        name = parameterName,
+                        value = value,
+                    }
+                }
+            };
+        }
+
         private void SetImmediateTransitionSetting(AnimatorStateTransition ast)
         {
             ast.hasExitTime = false;
@@ -897,6 +857,55 @@ namespace MitarashiDango.FaceEmoteControl
             ast.offset = 0;
             ast.interruptionSource = TransitionInterruptionSource.None;
             ast.orderedInterruption = true;
+        }
+
+        private AnimationClip GenerateHideLockIndicatorAnimationClip()
+        {
+            var animationCurve = new AnimationCurve();
+            animationCurve.AddKey(0, 0);
+            var animationClip = new AnimationClip
+            {
+                name = "LockIndicator_OFF",
+                frameRate = 60
+            };
+            animationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", animationCurve);
+
+            return animationClip;
+        }
+
+        private AnimationClip GenerateShowLockIndicatorAnimationClip()
+        {
+            var animationCurve = new AnimationCurve();
+            animationCurve.AddKey(0, 1);
+            var animationClip = new AnimationClip
+            {
+                name = "LockIndicator_ON",
+                frameRate = 60
+            };
+            animationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", animationCurve);
+
+            return animationClip;
+        }
+
+        private AnimationClip GenerateFlashLockIndicatorAnimationClip()
+        {
+            var animationCurve = new AnimationCurve();
+            animationCurve.AddKey(new Keyframe(0, 0, float.PositiveInfinity, float.PositiveInfinity));
+            animationCurve.AddKey(new Keyframe(0, 0, float.PositiveInfinity, float.PositiveInfinity));
+            animationCurve.AddKey(new Keyframe(0.16666667f, 1, float.PositiveInfinity, float.PositiveInfinity));
+            animationCurve.AddKey(new Keyframe(0.33333334f, 0, float.PositiveInfinity, float.PositiveInfinity));
+            animationCurve.AddKey(new Keyframe(0.5f, 1, float.PositiveInfinity, float.PositiveInfinity));
+            animationCurve.AddKey(new Keyframe(0.6666667f, 0, float.PositiveInfinity, float.PositiveInfinity));
+            animationCurve.AddKey(new Keyframe(0.8333333f, 1, float.PositiveInfinity, float.PositiveInfinity));
+            animationCurve.AddKey(new Keyframe(1, 0, float.PositiveInfinity, float.PositiveInfinity));
+            var animationClip = new AnimationClip
+            {
+                name = "LockIndicator_FLASH",
+                frameRate = 60
+            };
+            animationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", animationCurve);
+
+            return animationClip;
         }
     }
 #endif
