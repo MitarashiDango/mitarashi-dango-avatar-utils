@@ -1,11 +1,11 @@
 {
-    "name": "com.matcha-soft.face-emote-control",
+    "name": "com.matcha-soft.mitarashi-dango-avatar-utils",
     "rootNamespace": "",
     "references": [
-        "com.matcha-soft.face-emote-control.runtime",
         "nadena.dev.ndmf",
         "nadena.dev.ndmf.runtime",
-        "nadena.dev.modular-avatar.core"
+        "nadena.dev.modular-avatar.core",
+        "com.matcha-soft.mitarashi-dango-avatar-utils.runtime"
     ],
     "includePlatforms": [
         "Editor"

@@ -4,7 +4,7 @@ using nadena.dev.modular_avatar.core;
 using UnityEngine;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
     public class RadialMenuGenerator

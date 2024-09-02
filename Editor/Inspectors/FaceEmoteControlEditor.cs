@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
     [DisallowMultipleComponent, CustomEditor(typeof(FaceEmoteControl))]

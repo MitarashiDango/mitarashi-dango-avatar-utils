@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(FaceEmote))]

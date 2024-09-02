@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
     [Serializable]
     public class FaceEmote

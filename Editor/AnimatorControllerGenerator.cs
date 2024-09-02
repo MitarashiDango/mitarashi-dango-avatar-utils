@@ -6,7 +6,7 @@ using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDKBase;
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
     public class AnimatorControllerGenerator

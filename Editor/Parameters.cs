@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using nadena.dev.modular_avatar.core;
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
     public class Parameters

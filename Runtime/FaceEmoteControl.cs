@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRC.SDKBase;
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
     [DisallowMultipleComponent]
     public class FaceEmoteControl : MonoBehaviour, IEditorOnly

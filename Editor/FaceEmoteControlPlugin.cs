@@ -1,5 +1,5 @@
 
-using MitarashiDango.FaceEmoteControl;
+using MitarashiDango.AvatarUtils;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
 using UnityEngine;
@@ -7,13 +7,11 @@ using UnityEngine.Animations;
 
 [assembly: ExportsPlugin(typeof(FaceEmoteControlPlugin))]
 
-namespace MitarashiDango.FaceEmoteControl
+namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
     public class FaceEmoteControlPlugin : Plugin<FaceEmoteControlPlugin>
     {
-        public override string QualifiedName => "MitarashiDango.FaceEmoteControl";
-
         protected override void Configure()
         {
             InPhase(BuildPhase.Generating)
