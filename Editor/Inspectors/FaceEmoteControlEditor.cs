@@ -9,7 +9,7 @@ namespace MitarashiDango.AvatarUtils
     [DisallowMultipleComponent, CustomEditor(typeof(FaceEmoteControl))]
     public class FaceEmoteControlEditor : Editor
     {
-        private SerializedProperty defaultFaceAnimationClip;
+        private SerializedProperty defaultFaceMotion;
         private SerializedProperty leftFist;
         private SerializedProperty leftHandOpen;
         private SerializedProperty leftFingerPoint;
@@ -30,7 +30,7 @@ namespace MitarashiDango.AvatarUtils
 
         private void OnEnable()
         {
-            defaultFaceAnimationClip = serializedObject.FindProperty("defaultFaceAnimationClip");
+            defaultFaceMotion = serializedObject.FindProperty("defaultFaceMotion");
 
             leftFist = serializedObject.FindProperty("leftFist");
             leftHandOpen = serializedObject.FindProperty("leftHandOpen");
@@ -72,7 +72,7 @@ namespace MitarashiDango.AvatarUtils
 
             EditorGUILayout.LabelField("表情設定", EditorStyles.boldLabel);
 
-            EditorGUILayout.PropertyField(defaultFaceAnimationClip, new GUIContent("Default Face"), false);
+            EditorGUILayout.PropertyField(defaultFaceMotion, new GUIContent("Default Face"), false);
 
             EditorGUILayout.Space();
 

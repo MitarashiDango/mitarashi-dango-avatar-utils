@@ -99,37 +99,37 @@ namespace MitarashiDango.AvatarUtils
             var subMenu = GenerateSubMenu("左手", null);
             var subMenuItems = new List<GameObject>();
 
-            if (faceEmoteControl.leftFist != null && faceEmoteControl.leftFist.animationClip != null)
+            if (faceEmoteControl.leftFist != null && faceEmoteControl.leftFist.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftFist, "Fist", 1));
             }
 
-            if (faceEmoteControl.leftHandOpen != null && faceEmoteControl.leftHandOpen.animationClip != null)
+            if (faceEmoteControl.leftHandOpen != null && faceEmoteControl.leftHandOpen.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftHandOpen, "HandOpen", 2));
             }
 
-            if (faceEmoteControl.leftFingerPoint != null && faceEmoteControl.leftFingerPoint.animationClip != null)
+            if (faceEmoteControl.leftFingerPoint != null && faceEmoteControl.leftFingerPoint.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftFingerPoint, "FingerPoint", 3));
             }
 
-            if (faceEmoteControl.leftVictory != null && faceEmoteControl.leftVictory.animationClip != null)
+            if (faceEmoteControl.leftVictory != null && faceEmoteControl.leftVictory.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftVictory, "Victory", 4));
             }
 
-            if (faceEmoteControl.leftRockNRoll != null && faceEmoteControl.leftRockNRoll.animationClip != null)
+            if (faceEmoteControl.leftRockNRoll != null && faceEmoteControl.leftRockNRoll.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftRockNRoll, "RockNRoll", 5));
             }
 
-            if (faceEmoteControl.leftHandGun != null && faceEmoteControl.leftHandGun.animationClip != null)
+            if (faceEmoteControl.leftHandGun != null && faceEmoteControl.leftHandGun.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftHandGun, "HandGun", 6));
             }
 
-            if (faceEmoteControl.leftThumbsUp != null && faceEmoteControl.leftThumbsUp.animationClip != null)
+            if (faceEmoteControl.leftThumbsUp != null && faceEmoteControl.leftThumbsUp.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftThumbsUp, "ThumbsUp", 7));
             }
@@ -152,37 +152,37 @@ namespace MitarashiDango.AvatarUtils
             var subMenu = GenerateSubMenu("右手", null);
             var subMenuItems = new List<GameObject>();
 
-            if (faceEmoteControl.rightFist != null && faceEmoteControl.rightFist.animationClip != null)
+            if (faceEmoteControl.rightFist != null && faceEmoteControl.rightFist.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightFist, "Fist", 8));
             }
 
-            if (faceEmoteControl.rightHandOpen != null && faceEmoteControl.rightHandOpen.animationClip != null)
+            if (faceEmoteControl.rightHandOpen != null && faceEmoteControl.rightHandOpen.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightHandOpen, "HandOpen", 9));
             }
 
-            if (faceEmoteControl.rightFingerPoint != null && faceEmoteControl.rightFingerPoint.animationClip != null)
+            if (faceEmoteControl.rightFingerPoint != null && faceEmoteControl.rightFingerPoint.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightFingerPoint, "FingerPoint", 10));
             }
 
-            if (faceEmoteControl.rightVictory != null && faceEmoteControl.rightVictory.animationClip != null)
+            if (faceEmoteControl.rightVictory != null && faceEmoteControl.rightVictory.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightVictory, "Victory", 11));
             }
 
-            if (faceEmoteControl.rightRockNRoll != null && faceEmoteControl.rightRockNRoll.animationClip != null)
+            if (faceEmoteControl.rightRockNRoll != null && faceEmoteControl.rightRockNRoll.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightRockNRoll, "RockNRoll", 12));
             }
 
-            if (faceEmoteControl.rightHandGun != null && faceEmoteControl.rightHandGun.animationClip != null)
+            if (faceEmoteControl.rightHandGun != null && faceEmoteControl.rightHandGun.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightHandGun, "HandGun", 13));
             }
 
-            if (faceEmoteControl.rightThumbsUp != null && faceEmoteControl.rightThumbsUp.animationClip != null)
+            if (faceEmoteControl.rightThumbsUp != null && faceEmoteControl.rightThumbsUp.motion != null)
             {
                 subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightThumbsUp, "ThumbsUp", 14));
             }

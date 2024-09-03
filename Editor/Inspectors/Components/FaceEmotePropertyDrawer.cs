@@ -13,7 +13,7 @@ namespace MitarashiDango.AvatarUtils
             using (var scope = new EditorGUI.PropertyScope(position, label, property))
             {
                 var nameProperty = property.FindPropertyRelative("name");
-                var animationClipProperty = property.FindPropertyRelative("animationClip");
+                var motionProperty = property.FindPropertyRelative("motion");
                 var iconProperty = property.FindPropertyRelative("icon");
 
                 var nameRect = new Rect(position)
@@ -23,16 +23,16 @@ namespace MitarashiDango.AvatarUtils
                 };
                 EditorGUI.PropertyField(nameRect, nameProperty, new GUIContent("表情名"));
 
-                var animationClipRect = new Rect(nameRect)
+                var motionRect = new Rect(nameRect)
                 {
                     y = nameRect.y + nameRect.height + EditorGUIUtility.standardVerticalSpacing,
                     height = EditorGUIUtility.singleLineHeight
                 };
-                EditorGUI.PropertyField(animationClipRect, animationClipProperty, new GUIContent("表情アニメーション"));
+                EditorGUI.PropertyField(motionRect, motionProperty, new GUIContent("表情アニメーション"));
 
-                var iconRect = new Rect(animationClipRect)
+                var iconRect = new Rect(motionRect)
                 {
-                    y = animationClipRect.y + animationClipRect.height + EditorGUIUtility.standardVerticalSpacing,
+                    y = motionRect.y + motionRect.height + EditorGUIUtility.standardVerticalSpacing,
                     height = EditorGUIUtility.singleLineHeight
                 };
                 EditorGUI.PropertyField(iconRect, iconProperty, new GUIContent("アイコン"));

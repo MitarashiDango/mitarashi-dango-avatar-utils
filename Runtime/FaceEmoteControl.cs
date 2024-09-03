@@ -9,7 +9,7 @@ namespace MitarashiDango.AvatarUtils
     public class FaceEmoteControl : MonoBehaviour, IEditorOnly
     {
         [HideInInspector]
-        public AnimationClip defaultFaceAnimationClip;
+        public Motion defaultFaceMotion;
 
         [HideInInspector]
         public FaceEmote leftFist;
@@ -60,13 +60,13 @@ namespace MitarashiDango.AvatarUtils
         {
             get
             {
-                return (leftFist != null && leftFist.animationClip != null)
-                  || (leftHandOpen != null && leftHandOpen.animationClip != null)
-                  || (leftFingerPoint != null && leftFingerPoint.animationClip != null)
-                  || (leftVictory != null && leftVictory.animationClip != null)
-                  || (leftRockNRoll != null && leftRockNRoll.animationClip != null)
-                  || (leftHandGun != null && leftHandGun.animationClip != null)
-                  || (leftThumbsUp != null && leftThumbsUp.animationClip != null);
+                return (leftFist != null && leftFist.motion != null)
+                  || (leftHandOpen != null && leftHandOpen.motion != null)
+                  || (leftFingerPoint != null && leftFingerPoint.motion != null)
+                  || (leftVictory != null && leftVictory.motion != null)
+                  || (leftRockNRoll != null && leftRockNRoll.motion != null)
+                  || (leftHandGun != null && leftHandGun.motion != null)
+                  || (leftThumbsUp != null && leftThumbsUp.motion != null);
             }
         }
 
@@ -74,13 +74,13 @@ namespace MitarashiDango.AvatarUtils
         {
             get
             {
-                return (rightFist != null && rightFist.animationClip != null)
-                  || (rightHandOpen != null && rightHandOpen.animationClip != null)
-                  || (rightFingerPoint != null && rightFingerPoint.animationClip != null)
-                  || (rightVictory != null && rightVictory.animationClip != null)
-                  || (rightRockNRoll != null && rightRockNRoll.animationClip != null)
-                  || (rightHandGun != null && rightHandGun.animationClip != null)
-                  || (rightThumbsUp != null && rightThumbsUp.animationClip != null);
+                return (rightFist != null && rightFist.motion != null)
+                  || (rightHandOpen != null && rightHandOpen.motion != null)
+                  || (rightFingerPoint != null && rightFingerPoint.motion != null)
+                  || (rightVictory != null && rightVictory.motion != null)
+                  || (rightRockNRoll != null && rightRockNRoll.motion != null)
+                  || (rightHandGun != null && rightHandGun.motion != null)
+                  || (rightThumbsUp != null && rightThumbsUp.motion != null);
             }
         }
     }

@@ -10,7 +10,7 @@ namespace MitarashiDango.AvatarUtils
         public string name = "";
 
         [HideInInspector]
-        public AnimationClip animationClip;
+        public Motion motion;
 
         [HideInInspector]
         public Texture2D icon;

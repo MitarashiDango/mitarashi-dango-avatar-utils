@@ -622,9 +622,9 @@ namespace MitarashiDango.AvatarUtils
 
             var setDefaultFaceEmoteState = layer.stateMachine.AddState("Set Default Face Emote", new Vector3(-20, 60, 0));
             setDefaultFaceEmoteState.writeDefaultValues = false;
-            if (faceEmoteControl.defaultFaceAnimationClip != null)
+            if (faceEmoteControl.defaultFaceMotion != null)
             {
-                setDefaultFaceEmoteState.motion = faceEmoteControl.defaultFaceAnimationClip;
+                setDefaultFaceEmoteState.motion = faceEmoteControl.defaultFaceMotion;
             }
             else
             {
@@ -771,29 +771,29 @@ namespace MitarashiDango.AvatarUtils
                 }
 
                 var faceEmoteNumber = i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER;
-                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].animationClip, statePosition);
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].motion, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }
 
         private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, FaceEmote faceEmote, Vector3 position)
         {
-            if (faceEmote == null || faceEmote.animationClip == null)
+            if (faceEmote == null || faceEmote.motion == null)
             {
                 return;
             }
 
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.animationClip, "", position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, "", position);
         }
 
         private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, FaceEmote faceEmote, string motionTimeParameter, Vector3 position)
         {
-            if (faceEmote == null || faceEmote.animationClip == null)
+            if (faceEmote == null || faceEmote.motion == null)
             {
                 return;
             }
 
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.animationClip, motionTimeParameter, position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, motionTimeParameter, position);
         }
 
         private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, Vector3 position)
