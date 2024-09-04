@@ -28,7 +28,7 @@ jobs:
     permissions:
       contents: write
     env:
-      packagePath: ""
+      packagePath: "."
     if: needs.config.outputs.config_package == 'true'
     steps:
       # Checkout Local Repository
