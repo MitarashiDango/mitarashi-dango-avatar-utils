@@ -35,7 +35,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           path: "${{ env.packagePath }}"
+
+      - name: Git Checkout
+        working-directory: "${{ env.packagePath }}"
+        run: git checkout ${{ github.event.inputs.ref }}
+        if: ${{ github.event.inputs.ref != '' }}
 
       # Get the Package version based on the package.json file
       - name: Get Version
@@ -67,13 +73,6 @@ jobs:
         with:
           package-path: ${{ env.unityPackage }}
           include-files: metaList
-
-      # Make a release tag of the version from the package.json file
-      - name: Create Tag
-        id: tag_version
-        uses: rickstaa/action-create-tag@88dbf7ff6fe2405f8e8f6c6fdfd78829bc631f83
-        with:
-          tag: "${{ env.version }}"
 
       # Publish the Release to GitHub
       - name: Make Release
