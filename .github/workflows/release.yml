@@ -34,6 +34,8 @@ jobs:
       # Checkout Local Repository
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          path: "${{ env.packagePath }}"
 
       # Get the Package version based on the package.json file
       - name: Get Version
@@ -52,20 +54,20 @@ jobs:
 
       # Zip the Package for release
       - name: Create Package Zip
-        working-directory: "./"
+        working-directory: "${{ env.packagePath }}"
         run: zip -r "${{ github.workspace }}/${{ env.zipFile }}" . -x .git .github '.git/*' '.github/*'
 
       # Build a list of .meta files for future use
       - name: Track Package Meta Files
-        run: find "./" -name \*.meta >> metaList
+        run: find "${{ env.packagePath }}/" -name \*.meta >> metaList
 
       # Make a UnityPackage version of the Package for release
       - name: Create UnityPackage
-        uses: pCYSl5EDgo/create-unitypackage@cfcd3cf0391a5ef1306342794866a9897c32af0b
+        uses: pCYSl5EDgo/create-unitypackage@master
         with:
           package-path: ${{ env.unityPackage }}
           include-files: metaList
-          project-folder: Packages/${{ vars.PACKAGE_NAME }}
+          working-folder: ${{ env.packagePath }}
 
       # Make a release tag of the version from the package.json file
       - name: Create Tag
@@ -81,5 +83,5 @@ jobs:
           files: |
             ${{ env.zipFile }}
             ${{ env.unityPackage }}
-            package.json
+            ${{ env.packagePath }}/package.json
           tag_name: ${{ env.version }}
