@@ -67,7 +67,6 @@ jobs:
         with:
           package-path: ${{ env.unityPackage }}
           include-files: metaList
-          working-folder: ${{ env.packagePath }}
 
       # Make a release tag of the version from the package.json file
       - name: Create Tag
