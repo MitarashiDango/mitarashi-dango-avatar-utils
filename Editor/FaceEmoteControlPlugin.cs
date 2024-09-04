@@ -25,18 +25,18 @@ namespace MitarashiDango.AvatarUtils
             if (faceEmoteControl != null)
             {
                 SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
-                AddParameters(faceEmoteControl.gameObject);
+                AddParameters(faceEmoteControl.gameObject, faceEmoteControl);
                 AddRadialMenus(faceEmoteControl.gameObject, faceEmoteControl);
                 AddAnimatorController(faceEmoteControl.gameObject, faceEmoteControl);
                 Object.DestroyImmediate(faceEmoteControl);
             }
         }
 
-        private void AddParameters(GameObject obj)
+        private void AddParameters(GameObject obj, FaceEmoteControl faceEmoteControl)
         {
             var parameters = new Parameters();
             var modularAvatarParameters = obj.AddComponent<ModularAvatarParameters>();
-            modularAvatarParameters.parameters = parameters.GetParameterConfigs();
+            modularAvatarParameters.parameters = parameters.GetParameterConfigs(faceEmoteControl);
         }
 
         private void AddRadialMenus(GameObject obj, FaceEmoteControl faceEmoteControl)

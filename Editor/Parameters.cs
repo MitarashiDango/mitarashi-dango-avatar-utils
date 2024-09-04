@@ -18,13 +18,15 @@ namespace MitarashiDango.AvatarUtils
         public static readonly string FEC_FACE_EMOTE_LOCKER_ENABLED = "FEC_FaceEmoteLockerEnabled";
         public static readonly string FEC_FACE_EMOTE_LOCKER_CONTACT = "FEC_FaceEmoteLockerContact";
         public static readonly string FEC_FACE_EMOTE_LOCKED = "FEC_FaceEmoteLocked";
+        public static readonly string FEC_GESTURE_LEFT_WEIGHT = "FEC_GestureLeftWeight";
+        public static readonly string FEC_GESTURE_RIGHT_WEIGHT = "FEC_GestureRightWeight";
         public static readonly string FEC_SELECTED_GESTURE_LEFT = "FEC_SelectedGestureLeft";
         public static readonly string FEC_SELECTED_GESTURE_RIGHT = "FEC_SelectedGestureRight";
         public static readonly string FEC_SELECTED_FACE_EMOTE_BY_MENU = "FEC_SelectedFaceEmoteByMenu";
         public static readonly string FEC_FACE_EMOTE_LOCKER_AUTO_DISABLE_ON_SIT = "FEC_FaceEmoteLockerAutoDisableOnSit";
         public static readonly string FEC_SELECTED_FACE_EMOTE = "FEC_SelectedFaceEmote";
 
-        public List<ParameterConfig> GetParameterConfigs()
+        public List<ParameterConfig> GetParameterConfigs(FaceEmoteControl faceEmoteControl)
         {
             var parameterConfigs = new List<ParameterConfig>
             {
@@ -93,6 +95,27 @@ namespace MitarashiDango.AvatarUtils
                     localOnly = false,
                 }
             };
+
+            if (faceEmoteControl.isGenerateGestureWeightLockLogic)
+            {
+                parameterConfigs.Add(new ParameterConfig
+                {
+                    nameOrPrefix = FEC_GESTURE_LEFT_WEIGHT,
+                    defaultValue = 0,
+                    syncType = ParameterSyncType.Float,
+                    saved = true,
+                    localOnly = false,
+                });
+
+                parameterConfigs.Add(new ParameterConfig
+                {
+                    nameOrPrefix = FEC_GESTURE_RIGHT_WEIGHT,
+                    defaultValue = 0,
+                    syncType = ParameterSyncType.Float,
+                    saved = true,
+                    localOnly = false,
+                });
+            }
 
             return parameterConfigs;
         }
