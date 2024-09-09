@@ -195,7 +195,7 @@ namespace MitarashiDango.AvatarUtils
                         {
                             type = VRC_AvatarParameterDriver.ChangeType.Set,
                             name = Parameters.FEC_FACE_EMOTE_LOCKED,
-                            value = 1,
+                            value = 0,
                         },
                         new VRC_AvatarParameterDriver.Parameter
                         {
