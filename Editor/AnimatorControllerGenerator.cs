@@ -33,13 +33,6 @@ namespace MitarashiDango.AvatarUtils
             animatorController.AddLayer(GenerateHandGestureLayer("FEC_LEFT_HAND_GESTURE", Parameters.FEC_SELECTED_GESTURE_LEFT, Parameters.GESTURE_LEFT));
             animatorController.AddLayer(GenerateHandGestureLayer("FEC_RIGHT_HAND_GESTURE", Parameters.FEC_SELECTED_GESTURE_RIGHT, Parameters.GESTURE_RIGHT));
             animatorController.AddLayer(GenerateSetFaceEmoteTypeLayer(faceEmoteControl));
-
-            if (faceEmoteControl.isGenerateGestureWeightLockLogic)
-            {
-                animatorController.AddLayer(GenerateUpdateGestureWeightLayer("FEC_LEFT_HAND_GESTURE_WEIGHT", Parameters.GESTURE_LEFT_WEIGHT, Parameters.FEC_GESTURE_LEFT_WEIGHT));
-                animatorController.AddLayer(GenerateUpdateGestureWeightLayer("FEC_RIGHT_HAND_GESTURE_WEIGHT", Parameters.GESTURE_RIGHT_WEIGHT, Parameters.FEC_GESTURE_RIGHT_WEIGHT));
-            }
-
             animatorController.AddLayer(GenerateFaceEmoteLockIndicatorControlLayer());
             animatorController.AddLayer(GenerateDefaultFaceEmoteLayer(faceEmoteControl));
             animatorController.AddLayer(GenerateFaceEmoteSettingsLayer(faceEmoteControl));
@@ -126,24 +119,19 @@ namespace MitarashiDango.AvatarUtils
                     type = AnimatorControllerParameterType.Int,
                     defaultInt = 0,
                 },
-            };
-
-            if (faceEmoteControl.isGenerateGestureWeightLockLogic)
-            {
-                animatorControllerParameters.Add(new AnimatorControllerParameter
+                new AnimatorControllerParameter
                 {
                     name = Parameters.FEC_GESTURE_LEFT_WEIGHT,
                     type = AnimatorControllerParameterType.Float,
                     defaultFloat = 0,
-                });
-
-                animatorControllerParameters.Add(new AnimatorControllerParameter
+                },
+                new AnimatorControllerParameter
                 {
                     name = Parameters.FEC_GESTURE_RIGHT_WEIGHT,
                     type = AnimatorControllerParameterType.Float,
                     defaultFloat = 0,
-                });
-            }
+                }
+            };
 
             return animatorControllerParameters.ToArray();
         }
@@ -168,6 +156,27 @@ namespace MitarashiDango.AvatarUtils
             var gestureLockDisabledState = layer.stateMachine.AddState("Gesture Lock Disabled", new Vector3(400, -80, 0));
             gestureLockDisabledState.writeDefaultValues = false;
             gestureLockDisabledState.motion = blankAnimationClip;
+            gestureLockDisabledState.behaviours = new StateMachineBehaviour[]{
+                new VRCAvatarParameterDriver
+                {
+                    localOnly = true,
+                    parameters = new List<VRC_AvatarParameterDriver.Parameter>
+                    {
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Set,
+                            name = Parameters.FEC_GESTURE_LEFT_WEIGHT,
+                            value = 0,
+                        },
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Set,
+                            name = Parameters.FEC_GESTURE_RIGHT_WEIGHT,
+                            value = 0,
+                        }
+                    }
+                }
+            };
 
             var gestureLockEnabledState = layer.stateMachine.AddState("Gesture Lock Enabled", new Vector3(400, 80, 0));
             gestureLockEnabledState.writeDefaultValues = false;
@@ -177,14 +186,64 @@ namespace MitarashiDango.AvatarUtils
             setDisableState.writeDefaultValues = false;
             setDisableState.motion = blankAnimationClip;
             setDisableState.behaviours = new StateMachineBehaviour[]{
-                GenerateVRCAvatarParameterLocalSetDriver(Parameters.FEC_FACE_EMOTE_LOCKED, 0)
+                new VRCAvatarParameterDriver
+                {
+                    localOnly = true,
+                    parameters = new List<VRC_AvatarParameterDriver.Parameter>
+                    {
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Set,
+                            name = Parameters.FEC_FACE_EMOTE_LOCKED,
+                            value = 1,
+                        },
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Set,
+                            name = Parameters.FEC_GESTURE_LEFT_WEIGHT,
+                            value = 0,
+                        },
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Set,
+                            name = Parameters.FEC_GESTURE_RIGHT_WEIGHT,
+                            value = 0,
+                        }
+                    }
+                }
             };
 
             var setEnableState = layer.stateMachine.AddState("Set Enable", new Vector3(600, 160, 0));
             setEnableState.writeDefaultValues = false;
             setEnableState.motion = blankAnimationClip;
             setEnableState.behaviours = new StateMachineBehaviour[]{
-                GenerateVRCAvatarParameterLocalSetDriver(Parameters.FEC_FACE_EMOTE_LOCKED, 1)
+                new VRCAvatarParameterDriver
+                {
+                    localOnly = true,
+                    parameters = new List<VRC_AvatarParameterDriver.Parameter>
+                    {
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Set,
+                            name = Parameters.FEC_FACE_EMOTE_LOCKED,
+                            value = 1,
+                        },
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Copy,
+                            source = Parameters.GESTURE_LEFT_WEIGHT,
+                            name = Parameters.FEC_GESTURE_LEFT_WEIGHT,
+                            convertRange = false,
+                        },
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Copy,
+                            source = Parameters.GESTURE_RIGHT_WEIGHT,
+                            name = Parameters.FEC_GESTURE_RIGHT_WEIGHT,
+                            convertRange = false,
+                        }
+                    }
+                }
             };
 
             var lockToUnlockSleepState = layer.stateMachine.AddState("Sleep (Lock to Unlock)", new Vector3(800, -80, 0));
@@ -194,6 +253,33 @@ namespace MitarashiDango.AvatarUtils
             var unlockToLockSleepState = layer.stateMachine.AddState("Sleep (Unlock to Lock)", new Vector3(800, 80, 0));
             unlockToLockSleepState.writeDefaultValues = false;
             unlockToLockSleepState.motion = blankAnimationClip;
+
+            var copyGestureWeightState = layer.stateMachine.AddState("Copy Gesture Weight", new Vector3(600, 0, 0));
+            copyGestureWeightState.writeDefaultValues = false;
+            copyGestureWeightState.motion = blankAnimationClip;
+            copyGestureWeightState.behaviours = new StateMachineBehaviour[]{
+                new VRCAvatarParameterDriver
+                {
+                    localOnly = true,
+                    parameters = new List<VRC_AvatarParameterDriver.Parameter>
+                    {
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Copy,
+                            source = Parameters.GESTURE_LEFT_WEIGHT,
+                            name = Parameters.FEC_GESTURE_LEFT_WEIGHT,
+                            convertRange = false,
+                        },
+                        new VRC_AvatarParameterDriver.Parameter
+                        {
+                            type = VRC_AvatarParameterDriver.ChangeType.Copy,
+                            source = Parameters.GESTURE_RIGHT_WEIGHT,
+                            name = Parameters.FEC_GESTURE_RIGHT_WEIGHT,
+                            convertRange = false,
+                        }
+                    }
+                }
+            };
 
             // [Initial State] -> [Gesture Lock Disabled]
             var initialToGestureLockDisabledTransition1 = initialState.AddTransition(gestureLockDisabledState);
@@ -207,10 +293,15 @@ namespace MitarashiDango.AvatarUtils
             initialToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.IS_LOCAL);
             initialToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
 
-            // [Gesture Lock Disabled] -> [Gesture Lock Enabled]
-            var gestureLockDisabledToGestureLockEnabledTransition1 = gestureLockDisabledState.AddTransition(gestureLockEnabledState);
-            SetImmediateTransitionSetting(gestureLockDisabledToGestureLockEnabledTransition1);
-            gestureLockDisabledToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+            // [Gesture Lock Disabled] -> [Copy Gesture Weight]
+            var gestureLockDisabledToCopyGestureWeightTransition1 = gestureLockDisabledState.AddTransition(copyGestureWeightState);
+            SetImmediateTransitionSetting(gestureLockDisabledToCopyGestureWeightTransition1);
+            gestureLockDisabledToCopyGestureWeightTransition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+
+            // [Copy Gesture Weight] -> [Gesture Lock Enabled]
+            var copyGestureWeightToGestureLockEnabledTransition1 = copyGestureWeightState.AddTransition(gestureLockEnabledState);
+            SetImmediateTransitionSetting(copyGestureWeightToGestureLockEnabledTransition1);
+            copyGestureWeightToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
 
             // [Gesture Lock Enabled] -> [Gesture Lock Disabled]
             var gestureLockEnabledToGestureLockDisabledTransition1 = gestureLockEnabledState.AddTransition(gestureLockDisabledState);
@@ -280,150 +371,6 @@ namespace MitarashiDango.AvatarUtils
             var unlockToLockSleepToGestureLockEnabledTransition1 = unlockToLockSleepState.AddTransition(gestureLockEnabledState);
             SetImmediateTransitionSetting(unlockToLockSleepToGestureLockEnabledTransition1);
             unlockToLockSleepToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKER_CONTACT);
-
-            return layer;
-        }
-
-        private AnimatorControllerLayer GenerateUpdateGestureWeightLayer(string layerName, string srcGestureWeightParameterName, string destGestureWeightParameterName)
-        {
-            var layer = new AnimatorControllerLayer
-            {
-                name = layerName,
-                defaultWeight = 0,
-                stateMachine = new AnimatorStateMachine(),
-            };
-
-            layer.stateMachine.entryPosition = new Vector3(0, 0, 0);
-            layer.stateMachine.anyStatePosition = new Vector3(0, 200, 0);
-            layer.stateMachine.exitPosition = new Vector3(800, 0, 0);
-
-            var idleState = layer.stateMachine.AddState("Idle", new Vector3(300, 0, 0));
-            idleState.writeDefaultValues = false;
-            idleState.motion = blankAnimationClip;
-
-            var updateGestureWeightState = layer.stateMachine.AddState("Update Gesture Weight", new Vector3(300, 200, 0));
-            updateGestureWeightState.writeDefaultValues = false;
-            updateGestureWeightState.motion = blankAnimationClip;
-            updateGestureWeightState.behaviours = new StateMachineBehaviour[]{
-                new VRCAvatarParameterDriver
-                {
-                    localOnly = true,
-                    parameters = new List<VRC_AvatarParameterDriver.Parameter>
-                    {
-                        new VRC_AvatarParameterDriver.Parameter
-                        {
-                            type = VRC_AvatarParameterDriver.ChangeType.Copy,
-                            source = srcGestureWeightParameterName,
-                            name = destGestureWeightParameterName,
-                            convertRange = false,
-                        }
-                    }
-                }
-            };
-
-            var updateToMinValueState = layer.stateMachine.AddState("Update to Min Value", new Vector3(300, 300, 0));
-            updateToMinValueState.writeDefaultValues = false;
-            updateToMinValueState.motion = blankAnimationClip;
-            updateToMinValueState.behaviours = new StateMachineBehaviour[]{
-                new VRCAvatarParameterDriver
-                {
-                    localOnly = true,
-                    parameters = new List<VRC_AvatarParameterDriver.Parameter>
-                    {
-                        new VRC_AvatarParameterDriver.Parameter
-                        {
-                            type = VRC_AvatarParameterDriver.ChangeType.Set,
-                            name = destGestureWeightParameterName,
-                            value = 0,
-                        }
-                    }
-                }
-            };
-
-            var updateToMaxValueState = layer.stateMachine.AddState("Update to Max Value", new Vector3(300, 100, 0));
-            updateToMaxValueState.writeDefaultValues = false;
-            updateToMaxValueState.motion = blankAnimationClip;
-            updateToMaxValueState.behaviours = new StateMachineBehaviour[]{
-                new VRCAvatarParameterDriver
-                {
-                    localOnly = true,
-                    parameters = new List<VRC_AvatarParameterDriver.Parameter>
-                    {
-                        new VRC_AvatarParameterDriver.Parameter
-                        {
-                            type = VRC_AvatarParameterDriver.ChangeType.Set,
-                            name = destGestureWeightParameterName,
-                            value = 1,
-                        }
-                    }
-                }
-            };
-
-            var transition1 = layer.stateMachine.AddEntryTransition(updateGestureWeightState);
-            transition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.IS_LOCAL);
-            transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition1.AddCondition(AnimatorConditionMode.NotEqual, 0, srcGestureWeightParameterName);
-            transition1.AddCondition(AnimatorConditionMode.NotEqual, 1, srcGestureWeightParameterName);
-
-            var transition2 = layer.stateMachine.AddEntryTransition(idleState);
-            transition2.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.IS_LOCAL);
-
-            var transition3 = layer.stateMachine.AddEntryTransition(idleState);
-            transition3.AddCondition(AnimatorConditionMode.If, 0, Parameters.IS_LOCAL);
-            transition3.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-
-            var transition4 = layer.stateMachine.AddEntryTransition(updateToMinValueState);
-            transition4.AddCondition(AnimatorConditionMode.If, 0, Parameters.IS_LOCAL);
-            transition4.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition4.AddCondition(AnimatorConditionMode.Equals, 0, srcGestureWeightParameterName);
-
-            var transition5 = layer.stateMachine.AddEntryTransition(updateToMaxValueState);
-            transition5.AddCondition(AnimatorConditionMode.If, 0, Parameters.IS_LOCAL);
-            transition5.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition5.AddCondition(AnimatorConditionMode.Equals, 1, srcGestureWeightParameterName);
-
-            var transition6 = idleState.AddExitTransition();
-            SetImmediateTransitionSetting(transition6);
-            transition6.AddCondition(AnimatorConditionMode.If, 0, Parameters.IS_LOCAL);
-            transition6.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-
-            var transition7 = updateToMinValueState.AddExitTransition();
-            SetImmediateTransitionSetting(transition6);
-            transition7.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition7.AddCondition(AnimatorConditionMode.NotEqual, 0, srcGestureWeightParameterName);
-
-            var transition8 = updateToMaxValueState.AddExitTransition();
-            SetImmediateTransitionSetting(transition6);
-            transition8.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition8.AddCondition(AnimatorConditionMode.NotEqual, 1, srcGestureWeightParameterName);
-
-            var transition9 = updateGestureWeightState.AddExitTransition();
-            SetImmediateTransitionSetting(transition9);
-            transition9.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition9.AddCondition(AnimatorConditionMode.NotEqual, 0, srcGestureWeightParameterName);
-            transition9.AddCondition(AnimatorConditionMode.NotEqual, 1, srcGestureWeightParameterName);
-
-            var transition10 = updateGestureWeightState.AddExitTransition();
-            SetImmediateTransitionSetting(transition10);
-            transition10.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition10.AddCondition(AnimatorConditionMode.Equals, 0, srcGestureWeightParameterName);
-
-            var transition11 = updateGestureWeightState.AddExitTransition();
-            SetImmediateTransitionSetting(transition11);
-            transition11.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
-            transition11.AddCondition(AnimatorConditionMode.Equals, 1, srcGestureWeightParameterName);
-
-            var transition12 = updateGestureWeightState.AddExitTransition();
-            SetImmediateTransitionSetting(transition12);
-            transition12.AddCondition(AnimatorConditionMode.If, 1, Parameters.FEC_FACE_EMOTE_LOCKED);
-
-            var transition13 = updateToMinValueState.AddExitTransition();
-            SetImmediateTransitionSetting(transition13);
-            transition13.AddCondition(AnimatorConditionMode.If, 1, Parameters.FEC_FACE_EMOTE_LOCKED);
-
-            var transition14 = updateToMaxValueState.AddExitTransition();
-            SetImmediateTransitionSetting(transition14);
-            transition14.AddCondition(AnimatorConditionMode.If, 1, Parameters.FEC_FACE_EMOTE_LOCKED);
 
             return layer;
         }
@@ -882,13 +829,13 @@ namespace MitarashiDango.AvatarUtils
 
             stateMachine.AddStateMachineExitTransition(leftGestureEmoteStateMachine);
 
-            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Fist (Left Gesture)", 1, faceEmoteControl.leftFist, Parameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
-            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", 2, faceEmoteControl.leftHandOpen, new Vector3(500, 60, 0));
-            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", 3, faceEmoteControl.leftFingerPoint, new Vector3(500, 120, 0));
-            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", 4, faceEmoteControl.leftVictory, new Vector3(500, 180, 0));
-            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", 5, faceEmoteControl.leftRockNRoll, new Vector3(500, 240, 0));
-            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", 6, faceEmoteControl.leftHandGun, new Vector3(500, 300, 0));
-            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", 7, faceEmoteControl.leftThumbsUp, new Vector3(500, 360, 0));
+            AddFaceEmoteStatesWithGenerateBlendTree(leftGestureEmoteStateMachine, "Fist (Left Gesture)", 1, faceEmoteControl.defaultFaceMotion, faceEmoteControl.leftFist, Parameters.GESTURE_LEFT_WEIGHT, Parameters.FEC_GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
+            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", 2, faceEmoteControl.leftHandOpen, new Vector3(500, 180, 0));
+            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", 3, faceEmoteControl.leftFingerPoint, new Vector3(500, 240, 0));
+            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", 4, faceEmoteControl.leftVictory, new Vector3(500, 300, 0));
+            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", 5, faceEmoteControl.leftRockNRoll, new Vector3(500, 360, 0));
+            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", 6, faceEmoteControl.leftHandGun, new Vector3(500, 420, 0));
+            AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", 7, faceEmoteControl.leftThumbsUp, new Vector3(500, 480, 0));
         }
 
         private void AddRightGestureEmoteStates(AnimatorStateMachine stateMachine, Vector3 position, FaceEmoteControl faceEmoteControl)
@@ -907,13 +854,13 @@ namespace MitarashiDango.AvatarUtils
 
             stateMachine.AddStateMachineExitTransition(rightGestureEmoteStateMachine);
 
-            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.rightFist, Parameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
-            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.rightHandOpen, new Vector3(500, 60, 0));
-            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.rightFingerPoint, new Vector3(500, 120, 0));
-            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.rightVictory, new Vector3(500, 180, 0));
-            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.rightRockNRoll, new Vector3(500, 240, 0));
-            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.rightHandGun, new Vector3(500, 300, 0));
-            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.rightThumbsUp, new Vector3(500, 360, 0));
+            AddFaceEmoteStatesWithGenerateBlendTree(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.defaultFaceMotion, faceEmoteControl.rightFist, Parameters.GESTURE_RIGHT_WEIGHT, Parameters.FEC_GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
+            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.rightHandOpen, new Vector3(500, 180, 0));
+            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.rightFingerPoint, new Vector3(500, 240, 0));
+            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.rightVictory, new Vector3(500, 300, 0));
+            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.rightRockNRoll, new Vector3(500, 360, 0));
+            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.rightHandGun, new Vector3(500, 420, 0));
+            AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.rightThumbsUp, new Vector3(500, 480, 0));
         }
 
         private void AddAdditionalEmoteStates(AnimatorStateMachine stateMachine, Vector3 startPosition, FaceEmoteControl faceEmoteControl)
@@ -951,20 +898,11 @@ namespace MitarashiDango.AvatarUtils
         {
             if (faceEmote == null || faceEmote.motion == null)
             {
+                AddFaceEmoteState(stateMachine, name, faceEmoteNumber, blankAnimationClip, "", position);
                 return;
             }
 
             AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, "", position);
-        }
-
-        private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, FaceEmote faceEmote, string motionTimeParameter, Vector3 position)
-        {
-            if (faceEmote == null || faceEmote.motion == null)
-            {
-                return;
-            }
-
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, motionTimeParameter, position);
         }
 
         private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, Vector3 position)
@@ -1000,6 +938,153 @@ namespace MitarashiDango.AvatarUtils
             var toExitTransition2 = state.AddExitTransition();
             SetImmediateTransitionSetting(toExitTransition2);
             toExitTransition2.AddCondition(AnimatorConditionMode.If, 0, Parameters.AFK);
+        }
+
+        private void AddFaceEmoteStatesWithGenerateBlendTree(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion defaultFaceEmoteMotion, FaceEmote faceEmote, string motionTimeParameter, string gestureLockedMotionTimeParameter, Vector3 position)
+        {
+            var motion = faceEmote != null ? faceEmote.motion : null;
+
+            Func<string, Motion, Motion, BlendTree> generateBlendTree = (string blendParameter, Motion defaultFaceEmoteMotion, Motion motion) =>
+            {
+                var blendTree = new BlendTree();
+                blendTree.blendType = BlendTreeType.Simple1D;
+                blendTree.blendParameter = blendParameter;
+                blendTree.AddChild(defaultFaceEmoteMotion, 0);
+                blendTree.AddChild(motion, 1);
+                return blendTree;
+            };
+
+            // ジェスチャー用ステート
+            var state1 = stateMachine.AddState($"{name} - Gesture", position);
+            state1.writeDefaultValues = false;
+            if (motionTimeParameter != "")
+            {
+                state1.motion = motion != null ? generateBlendTree(motionTimeParameter, defaultFaceEmoteMotion, motion) : blankAnimationClip;
+                state1.timeParameterActive = true;
+                state1.timeParameter = motionTimeParameter;
+            }
+            else
+            {
+                state1.motion = motion != null ? motion : blankAnimationClip;
+            }
+
+            var entryToState1Transition1 = stateMachine.AddEntryTransition(state1);
+            entryToState1Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            entryToState1Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+            entryToState1Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            entryToState1Transition1.AddCondition(AnimatorConditionMode.Equals, 0, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            var state1ToExitTransition1 = state1.AddExitTransition();
+            state1ToExitTransition1.hasExitTime = false;
+            state1ToExitTransition1.exitTime = 0;
+            state1ToExitTransition1.hasFixedDuration = true;
+            state1ToExitTransition1.duration = 0.1f;
+            state1ToExitTransition1.offset = 0;
+            state1ToExitTransition1.interruptionSource = TransitionInterruptionSource.None;
+            state1ToExitTransition1.orderedInterruption = true;
+            state1ToExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+
+            var state1ToExitTransition2 = state1.AddExitTransition();
+            SetImmediateTransitionSetting(state1ToExitTransition2);
+            state1ToExitTransition2.AddCondition(AnimatorConditionMode.If, 0, Parameters.AFK);
+
+            // 表情ロック用ステート
+            var state2 = stateMachine.AddState($"{name} - Gesture Locked", new Vector3(position.x, position.y + 60, position.z));
+            state2.writeDefaultValues = false;
+            if (gestureLockedMotionTimeParameter != "")
+            {
+                state2.motion = motion != null ? generateBlendTree(gestureLockedMotionTimeParameter, defaultFaceEmoteMotion, motion) : blankAnimationClip;
+                state2.timeParameterActive = true;
+                state2.timeParameter = gestureLockedMotionTimeParameter;
+            }
+            else
+            {
+                state2.motion = motion != null ? motion : blankAnimationClip;
+            }
+
+            var entryToState2Transition1 = stateMachine.AddEntryTransition(state2);
+            entryToState2Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            entryToState2Transition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+            entryToState2Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            entryToState2Transition1.AddCondition(AnimatorConditionMode.Equals, 0, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            var state2ToExitTransition1 = state2.AddExitTransition();
+            state2ToExitTransition1.hasExitTime = false;
+            state2ToExitTransition1.exitTime = 0;
+            state2ToExitTransition1.hasFixedDuration = true;
+            state2ToExitTransition1.duration = 0.1f;
+            state2ToExitTransition1.offset = 0;
+            state2ToExitTransition1.interruptionSource = TransitionInterruptionSource.None;
+            state2ToExitTransition1.orderedInterruption = true;
+            state2ToExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+
+            var state2ToExitTransition2 = state2.AddExitTransition();
+            SetImmediateTransitionSetting(state2ToExitTransition2);
+            state2ToExitTransition2.AddCondition(AnimatorConditionMode.If, 0, Parameters.AFK);
+
+            var state1ToState2Transition1 = state1.AddTransition(state2);
+            SetImmediateTransitionSetting(state1ToState2Transition1);
+            state1ToState2Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            state1ToState2Transition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+            state1ToState2Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            state1ToState2Transition1.AddCondition(AnimatorConditionMode.Equals, 0, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            var state2ToState1Transition1 = state2.AddTransition(state1);
+            SetImmediateTransitionSetting(state2ToState1Transition1);
+            state2ToState1Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            state2ToState1Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+            state2ToState1Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            state2ToState1Transition1.AddCondition(AnimatorConditionMode.Equals, 0, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            // 表情指定時のステート
+            var state3 = stateMachine.AddState($"{name} - Selected By Menu", new Vector3(position.x, position.y + 120, position.z));
+            state3.writeDefaultValues = false;
+            state3.motion = motion != null ? motion : blankAnimationClip;
+
+            var entryToState3Transition1 = stateMachine.AddEntryTransition(state3);
+            entryToState3Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            entryToState3Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            entryToState3Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            var state3ToExitTransition1 = state3.AddExitTransition();
+            state3ToExitTransition1.hasExitTime = false;
+            state3ToExitTransition1.exitTime = 0;
+            state3ToExitTransition1.hasFixedDuration = true;
+            state3ToExitTransition1.duration = 0.1f;
+            state3ToExitTransition1.offset = 0;
+            state3ToExitTransition1.interruptionSource = TransitionInterruptionSource.None;
+            state3ToExitTransition1.orderedInterruption = true;
+            state3ToExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+
+            var state3ToExitTransition2 = state3.AddExitTransition();
+            SetImmediateTransitionSetting(state3ToExitTransition2);
+            state3ToExitTransition2.AddCondition(AnimatorConditionMode.If, 0, Parameters.AFK);
+
+            var state1ToState3Transition1 = state1.AddTransition(state3);
+            SetImmediateTransitionSetting(state1ToState3Transition1);
+            state1ToState3Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            state1ToState3Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            state1ToState3Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            var state3ToState1Transition1 = state3.AddTransition(state1);
+            SetImmediateTransitionSetting(state3ToState1Transition1);
+            state3ToState1Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            state3ToState1Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+            state3ToState1Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            state3ToState1Transition1.AddCondition(AnimatorConditionMode.Equals, 0, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            var state2ToState3Transition1 = state2.AddTransition(state3);
+            SetImmediateTransitionSetting(state2ToState3Transition1);
+            state2ToState3Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            state2ToState3Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            state2ToState3Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+
+            var state3ToState2Transition1 = state3.AddTransition(state2);
+            SetImmediateTransitionSetting(state3ToState2Transition1);
+            state3ToState2Transition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
+            state3ToState2Transition1.AddCondition(AnimatorConditionMode.If, 0, Parameters.FEC_FACE_EMOTE_LOCKED);
+            state3ToState2Transition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, Parameters.FEC_SELECTED_FACE_EMOTE);
+            state3ToState2Transition1.AddCondition(AnimatorConditionMode.Equals, 0, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
         }
 
         private VRCAvatarParameterDriver GenerateVRCAvatarParameterLocalSetDriver(string parameterName, float value)

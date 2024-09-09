@@ -52,7 +52,7 @@ namespace MitarashiDango.AvatarUtils
                     defaultValue = 0,
                     syncType = ParameterSyncType.Bool,
                     saved = true,
-                    localOnly = true,
+                    localOnly = false,
                 },
                 new ParameterConfig
                 {
@@ -76,7 +76,7 @@ namespace MitarashiDango.AvatarUtils
                     defaultValue = 0,
                     syncType = ParameterSyncType.Int,
                     saved = true,
-                    localOnly = true,
+                    localOnly = false,
                 },
                 new ParameterConfig
                 {
@@ -93,29 +93,24 @@ namespace MitarashiDango.AvatarUtils
                     syncType = ParameterSyncType.Int,
                     saved = true,
                     localOnly = false,
-                }
-            };
-
-            if (faceEmoteControl.isGenerateGestureWeightLockLogic)
-            {
-                parameterConfigs.Add(new ParameterConfig
+                },
+                new ParameterConfig
                 {
                     nameOrPrefix = FEC_GESTURE_LEFT_WEIGHT,
                     defaultValue = 0,
                     syncType = ParameterSyncType.Float,
                     saved = true,
                     localOnly = false,
-                });
-
-                parameterConfigs.Add(new ParameterConfig
+                },
+                new ParameterConfig
                 {
                     nameOrPrefix = FEC_GESTURE_RIGHT_WEIGHT,
                     defaultValue = 0,
                     syncType = ParameterSyncType.Float,
                     saved = true,
                     localOnly = false,
-                });
-            }
+                }
+            };
 
             return parameterConfigs;
         }

@@ -56,9 +56,6 @@ namespace MitarashiDango.AvatarUtils
         [HideInInspector]
         public List<FaceEmote> additionalFaceEmotes;
 
-        [HideInInspector]
-        public bool isGenerateGestureWeightLockLogic;
-
         public bool IsLeftGestureAvailable
         {
             get
