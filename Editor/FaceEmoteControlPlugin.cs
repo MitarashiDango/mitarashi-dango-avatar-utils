@@ -85,8 +85,8 @@ namespace MitarashiDango.AvatarUtils
             var vrcContactReceiver = go.AddComponent<VRCContactReceiver>();
             vrcContactReceiver.rootTransform = rootGameObject.transform;
             vrcContactReceiver.shapeType = VRC.Dynamics.ContactBase.ShapeType.Sphere;
-            vrcContactReceiver.radius = 0.13f;
-            vrcContactReceiver.position = new Vector3(0, 0.08f, 0);
+            vrcContactReceiver.radius = 0.14f;
+            vrcContactReceiver.position = new Vector3(0, 0.09f, 0);
             vrcContactReceiver.allowSelf = true;
             vrcContactReceiver.localOnly = true;
             vrcContactReceiver.collisionTags = new List<string>
