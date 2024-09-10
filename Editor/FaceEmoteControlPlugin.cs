@@ -115,24 +115,35 @@ namespace MitarashiDango.AvatarUtils
                 weight = 1
             });
 
-            var iconGameObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            iconGameObject.name = "FaceEmoteLockingIcon";
+            var iconGameObject = new GameObject("FaceEmoteLockingIcon");
             iconGameObject.transform.SetParent(go.transform);
-
-            var colider = iconGameObject.GetComponent<MeshCollider>();
-            GameObject.Destroy(colider);
 
             iconGameObject.transform.position = new Vector3(0.06f, -0.05f, 0.3f);
             iconGameObject.transform.rotation = Quaternion.Euler(90, 180, 0);
             iconGameObject.transform.localScale = new Vector3(0.0015f, 0.0015f, 0.0015f);
 
+            var meshFilter = iconGameObject.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = CreatePrimitiveMesh(PrimitiveType.Plane);
+
             var materialFilePath = AssetDatabase.GUIDToAssetPath("c0b839fd3b1aa3044bb8095cbeddbae0");
             var iconMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialFilePath);
 
-            var renderer = iconGameObject.GetComponent<MeshRenderer>();
+            var renderer = iconGameObject.AddComponent<MeshRenderer>();
             renderer.material = iconMaterial;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+            renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
 
             return go;
+        }
+
+        private Mesh CreatePrimitiveMesh(PrimitiveType type)
+        {
+            var go = GameObject.CreatePrimitive(type);
+            var mesh = go.GetComponent<MeshFilter>().sharedMesh;
+            GameObject.DestroyImmediate(go);
+            return mesh;
         }
     }
 #endif
