@@ -1,9 +1,12 @@
 
+using System.Collections.Generic;
 using MitarashiDango.AvatarUtils;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
+using VRC.SDK3.Dynamics.Contact.Components;
 
 [assembly: ExportsPlugin(typeof(FaceEmoteControlPlugin))]
 
@@ -24,7 +27,16 @@ namespace MitarashiDango.AvatarUtils
             var faceEmoteControl = ctx.AvatarRootObject.GetComponentInChildren<FaceEmoteControl>();
             if (faceEmoteControl != null)
             {
-                SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
+                var fecRootGameObject = GenerateHeadBoneChildObject();
+                fecRootGameObject.transform.SetParent(faceEmoteControl.gameObject.transform);
+
+                var faceEmoteLocker = GenerateFaceEmoteLocker(fecRootGameObject);
+                faceEmoteLocker.transform.SetParent(faceEmoteControl.gameObject.transform);
+
+                var faceEmoteLockIndicator = GenerateFaceEmoteLockIndicator(fecRootGameObject);
+                faceEmoteLockIndicator.transform.SetParent(faceEmoteControl.gameObject.transform);
+
+                // SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
                 AddParameters(faceEmoteControl.gameObject);
                 AddRadialMenus(faceEmoteControl.gameObject, faceEmoteControl);
                 AddAnimatorController(faceEmoteControl.gameObject, faceEmoteControl);
@@ -55,17 +67,72 @@ namespace MitarashiDango.AvatarUtils
             mergeAnimator.matchAvatarWriteDefaults = true;
         }
 
-        private void SetupFaceEmoteLockIndicator(FaceEmoteControl faceEmoteControl, GameObject avatarRootObject)
+        private GameObject GenerateHeadBoneChildObject()
         {
-            var faceEmoteLockIndicator = faceEmoteControl.transform.Find("FaceEmoteLockIndicator");
-            var faceEmoteLockIndicatorParentConstraint = faceEmoteLockIndicator.GetComponent<ParentConstraint>();
-            var headGameObject = avatarRootObject.transform.Find("Armature/Hips/Spine/Chest/Neck/Head");
-            var constraintSource = new ConstraintSource
+            var go = new GameObject("FaceEmoteControl_Root");
+
+            var modularAvatarBoneProxy = go.AddComponent<ModularAvatarBoneProxy>();
+            modularAvatarBoneProxy.attachmentMode = BoneProxyAttachmentMode.AsChildAtRoot;
+            modularAvatarBoneProxy.boneReference = HumanBodyBones.Head;
+
+            return go;
+        }
+
+        private GameObject GenerateFaceEmoteLocker(GameObject rootGameObject)
+        {
+            var go = new GameObject("FaceEmoteLocker");
+
+            var vrcContactReceiver = go.AddComponent<VRCContactReceiver>();
+            vrcContactReceiver.rootTransform = rootGameObject.transform;
+            vrcContactReceiver.shapeType = VRC.Dynamics.ContactBase.ShapeType.Sphere;
+            vrcContactReceiver.radius = 0.13f;
+            vrcContactReceiver.position = new Vector3(0, 0.08f, 0);
+            vrcContactReceiver.allowSelf = true;
+            vrcContactReceiver.localOnly = true;
+            vrcContactReceiver.collisionTags = new List<string>
             {
-                sourceTransform = headGameObject,
-                weight = 1
+                "Hand",
+                "Finger"
             };
-            faceEmoteLockIndicatorParentConstraint.AddSource(constraintSource);
+            vrcContactReceiver.receiverType = VRC.Dynamics.ContactReceiver.ReceiverType.Constant;
+            vrcContactReceiver.parameter = Parameters.FEC_FACE_EMOTE_LOCKER_CONTACT;
+
+            return go;
+        }
+
+        private GameObject GenerateFaceEmoteLockIndicator(GameObject sourceGameObject)
+        {
+            var go = new GameObject("FaceEmoteLockIndicator");
+            go.SetActive(false);
+
+            var parentConstraint = go.AddComponent<ParentConstraint>();
+            parentConstraint.constraintActive = true;
+            parentConstraint.weight = 1;
+            parentConstraint.locked = true;
+            parentConstraint.AddSource(new ConstraintSource()
+            {
+                sourceTransform = sourceGameObject.transform,
+                weight = 1
+            });
+
+            var iconGameObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            iconGameObject.name = "FaceEmoteLockingIcon";
+            iconGameObject.transform.SetParent(go.transform);
+
+            var colider = iconGameObject.GetComponent<MeshCollider>();
+            GameObject.Destroy(colider);
+
+            iconGameObject.transform.position = new Vector3(0.06f, -0.05f, 0.3f);
+            iconGameObject.transform.rotation = Quaternion.Euler(90, 180, 0);
+            iconGameObject.transform.localScale = new Vector3(0.0015f, 0.0015f, 0.0015f);
+
+            var materialFilePath = AssetDatabase.GUIDToAssetPath("c0b839fd3b1aa3044bb8095cbeddbae0");
+            var iconMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialFilePath);
+
+            var renderer = iconGameObject.GetComponent<MeshRenderer>();
+            renderer.material = iconMaterial;
+
+            return go;
         }
     }
 #endif
