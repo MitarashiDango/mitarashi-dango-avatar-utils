@@ -88,6 +88,7 @@ namespace MitarashiDango.AvatarUtils
             vrcContactReceiver.radius = 0.14f;
             vrcContactReceiver.position = new Vector3(0, 0.09f, 0);
             vrcContactReceiver.allowSelf = true;
+            vrcContactReceiver.allowOthers = false;
             vrcContactReceiver.localOnly = true;
             vrcContactReceiver.collisionTags = new List<string>
             {
