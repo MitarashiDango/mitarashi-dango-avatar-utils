@@ -15,6 +15,8 @@ namespace MitarashiDango.AvatarUtils
                 var nameProperty = property.FindPropertyRelative("name");
                 var motionProperty = property.FindPropertyRelative("motion");
                 var iconProperty = property.FindPropertyRelative("icon");
+                var eyeControlTypeProperty = property.FindPropertyRelative("eyeControlType");
+                var mouthControlTypeProperty = property.FindPropertyRelative("mouthControlType");
 
                 var nameRect = new Rect(position)
                 {
@@ -37,6 +39,20 @@ namespace MitarashiDango.AvatarUtils
                 };
                 EditorGUI.PropertyField(iconRect, iconProperty, new GUIContent("アイコン"));
 
+                var eyeControlTypeRect = new Rect(iconRect)
+                {
+                    y = iconRect.y + iconRect.height + EditorGUIUtility.standardVerticalSpacing,
+                    height = EditorGUIUtility.singleLineHeight
+                };
+                EditorGUI.PropertyField(eyeControlTypeRect, eyeControlTypeProperty, new GUIContent("目の動き"));
+
+                var mouthControlTypeRect = new Rect(eyeControlTypeRect)
+                {
+                    y = eyeControlTypeRect.y + eyeControlTypeRect.height + EditorGUIUtility.standardVerticalSpacing,
+                    height = EditorGUIUtility.singleLineHeight
+                };
+                EditorGUI.PropertyField(mouthControlTypeRect, mouthControlTypeProperty, new GUIContent("口の動き"));
+
                 if (iconProperty.objectReferenceValue != null)
                 {
                     var iconViewRect = new Rect(position)
@@ -58,10 +74,10 @@ namespace MitarashiDango.AvatarUtils
             var iconProperty = property.FindPropertyRelative("icon");
             if (iconProperty != null && iconProperty.objectReferenceValue != null)
             {
-                return Mathf.Max(EditorGUIUtility.singleLineHeight * 3 + EditorGUIUtility.standardVerticalSpacing * 2, 64f);
+                return Mathf.Max(EditorGUIUtility.singleLineHeight * 5 + EditorGUIUtility.standardVerticalSpacing * 4, 64f);
             }
 
-            return EditorGUIUtility.singleLineHeight * 3 + EditorGUIUtility.standardVerticalSpacing * 2;
+            return EditorGUIUtility.singleLineHeight * 5 + EditorGUIUtility.standardVerticalSpacing * 4;
         }
     }
 #endif

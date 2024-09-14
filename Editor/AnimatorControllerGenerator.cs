@@ -675,6 +675,20 @@ namespace MitarashiDango.AvatarUtils
             var state = stateMachine.AddState("Face Emote (Neutral)", position);
             state.writeDefaultValues = false;
             state.motion = blankAnimationClip;
+            state.behaviours = new StateMachineBehaviour[]{
+                new VRCAnimatorTrackingControl(){
+                    trackingHead = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingHip = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingEyes = VRC_AnimatorTrackingControl.TrackingType.Tracking,
+                    trackingMouth = VRC_AnimatorTrackingControl.TrackingType.Tracking,
+                }
+            };
 
             var fromEntryTransition1 = stateMachine.AddEntryTransition(state);
             fromEntryTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
@@ -770,8 +784,9 @@ namespace MitarashiDango.AvatarUtils
                     statePosition = new Vector3(500, 0, 0);
                 }
 
+                var faceEmote = faceEmoteControl.additionalFaceEmotes[i];
                 var faceEmoteNumber = i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER;
-                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].motion, statePosition);
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }
@@ -783,7 +798,7 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, "", position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, "", faceEmote.eyeControlType, faceEmote.mouthControlType, position);
         }
 
         private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, FaceEmote faceEmote, string motionTimeParameter, Vector3 position)
@@ -793,15 +808,15 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, motionTimeParameter, position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, motionTimeParameter, faceEmote.eyeControlType, faceEmote.mouthControlType, position);
         }
 
-        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, Vector3 position)
+        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, TrackingControlType eyeTrackingType, TrackingControlType mouthTrackingType, Vector3 position)
         {
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, motion, "", position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, motion, "", eyeTrackingType, mouthTrackingType, position);
         }
 
-        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, string motionTimeParameter, Vector3 position)
+        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, string motionTimeParameter, TrackingControlType eyeTrackingType, TrackingControlType mouthTrackingType, Vector3 position)
         {
             var state = stateMachine.AddState(name, position);
             state.writeDefaultValues = false;
@@ -811,6 +826,21 @@ namespace MitarashiDango.AvatarUtils
                 state.timeParameterActive = true;
                 state.timeParameter = motionTimeParameter;
             }
+
+            state.behaviours = new StateMachineBehaviour[]{
+                new VRCAnimatorTrackingControl(){
+                    trackingHead = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingHip = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingEyes = getTrackingType(eyeTrackingType),
+                    trackingMouth = getTrackingType(mouthTrackingType),
+                }
+            };
 
             var fromEntryTransition1 = stateMachine.AddEntryTransition(state);
             fromEntryTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, Parameters.AFK);
@@ -829,6 +859,19 @@ namespace MitarashiDango.AvatarUtils
             var toExitTransition2 = state.AddExitTransition();
             SetImmediateTransitionSetting(toExitTransition2);
             toExitTransition2.AddCondition(AnimatorConditionMode.If, 0, Parameters.AFK);
+        }
+
+        private VRC_AnimatorTrackingControl.TrackingType getTrackingType(TrackingControlType trackingControlType)
+        {
+            switch (trackingControlType)
+            {
+                case TrackingControlType.Animation:
+                    return VRC_AnimatorTrackingControl.TrackingType.Animation;
+                case TrackingControlType.Tracking:
+                    return VRC_AnimatorTrackingControl.TrackingType.Tracking;
+                default:
+                    return VRC_AnimatorTrackingControl.TrackingType.NoChange;
+            }
         }
 
         private VRCAvatarParameterDriver GenerateVRCAvatarParameterLocalSetDriver(string parameterName, float value)
