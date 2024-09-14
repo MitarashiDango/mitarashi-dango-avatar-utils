@@ -14,5 +14,11 @@ namespace MitarashiDango.AvatarUtils
 
         [HideInInspector]
         public Texture2D icon;
+
+        [HideInInspector]
+        public TrackingControlType eyeControlType;
+
+        [HideInInspector]
+        public TrackingControlType mouthControlType;
     }
 }
