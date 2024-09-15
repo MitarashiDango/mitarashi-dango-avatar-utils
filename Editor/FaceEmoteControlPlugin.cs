@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using MitarashiDango.AvatarUtils;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
 using VRC.SDK3.Dynamics.Contact.Components;
@@ -38,7 +37,7 @@ namespace MitarashiDango.AvatarUtils
 
                 // SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
                 AddParameters(faceEmoteControl.gameObject);
-                AddRadialMenus(faceEmoteControl.gameObject, faceEmoteControl);
+                AddMenuItems(faceEmoteControl.gameObject, faceEmoteControl);
                 AddAnimatorController(faceEmoteControl.gameObject, faceEmoteControl);
                 Object.DestroyImmediate(faceEmoteControl);
             }
@@ -51,10 +50,10 @@ namespace MitarashiDango.AvatarUtils
             modularAvatarParameters.parameters = parameters.GetParameterConfigs();
         }
 
-        private void AddRadialMenus(GameObject obj, FaceEmoteControl faceEmoteControl)
+        private void AddMenuItems(GameObject obj, FaceEmoteControl faceEmoteControl)
         {
-            var radialMenuBuilder = new RadialMenuGenerator();
-            radialMenuBuilder.GenerateRadialMenu(faceEmoteControl).transform.parent = obj.transform;
+            var menuBuilder = new MenuGenerator();
+            menuBuilder.GenerateMenus(faceEmoteControl).transform.parent = obj.transform;
         }
 
         private void AddAnimatorController(GameObject obj, FaceEmoteControl faceEmoteControl)
@@ -126,9 +125,7 @@ namespace MitarashiDango.AvatarUtils
             var meshFilter = iconGameObject.AddComponent<MeshFilter>();
             meshFilter.sharedMesh = CreatePrimitiveMesh(PrimitiveType.Plane);
 
-            var materialFilePath = AssetDatabase.GUIDToAssetPath("c0b839fd3b1aa3044bb8095cbeddbae0");
-            var iconMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialFilePath);
-
+            var iconMaterial = AssetUtil.LoadAssetAtGUID<Material>(Constants.ASSET_GUID_FACE_EMOTE_LOCKING_ICON);
             var renderer = iconGameObject.AddComponent<MeshRenderer>();
             renderer.material = iconMaterial;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;

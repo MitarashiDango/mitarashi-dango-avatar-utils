@@ -7,9 +7,9 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
-    public class RadialMenuGenerator
+    public class MenuGenerator
     {
-        public GameObject GenerateRadialMenu(FaceEmoteControl faceEmoteControl)
+        public GameObject GenerateMenus(FaceEmoteControl faceEmoteControl)
         {
             var menuTree = GenerateFaceEmoteControlMenu(faceEmoteControl);
             menuTree.AddComponent<ModularAvatarMenuInstaller>();
