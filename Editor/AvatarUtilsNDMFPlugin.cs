@@ -50,20 +50,20 @@ namespace MitarashiDango.AvatarUtils
 
         private void AddParameters(GameObject obj)
         {
-            var parameters = new Parameters();
+            var parameters = new FaceEmoteControlParameters();
             var modularAvatarParameters = obj.AddComponent<ModularAvatarParameters>();
             modularAvatarParameters.parameters = parameters.GetParameterConfigs();
         }
 
         private void AddMenuItems(GameObject obj, FaceEmoteControl faceEmoteControl)
         {
-            var menuBuilder = new MenuGenerator();
+            var menuBuilder = new FaceEmoteControlMenuGenerator();
             menuBuilder.GenerateMenus(faceEmoteControl).transform.parent = obj.transform;
         }
 
         private void AddAnimatorController(GameObject obj, FaceEmoteControl faceEmoteControl)
         {
-            var faceEmoteSettingsAnimatorControllerBuilder = new AnimatorControllerGenerator();
+            var faceEmoteSettingsAnimatorControllerBuilder = new FaceEmoteControlAnimatorControllerGenerator();
             var mergeAnimator = obj.AddComponent<ModularAvatarMergeAnimator>();
             mergeAnimator.animator = faceEmoteSettingsAnimatorControllerBuilder.GenerateAnimatorController(faceEmoteControl);
             mergeAnimator.layerType = VRC.SDK3.Avatars.Components.VRCAvatarDescriptor.AnimLayerType.FX;
@@ -100,7 +100,7 @@ namespace MitarashiDango.AvatarUtils
                 "Finger"
             };
             vrcContactReceiver.receiverType = VRC.Dynamics.ContactReceiver.ReceiverType.Constant;
-            vrcContactReceiver.parameter = Parameters.FEC_FACE_EMOTE_LOCKER_CONTACT;
+            vrcContactReceiver.parameter = FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_CONTACT;
 
             return go;
         }

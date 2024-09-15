@@ -6,7 +6,7 @@ using nadena.dev.modular_avatar.core;
 namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
-    public class Parameters
+    public class FaceEmoteControlParameters
     {
         public static readonly string FEC_FACE_EMOTE_LOCKER_ENABLED = "FEC_FaceEmoteLockerEnabled";
         public static readonly string FEC_FACE_EMOTE_LOCKER_CONTACT = "FEC_FaceEmoteLockerContact";

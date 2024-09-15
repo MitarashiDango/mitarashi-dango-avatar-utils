@@ -7,7 +7,7 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
-    public class MenuGenerator
+    public class FaceEmoteControlMenuGenerator
     {
         public GameObject GenerateMenus(FaceEmoteControl faceEmoteControl)
         {
@@ -41,9 +41,9 @@ namespace MitarashiDango.AvatarUtils
 
             var subMenuItems = new List<GameObject>
             {
-                GenerateToggleMenuItem("表情ロックON", null, Parameters.FEC_FACE_EMOTE_LOCKED, 1),
-                GenerateToggleMenuItem("表情ロック用Contact Receiver ON", null, Parameters.FEC_FACE_EMOTE_LOCKER_ENABLED, 1),
-                GenerateToggleMenuItem("Sit判定時にContact Receiverを自動OFF", null, Parameters.FEC_FACE_EMOTE_LOCKER_AUTO_DISABLE_ON_SIT, 1),
+                GenerateToggleMenuItem("表情ロックON", null, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED, 1),
+                GenerateToggleMenuItem("表情ロック用Contact Receiver ON", null, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_ENABLED, 1),
+                GenerateToggleMenuItem("Sit判定時にContact Receiverを自動OFF", null, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_AUTO_DISABLE_ON_SIT, 1),
             };
 
             foreach (var subMenuItem in subMenuItems)
@@ -60,7 +60,7 @@ namespace MitarashiDango.AvatarUtils
 
             var subMenuItems = new List<GameObject>
             {
-                GenerateToggleMenuItem("未選択（ジェスチャー優先）", null, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU, 0)
+                GenerateToggleMenuItem("未選択（ジェスチャー優先）", null, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU, 0)
             };
 
             var leftGestureFaceEmoteMenu = GenerateLeftGestureFaceEmoteMenu(faceEmoteControl);
@@ -221,7 +221,7 @@ namespace MitarashiDango.AvatarUtils
         private GameObject GenerateFaceSelectMenuItem(FaceEmote faceEmote, string defaultName, float parameterValue)
         {
             var name = faceEmote.name != "" ? faceEmote.name : defaultName;
-            return GenerateToggleMenuItem(name, faceEmote.icon, Parameters.FEC_SELECTED_FACE_EMOTE_BY_MENU, parameterValue);
+            return GenerateToggleMenuItem(name, faceEmote.icon, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU, parameterValue);
         }
 
         private GameObject GenerateSubMenu(string name, Texture2D icon)
