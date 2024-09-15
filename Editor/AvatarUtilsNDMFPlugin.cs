@@ -7,12 +7,12 @@ using UnityEngine;
 using UnityEngine.Animations;
 using VRC.SDK3.Dynamics.Contact.Components;
 
-[assembly: ExportsPlugin(typeof(FaceEmoteControlPlugin))]
+[assembly: ExportsPlugin(typeof(AvatarUtilsNDMFPlugin))]
 
 namespace MitarashiDango.AvatarUtils
 {
 #if UNITY_EDITOR
-    public class FaceEmoteControlPlugin : Plugin<FaceEmoteControlPlugin>
+    public class AvatarUtilsNDMFPlugin : Plugin<AvatarUtilsNDMFPlugin>
     {
         protected override void Configure()
         {
@@ -22,6 +22,11 @@ namespace MitarashiDango.AvatarUtils
         }
 
         private void Processing(BuildContext ctx)
+        {
+            FaceEmoteControlProcess(ctx);
+        }
+
+        private void FaceEmoteControlProcess(BuildContext ctx)
         {
             var faceEmoteControl = ctx.AvatarRootObject.GetComponentInChildren<FaceEmoteControl>();
             if (faceEmoteControl != null)
