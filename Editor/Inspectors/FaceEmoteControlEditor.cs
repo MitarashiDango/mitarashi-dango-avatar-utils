@@ -1,5 +1,8 @@
 
+using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
+using UnityEditor.SearchService;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -10,6 +13,7 @@ namespace MitarashiDango.AvatarUtils
     public class FaceEmoteControlEditor : Editor
     {
         private SerializedProperty defaultFaceMotion;
+        private SerializedProperty leftFaceEmoteGroup;
         private SerializedProperty leftFist;
         private SerializedProperty leftHandOpen;
         private SerializedProperty leftFingerPoint;
@@ -17,6 +21,7 @@ namespace MitarashiDango.AvatarUtils
         private SerializedProperty leftRockNRoll;
         private SerializedProperty leftHandGun;
         private SerializedProperty leftThumbsUp;
+        private SerializedProperty rightFaceEmoteGroup;
         private SerializedProperty rightFist;
         private SerializedProperty rightHandOpen;
         private SerializedProperty rightFingerPoint;
@@ -32,6 +37,8 @@ namespace MitarashiDango.AvatarUtils
         {
             defaultFaceMotion = serializedObject.FindProperty("defaultFaceMotion");
 
+            leftFaceEmoteGroup = serializedObject.FindProperty("leftFaceEmoteGroup");
+
             leftFist = serializedObject.FindProperty("leftFist");
             leftHandOpen = serializedObject.FindProperty("leftHandOpen");
             leftFingerPoint = serializedObject.FindProperty("leftFingerPoint");
@@ -39,6 +46,8 @@ namespace MitarashiDango.AvatarUtils
             leftRockNRoll = serializedObject.FindProperty("leftRockNRoll");
             leftHandGun = serializedObject.FindProperty("leftHandGun");
             leftThumbsUp = serializedObject.FindProperty("leftThumbsUp");
+
+            rightFaceEmoteGroup = serializedObject.FindProperty("rightFaceEmoteGroup");
 
             rightFist = serializedObject.FindProperty("rightFist");
             rightHandOpen = serializedObject.FindProperty("rightHandOpen");
@@ -77,24 +86,56 @@ namespace MitarashiDango.AvatarUtils
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField("Left hand", EditorStyles.boldLabel);
-            RenderGestureFaceEmoteItem("Left Fist", leftFist);
-            RenderGestureFaceEmoteItem("Left Hand Open", leftHandOpen);
-            RenderGestureFaceEmoteItem("Left Finger Point", leftFingerPoint);
-            RenderGestureFaceEmoteItem("Left Victory", leftVictory);
-            RenderGestureFaceEmoteItem("Left Rock N Roll", leftRockNRoll);
-            RenderGestureFaceEmoteItem("Left Hand Gun", leftHandGun);
-            RenderGestureFaceEmoteItem("Left Thumbs Up", leftThumbsUp);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.PropertyField(leftFaceEmoteGroup, new GUIContent("表情グループ"), false);
+
+                if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
+                {
+                    leftFaceEmoteGroup.objectReferenceValue = CreateNewFaceEmoteGroup();
+                }
+            }
+
+            if (leftFaceEmoteGroup.objectReferenceValue == null)
+            {
+                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情グループ設定を使用してください。", MessageType.Info);
+
+                RenderGestureFaceEmoteItem("Left Fist", leftFist);
+                RenderGestureFaceEmoteItem("Left Hand Open", leftHandOpen);
+                RenderGestureFaceEmoteItem("Left Finger Point", leftFingerPoint);
+                RenderGestureFaceEmoteItem("Left Victory", leftVictory);
+                RenderGestureFaceEmoteItem("Left Rock N Roll", leftRockNRoll);
+                RenderGestureFaceEmoteItem("Left Hand Gun", leftHandGun);
+                RenderGestureFaceEmoteItem("Left Thumbs Up", leftThumbsUp);
+            }
 
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField("Right hand", EditorStyles.boldLabel);
-            RenderGestureFaceEmoteItem("Right Fist", rightFist);
-            RenderGestureFaceEmoteItem("Right Hand Open", rightHandOpen);
-            RenderGestureFaceEmoteItem("Right Finger Point", rightFingerPoint);
-            RenderGestureFaceEmoteItem("Right Victory", rightVictory);
-            RenderGestureFaceEmoteItem("Right Rock N Roll", rightRockNRoll);
-            RenderGestureFaceEmoteItem("Right Hand Gun", rightHandGun);
-            RenderGestureFaceEmoteItem("Right Thumbs Up", rightThumbsUp);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.PropertyField(rightFaceEmoteGroup, new GUIContent("表情グループ"), false);
+
+                if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
+                {
+                    rightFaceEmoteGroup.objectReferenceValue = CreateNewFaceEmoteGroup();
+                }
+            }
+
+            if (rightFaceEmoteGroup.objectReferenceValue == null)
+            {
+                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情グループ設定を使用してください。", MessageType.Info);
+
+                RenderGestureFaceEmoteItem("Right Fist", rightFist);
+                RenderGestureFaceEmoteItem("Right Hand Open", rightHandOpen);
+                RenderGestureFaceEmoteItem("Right Finger Point", rightFingerPoint);
+                RenderGestureFaceEmoteItem("Right Victory", rightVictory);
+                RenderGestureFaceEmoteItem("Right Rock N Roll", rightRockNRoll);
+                RenderGestureFaceEmoteItem("Right Hand Gun", rightHandGun);
+                RenderGestureFaceEmoteItem("Right Thumbs Up", rightThumbsUp);
+            }
 
             EditorGUILayout.Space();
 
@@ -121,6 +162,22 @@ namespace MitarashiDango.AvatarUtils
                     }
                 }
             }
+        }
+
+        private FaceEmoteGroup CreateNewFaceEmoteGroup()
+        {
+            var obj = ScriptableObject.CreateInstance<FaceEmoteGroup>();
+            for (var i = 0; ; i++)
+            {
+                var filename = $"New Face Emote Group{(i > 0 ? $" {i}" : "")}.asset";
+                var filepath = Path.Combine("Assets", filename);
+                if (!File.Exists(filepath))
+                {
+                    AssetDatabase.CreateAsset(obj, filepath);
+                    break;
+                }
+            }
+            return obj;
         }
     }
 #endif
