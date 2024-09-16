@@ -16,7 +16,7 @@ namespace MitarashiDango.AvatarUtils
             name = "blank"
         };
 
-        public AnimatorController GenerateAnimatorController(FaceEmoteControl faceEmoteControl)
+        public AnimatorController GenerateAnimatorController(GameObject avatarRoot, FaceEmoteControl faceEmoteControl, GameObject faceEmoteLockIndicator)
         {
             var animatorController = new AnimatorController
             {
@@ -33,7 +33,7 @@ namespace MitarashiDango.AvatarUtils
             animatorController.AddLayer(GenerateHandGestureLayer("FEC_LEFT_HAND_GESTURE", FaceEmoteControlParameters.FEC_SELECTED_GESTURE_LEFT, VRCParameters.GESTURE_LEFT));
             animatorController.AddLayer(GenerateHandGestureLayer("FEC_RIGHT_HAND_GESTURE", FaceEmoteControlParameters.FEC_SELECTED_GESTURE_RIGHT, VRCParameters.GESTURE_RIGHT));
             animatorController.AddLayer(GenerateSetFaceEmoteTypeLayer(faceEmoteControl));
-            animatorController.AddLayer(GenerateFaceEmoteLockIndicatorControlLayer());
+            animatorController.AddLayer(GenerateFaceEmoteLockIndicatorControlLayer(avatarRoot, faceEmoteLockIndicator));
             animatorController.AddLayer(GenerateDefaultFaceEmoteLayer(faceEmoteControl));
             animatorController.AddLayer(GenerateFaceEmoteSettingsLayer(faceEmoteControl));
 
@@ -255,6 +255,41 @@ namespace MitarashiDango.AvatarUtils
             unlockToLockSleepToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_CONTACT);
 
             return layer;
+        }
+
+        /// <summary>
+        /// オブジェクトのヒエラルキー上でのパスを取得する
+        /// </summary>
+        /// <param name="targetObject">パス取得対象のオブジェクト</param>
+        /// <param name="rootObject">パス取得時の基準とするオブジェクト（絶対パスを取得する場合、nullを指定する)</param>
+        /// <returns></returns>
+        public static string GetPathInHierarchy(GameObject targetObject, GameObject rootObject)
+        {
+            if (targetObject == null)
+            {
+                return null;
+            }
+
+            var objectNames = new List<string>();
+            var currentTransform = targetObject.transform;
+            var rootTransform = rootObject?.transform;
+
+            while (true)
+            {
+                if (rootTransform != null && currentTransform == rootTransform)
+                {
+                    return string.Join("/", objectNames);
+                }
+
+                objectNames.Insert(0, currentTransform.name);
+
+                if (currentTransform.parent == null)
+                {
+                    return string.Join("/", objectNames);
+                }
+
+                currentTransform = currentTransform.parent;
+            }
         }
 
         private AnimatorControllerLayer GenerateHandGestureLayer(string layerName, string selectedGestureParameterName, string gestureParameterName)
@@ -544,11 +579,12 @@ namespace MitarashiDango.AvatarUtils
             return layer;
         }
 
-        private AnimatorControllerLayer GenerateFaceEmoteLockIndicatorControlLayer()
+        private AnimatorControllerLayer GenerateFaceEmoteLockIndicatorControlLayer(GameObject avatarRoot, GameObject faceEmoteLockIndicator)
         {
-            var hideLockIndicatorAnimationClip = GenerateHideLockIndicatorAnimationClip();
-            var showLockIndicatorAnimationClip = GenerateShowLockIndicatorAnimationClip();
-            var flashLockIndicatorAnimationClip = GenerateFlashLockIndicatorAnimationClip();
+            var objectHierarchyPath = GetPathInHierarchy(faceEmoteLockIndicator, avatarRoot);
+            var hideLockIndicatorAnimationClip = GenerateHideLockIndicatorAnimationClip(objectHierarchyPath);
+            var showLockIndicatorAnimationClip = GenerateShowLockIndicatorAnimationClip(objectHierarchyPath);
+            var flashLockIndicatorAnimationClip = GenerateFlashLockIndicatorAnimationClip(objectHierarchyPath);
 
             var layer = new AnimatorControllerLayer
             {
@@ -902,7 +938,7 @@ namespace MitarashiDango.AvatarUtils
             ast.orderedInterruption = true;
         }
 
-        private AnimationClip GenerateHideLockIndicatorAnimationClip()
+        private AnimationClip GenerateHideLockIndicatorAnimationClip(string objectHierarchyPath)
         {
             var animationCurve = new AnimationCurve();
             animationCurve.AddKey(0, 0);
@@ -911,12 +947,12 @@ namespace MitarashiDango.AvatarUtils
                 name = "LockIndicator_OFF",
                 frameRate = 60
             };
-            animationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", animationCurve);
+            animationClip.SetCurve(objectHierarchyPath, typeof(GameObject), "m_IsActive", animationCurve);
 
             return animationClip;
         }
 
-        private AnimationClip GenerateShowLockIndicatorAnimationClip()
+        private AnimationClip GenerateShowLockIndicatorAnimationClip(string objectHierarchyPath)
         {
             var animationCurve = new AnimationCurve();
             animationCurve.AddKey(0, 1);
@@ -925,12 +961,12 @@ namespace MitarashiDango.AvatarUtils
                 name = "LockIndicator_ON",
                 frameRate = 60
             };
-            animationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", animationCurve);
+            animationClip.SetCurve(objectHierarchyPath, typeof(GameObject), "m_IsActive", animationCurve);
 
             return animationClip;
         }
 
-        private AnimationClip GenerateFlashLockIndicatorAnimationClip()
+        private AnimationClip GenerateFlashLockIndicatorAnimationClip(string objectHierarchyPath)
         {
             var animationCurve = new AnimationCurve();
             animationCurve.AddKey(new Keyframe(0, 0, float.PositiveInfinity, float.PositiveInfinity));
@@ -946,7 +982,7 @@ namespace MitarashiDango.AvatarUtils
                 name = "LockIndicator_FLASH",
                 frameRate = 60
             };
-            animationClip.SetCurve("FaceEmoteControl/FaceEmoteLockIndicator", typeof(GameObject), "m_IsActive", animationCurve);
+            animationClip.SetCurve(objectHierarchyPath, typeof(GameObject), "m_IsActive", animationCurve);
 
             return animationClip;
         }
