@@ -43,7 +43,7 @@ namespace MitarashiDango.AvatarUtils
                 // SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
                 AddParameters(faceEmoteControl.gameObject);
                 AddMenuItems(faceEmoteControl.gameObject, faceEmoteControl);
-                AddAnimatorController(faceEmoteControl.gameObject, faceEmoteControl);
+                AddAnimatorController(ctx.AvatarRootObject, faceEmoteControl, faceEmoteLockIndicator);
                 Object.DestroyImmediate(faceEmoteControl);
             }
         }
@@ -61,11 +61,11 @@ namespace MitarashiDango.AvatarUtils
             menuBuilder.GenerateMenus(faceEmoteControl).transform.parent = obj.transform;
         }
 
-        private void AddAnimatorController(GameObject obj, FaceEmoteControl faceEmoteControl)
+        private void AddAnimatorController(GameObject avatarRoot, FaceEmoteControl faceEmoteControl, GameObject faceEmoteLockIndicator)
         {
             var faceEmoteSettingsAnimatorControllerBuilder = new FaceEmoteControlAnimatorControllerGenerator();
-            var mergeAnimator = obj.AddComponent<ModularAvatarMergeAnimator>();
-            mergeAnimator.animator = faceEmoteSettingsAnimatorControllerBuilder.GenerateAnimatorController(faceEmoteControl);
+            var mergeAnimator = faceEmoteControl.gameObject.AddComponent<ModularAvatarMergeAnimator>();
+            mergeAnimator.animator = faceEmoteSettingsAnimatorControllerBuilder.GenerateAnimatorController(avatarRoot, faceEmoteControl, faceEmoteLockIndicator);
             mergeAnimator.layerType = VRC.SDK3.Avatars.Components.VRCAvatarDescriptor.AnimLayerType.FX;
             mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
             mergeAnimator.matchAvatarWriteDefaults = true;
