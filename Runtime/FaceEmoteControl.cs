@@ -12,6 +12,9 @@ namespace MitarashiDango.AvatarUtils
         public Motion defaultFaceMotion;
 
         [HideInInspector]
+        public FaceEmoteGroup leftFaceEmoteGroup;
+
+        [HideInInspector]
         public FaceEmote leftFist;
 
         [HideInInspector]
@@ -31,6 +34,9 @@ namespace MitarashiDango.AvatarUtils
 
         [HideInInspector]
         public FaceEmote leftThumbsUp;
+
+        [HideInInspector]
+        public FaceEmoteGroup rightFaceEmoteGroup;
 
         [HideInInspector]
         public FaceEmote rightFist;
@@ -60,6 +66,17 @@ namespace MitarashiDango.AvatarUtils
         {
             get
             {
+                if (leftFaceEmoteGroup != null)
+                {
+                    return leftFaceEmoteGroup?.fist?.motion != null
+                        || leftFaceEmoteGroup?.handOpen?.motion != null
+                        || leftFaceEmoteGroup?.fingerPoint?.motion != null
+                        || leftFaceEmoteGroup?.victory?.motion != null
+                        || leftFaceEmoteGroup?.rockNRoll?.motion != null
+                        || leftFaceEmoteGroup?.handGun?.motion != null
+                        || leftFaceEmoteGroup?.thumbsUp?.motion != null;
+                }
+
                 return (leftFist != null && leftFist.motion != null)
                   || (leftHandOpen != null && leftHandOpen.motion != null)
                   || (leftFingerPoint != null && leftFingerPoint.motion != null)
@@ -74,6 +91,17 @@ namespace MitarashiDango.AvatarUtils
         {
             get
             {
+                if (rightFaceEmoteGroup != null)
+                {
+                    return rightFaceEmoteGroup?.fist?.motion != null
+                        || rightFaceEmoteGroup?.handOpen?.motion != null
+                        || rightFaceEmoteGroup?.fingerPoint?.motion != null
+                        || rightFaceEmoteGroup?.victory?.motion != null
+                        || rightFaceEmoteGroup?.rockNRoll?.motion != null
+                        || rightFaceEmoteGroup?.handGun?.motion != null
+                        || rightFaceEmoteGroup?.thumbsUp?.motion != null;
+                }
+
                 return (rightFist != null && rightFist.motion != null)
                   || (rightHandOpen != null && rightHandOpen.motion != null)
                   || (rightFingerPoint != null && rightFingerPoint.motion != null)
