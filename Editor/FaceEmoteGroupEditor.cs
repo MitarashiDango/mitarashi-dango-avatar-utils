@@ -6,6 +6,7 @@ namespace MitarashiDango.AvatarUtils
     [DisallowMultipleComponent, CustomEditor(typeof(FaceEmoteGroup))]
     public class FaceEmoteGroupEditor : Editor
     {
+        private SerializedProperty groupName;
         private SerializedProperty fist;
         private SerializedProperty handOpen;
         private SerializedProperty fingerPoint;
@@ -16,6 +17,7 @@ namespace MitarashiDango.AvatarUtils
 
         private void OnEnable()
         {
+            groupName = serializedObject.FindProperty("groupName");
             fist = serializedObject.FindProperty("fist");
             handOpen = serializedObject.FindProperty("handOpen");
             fingerPoint = serializedObject.FindProperty("fingerPoint");
@@ -29,7 +31,10 @@ namespace MitarashiDango.AvatarUtils
         {
             serializedObject.Update();
 
-            EditorGUILayout.LabelField("表情設定", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("表情グループ設定", EditorStyles.boldLabel);
+            EditorGUILayout.Space();
+
+            EditorGUILayout.PropertyField(groupName, new GUIContent("グループ名"), false);
             EditorGUILayout.Space();
 
             RenderGestureFaceEmoteItem("Fist", fist);
