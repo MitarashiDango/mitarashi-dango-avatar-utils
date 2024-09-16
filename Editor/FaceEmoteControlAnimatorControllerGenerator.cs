@@ -799,15 +799,15 @@ namespace MitarashiDango.AvatarUtils
 
             stateMachine.AddStateMachineExitTransition(rightGestureEmoteStateMachine);
 
-            if (faceEmoteControl.leftFaceEmoteGroup != null)
+            if (faceEmoteControl.rightFaceEmoteGroup != null)
             {
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.leftFaceEmoteGroup.fist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.leftFaceEmoteGroup.handOpen, new Vector3(500, 60, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.leftFaceEmoteGroup.fingerPoint, new Vector3(500, 120, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.leftFaceEmoteGroup.victory, new Vector3(500, 180, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.leftFaceEmoteGroup.rockNRoll, new Vector3(500, 240, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.leftFaceEmoteGroup.handGun, new Vector3(500, 300, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.leftFaceEmoteGroup.thumbsUp, new Vector3(500, 360, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.rightFaceEmoteGroup.fist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.rightFaceEmoteGroup.handOpen, new Vector3(500, 60, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.rightFaceEmoteGroup.fingerPoint, new Vector3(500, 120, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.rightFaceEmoteGroup.victory, new Vector3(500, 180, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.rightFaceEmoteGroup.rockNRoll, new Vector3(500, 240, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.rightFaceEmoteGroup.handGun, new Vector3(500, 300, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.rightFaceEmoteGroup.thumbsUp, new Vector3(500, 360, 0));
             }
             else
             {
