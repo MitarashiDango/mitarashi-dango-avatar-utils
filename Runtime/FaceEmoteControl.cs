@@ -5,6 +5,7 @@ using VRC.SDKBase;
 namespace MitarashiDango.AvatarUtils
 {
     [DisallowMultipleComponent]
+    [AddComponentMenu("MitarashiDango AvatarUtils/Face Emote Control")]
     public class FaceEmoteControl : MonoBehaviour, IEditorOnly
     {
         [HideInInspector]
