@@ -38,7 +38,6 @@ namespace MitarashiDango.AvatarUtils
                 var faceEmoteLockIndicator = GenerateFaceEmoteLockIndicator(fecRootGameObject);
                 faceEmoteLockIndicator.transform.SetParent(faceEmoteControl.gameObject.transform);
 
-                // SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
                 AddParameters(faceEmoteControl.gameObject);
                 AddMenuItems(faceEmoteControl.gameObject, faceEmoteControl);
                 AddAnimatorController(ctx.AvatarRootObject, faceEmoteControl, faceEmoteLockIndicator);
