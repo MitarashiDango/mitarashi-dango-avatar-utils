@@ -60,7 +60,7 @@ namespace MitarashiDango.AvatarUtils
 
             var subMenuItems = new List<GameObject>
             {
-                GenerateToggleMenuItem("未選択（ジェスチャー優先）", null, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU, 0)
+                GenerateToggleMenuItem("未選択（ジェスチャー優先）", null, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE, 0)
             };
 
             var leftGestureFaceEmoteMenu = GenerateLeftGestureFaceEmoteMenu(faceEmoteControl);
@@ -304,7 +304,7 @@ namespace MitarashiDango.AvatarUtils
         private GameObject GenerateFaceSelectMenuItem(FaceEmote faceEmote, string defaultName, float parameterValue)
         {
             var name = faceEmote.name != "" ? faceEmote.name : defaultName;
-            return GenerateToggleMenuItem(name, faceEmote.icon, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU, parameterValue);
+            return GenerateToggleMenuItem(name, faceEmote.icon, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE, parameterValue);
         }
 
         private GameObject GenerateSubMenu(string name, Texture2D icon)

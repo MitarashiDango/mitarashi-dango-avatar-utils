@@ -114,7 +114,7 @@ namespace MitarashiDango.AvatarUtils
                     defaultInt = 0,
                 },
                 new AnimatorControllerParameter{
-                    name = FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU,
+                    name = FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE,
                     type = AnimatorControllerParameterType.Int,
                     defaultInt = 0,
                 },
@@ -460,13 +460,13 @@ namespace MitarashiDango.AvatarUtils
             var initialToIdleTransition1 = initialState.AddTransition(idleState);
             SetImmediateTransitionSetting(initialToIdleTransition1);
             initialToIdleTransition1.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.IS_LOCAL);
-            initialToIdleTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+            initialToIdleTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
             initialToIdleTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_SELECTED_GESTURE_LEFT);
             initialToIdleTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_SELECTED_GESTURE_RIGHT);
 
             var idleToExitTransition1 = idleState.AddExitTransition();
             SetImmediateTransitionSetting(idleToExitTransition1);
-            idleToExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+            idleToExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
 
             var idleToExitTransition2 = idleState.AddExitTransition();
             SetImmediateTransitionSetting(idleToExitTransition2);
@@ -490,7 +490,7 @@ namespace MitarashiDango.AvatarUtils
 
                 var toExitTransition1 = state.AddExitTransition();
                 SetImmediateTransitionSetting(toExitTransition1);
-                toExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+                toExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
 
                 var toExitTransition2 = state.AddExitTransition();
                 SetImmediateTransitionSetting(toExitTransition2);
@@ -502,7 +502,7 @@ namespace MitarashiDango.AvatarUtils
             var initialToLeftHandTransition1 = initialState.AddTransition(leftHandStateMachine);
             SetImmediateTransitionSetting(initialToLeftHandTransition1);
             initialToLeftHandTransition1.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.IS_LOCAL);
-            initialToLeftHandTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+            initialToLeftHandTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
             initialToLeftHandTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_SELECTED_GESTURE_LEFT);
 
             layer.stateMachine.AddStateMachineExitTransition(leftHandStateMachine);
@@ -520,7 +520,7 @@ namespace MitarashiDango.AvatarUtils
             var initialToRightHandTransition1 = initialState.AddTransition(rightHandStateMachine);
             SetImmediateTransitionSetting(initialToRightHandTransition1);
             initialToRightHandTransition1.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.IS_LOCAL);
-            initialToRightHandTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+            initialToRightHandTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
             initialToRightHandTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_SELECTED_GESTURE_RIGHT);
 
             layer.stateMachine.AddStateMachineExitTransition(rightHandStateMachine);
@@ -542,7 +542,7 @@ namespace MitarashiDango.AvatarUtils
             var initialStateToFixedFaceEmotesStateTransition1 = initialState.AddTransition(fixedFaceEmotesStateMachine);
             SetImmediateTransitionSetting(initialStateToFixedFaceEmotesStateTransition1);
             initialStateToFixedFaceEmotesStateTransition1.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.IS_LOCAL);
-            initialStateToFixedFaceEmotesStateTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+            initialStateToFixedFaceEmotesStateTransition1.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
 
             layer.stateMachine.AddStateMachineExitTransition(fixedFaceEmotesStateMachine);
 
@@ -557,11 +557,11 @@ namespace MitarashiDango.AvatarUtils
                 };
 
                 var entryTransition1 = stateMachine.AddEntryTransition(state);
-                entryTransition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+                entryTransition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
 
                 var exitTransition1 = state.AddExitTransition();
                 SetImmediateTransitionSetting(exitTransition1);
-                exitTransition1.AddCondition(AnimatorConditionMode.NotEqual, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE_BY_MENU);
+                exitTransition1.AddCondition(AnimatorConditionMode.NotEqual, faceEmoteNumber, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
             };
 
             // ハンドジェスチャー割当済みの表情用ステートを追加する
