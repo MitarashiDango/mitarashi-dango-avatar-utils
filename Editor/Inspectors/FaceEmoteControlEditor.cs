@@ -1,8 +1,5 @@
-
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using UnityEditor.SearchService;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -13,7 +10,7 @@ namespace MitarashiDango.AvatarUtils
     public class FaceEmoteControlEditor : Editor
     {
         private SerializedProperty defaultFaceMotion;
-        private SerializedProperty leftFaceEmoteGroup;
+        private SerializedProperty leftFaceEmoteGestureGroup;
         private SerializedProperty leftFist;
         private SerializedProperty leftHandOpen;
         private SerializedProperty leftFingerPoint;
@@ -21,7 +18,7 @@ namespace MitarashiDango.AvatarUtils
         private SerializedProperty leftRockNRoll;
         private SerializedProperty leftHandGun;
         private SerializedProperty leftThumbsUp;
-        private SerializedProperty rightFaceEmoteGroup;
+        private SerializedProperty rightFaceEmoteGestureGroup;
         private SerializedProperty rightFist;
         private SerializedProperty rightHandOpen;
         private SerializedProperty rightFingerPoint;
@@ -37,7 +34,7 @@ namespace MitarashiDango.AvatarUtils
         {
             defaultFaceMotion = serializedObject.FindProperty("defaultFaceMotion");
 
-            leftFaceEmoteGroup = serializedObject.FindProperty("leftFaceEmoteGroup");
+            leftFaceEmoteGestureGroup = serializedObject.FindProperty("leftFaceEmoteGestureGroup");
 
             leftFist = serializedObject.FindProperty("leftFist");
             leftHandOpen = serializedObject.FindProperty("leftHandOpen");
@@ -47,7 +44,7 @@ namespace MitarashiDango.AvatarUtils
             leftHandGun = serializedObject.FindProperty("leftHandGun");
             leftThumbsUp = serializedObject.FindProperty("leftThumbsUp");
 
-            rightFaceEmoteGroup = serializedObject.FindProperty("rightFaceEmoteGroup");
+            rightFaceEmoteGestureGroup = serializedObject.FindProperty("rightFaceEmoteGestureGroup");
 
             rightFist = serializedObject.FindProperty("rightFist");
             rightHandOpen = serializedObject.FindProperty("rightHandOpen");
@@ -89,15 +86,15 @@ namespace MitarashiDango.AvatarUtils
 
             using (new EditorGUILayout.HorizontalScope())
             {
-                EditorGUILayout.PropertyField(leftFaceEmoteGroup, new GUIContent("表情グループ"), false);
+                EditorGUILayout.PropertyField(leftFaceEmoteGestureGroup, new GUIContent("表情グループ"), false);
 
                 if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
                 {
-                    leftFaceEmoteGroup.objectReferenceValue = CreateNewFaceEmoteGroup();
+                    leftFaceEmoteGestureGroup.objectReferenceValue = CreateNewFaceEmoteGestureGroup();
                 }
             }
 
-            if (leftFaceEmoteGroup.objectReferenceValue == null)
+            if (leftFaceEmoteGestureGroup.objectReferenceValue == null)
             {
                 EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情グループ設定を使用してください。", MessageType.Info);
 
@@ -116,15 +113,15 @@ namespace MitarashiDango.AvatarUtils
 
             using (new EditorGUILayout.HorizontalScope())
             {
-                EditorGUILayout.PropertyField(rightFaceEmoteGroup, new GUIContent("表情グループ"), false);
+                EditorGUILayout.PropertyField(rightFaceEmoteGestureGroup, new GUIContent("表情グループ"), false);
 
                 if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
                 {
-                    rightFaceEmoteGroup.objectReferenceValue = CreateNewFaceEmoteGroup();
+                    rightFaceEmoteGestureGroup.objectReferenceValue = CreateNewFaceEmoteGestureGroup();
                 }
             }
 
-            if (rightFaceEmoteGroup.objectReferenceValue == null)
+            if (rightFaceEmoteGestureGroup.objectReferenceValue == null)
             {
                 EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情グループ設定を使用してください。", MessageType.Info);
 
@@ -164,12 +161,12 @@ namespace MitarashiDango.AvatarUtils
             }
         }
 
-        private FaceEmoteGroup CreateNewFaceEmoteGroup()
+        private FaceEmoteGestureGroup CreateNewFaceEmoteGestureGroup()
         {
-            var obj = ScriptableObject.CreateInstance<FaceEmoteGroup>();
+            var obj = ScriptableObject.CreateInstance<FaceEmoteGestureGroup>();
             for (var i = 0; ; i++)
             {
-                var filename = $"New Face Emote Group{(i > 0 ? $" {i}" : "")}.asset";
+                var filename = $"New Face Emote Gesture Group{(i > 0 ? $" {i}" : "")}.asset";
                 var filepath = Path.Combine("Assets", filename);
                 if (!File.Exists(filepath))
                 {

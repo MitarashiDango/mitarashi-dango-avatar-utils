@@ -2,10 +2,11 @@ using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
 {
-    [CreateAssetMenu(fileName = "New Face Emote Group", menuName = "MitarashiDango AvatarUtils/Face Emote Group", order = 1)]
-    public class FaceEmoteGroup : ScriptableObject
+    [CreateAssetMenu(fileName = "New Face Emote Gesture Group", menuName = "MitarashiDango AvatarUtils/Face Emote Gesture Group", order = 1)]
+    public class FaceEmoteGestureGroup : ScriptableObject
     {
         public string groupName;
+
         public FaceEmote fist;
 
         public FaceEmote handOpen;

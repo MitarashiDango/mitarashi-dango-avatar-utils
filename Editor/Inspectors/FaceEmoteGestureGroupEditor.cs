@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
 {
-    [DisallowMultipleComponent, CustomEditor(typeof(FaceEmoteGroup))]
-    public class FaceEmoteGroupEditor : Editor
+    [DisallowMultipleComponent, CustomEditor(typeof(FaceEmoteGestureGroup))]
+    public class FaceEmoteGestureGroupEditor : Editor
     {
         private SerializedProperty groupName;
         private SerializedProperty fist;
