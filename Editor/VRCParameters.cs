@@ -1,6 +1,5 @@
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     public class VRCParameters
     {
         public static readonly string AFK = "AFK";
@@ -11,5 +10,4 @@ namespace MitarashiDango.AvatarUtils
         public static readonly string IS_LOCAL = "IsLocal";
         public static readonly string IN_STATION = "InStation";
     }
-#endif
 }

@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using MitarashiDango.AvatarUtils;
 using nadena.dev.modular_avatar.core;
@@ -11,7 +10,6 @@ using VRC.SDK3.Dynamics.Contact.Components;
 
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     public class AvatarUtilsNDMFPlugin : Plugin<AvatarUtilsNDMFPlugin>
     {
         protected override void Configure()
@@ -149,5 +147,4 @@ namespace MitarashiDango.AvatarUtils
             return mesh;
         }
     }
-#endif
 }

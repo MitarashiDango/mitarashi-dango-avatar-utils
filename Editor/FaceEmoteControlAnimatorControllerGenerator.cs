@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEditor.Animations;
@@ -8,7 +7,6 @@ using VRC.SDKBase;
 
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     public class FaceEmoteControlAnimatorControllerGenerator
     {
         private AnimationClip blankAnimationClip = new AnimationClip
@@ -1086,5 +1084,4 @@ namespace MitarashiDango.AvatarUtils
             return animationClip;
         }
     }
-#endif
 }
