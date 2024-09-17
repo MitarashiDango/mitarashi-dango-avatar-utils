@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEditor.Animations;
@@ -8,7 +7,6 @@ using VRC.SDKBase;
 
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     public class FaceEmoteControlAnimatorControllerGenerator
     {
         private AnimationClip blankAnimationClip = new AnimationClip
@@ -255,41 +253,6 @@ namespace MitarashiDango.AvatarUtils
             unlockToLockSleepToGestureLockEnabledTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_CONTACT);
 
             return layer;
-        }
-
-        /// <summary>
-        /// オブジェクトのヒエラルキー上でのパスを取得する
-        /// </summary>
-        /// <param name="targetObject">パス取得対象のオブジェクト</param>
-        /// <param name="rootObject">パス取得時の基準とするオブジェクト（絶対パスを取得する場合、nullを指定する)</param>
-        /// <returns></returns>
-        public static string GetPathInHierarchy(GameObject targetObject, GameObject rootObject)
-        {
-            if (targetObject == null)
-            {
-                return null;
-            }
-
-            var objectNames = new List<string>();
-            var currentTransform = targetObject.transform;
-            var rootTransform = rootObject?.transform;
-
-            while (true)
-            {
-                if (rootTransform != null && currentTransform == rootTransform)
-                {
-                    return string.Join("/", objectNames);
-                }
-
-                objectNames.Insert(0, currentTransform.name);
-
-                if (currentTransform.parent == null)
-                {
-                    return string.Join("/", objectNames);
-                }
-
-                currentTransform = currentTransform.parent;
-            }
         }
 
         private AnimatorControllerLayer GenerateHandGestureLayer(string layerName, string selectedGestureParameterName, string gestureParameterName)
@@ -602,7 +565,7 @@ namespace MitarashiDango.AvatarUtils
 
         private AnimatorControllerLayer GenerateFaceEmoteLockIndicatorControlLayer(GameObject avatarRoot, GameObject faceEmoteLockIndicator)
         {
-            var objectHierarchyPath = GetPathInHierarchy(faceEmoteLockIndicator, avatarRoot);
+            var objectHierarchyPath = MiscUtil.GetPathInHierarchy(faceEmoteLockIndicator, avatarRoot);
             var hideLockIndicatorAnimationClip = GenerateHideLockIndicatorAnimationClip(objectHierarchyPath);
             var showLockIndicatorAnimationClip = GenerateShowLockIndicatorAnimationClip(objectHierarchyPath);
             var flashLockIndicatorAnimationClip = GenerateFlashLockIndicatorAnimationClip(objectHierarchyPath);
@@ -972,8 +935,8 @@ namespace MitarashiDango.AvatarUtils
                     trackingRightFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
                     trackingLeftFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
                     trackingRightFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
-                    trackingEyes = getTrackingType(eyeTrackingType),
-                    trackingMouth = getTrackingType(mouthTrackingType),
+                    trackingEyes = GetTrackingType(eyeTrackingType),
+                    trackingMouth = GetTrackingType(mouthTrackingType),
                 }
             };
 
@@ -996,7 +959,7 @@ namespace MitarashiDango.AvatarUtils
             toExitTransition2.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.AFK);
         }
 
-        private VRC_AnimatorTrackingControl.TrackingType getTrackingType(TrackingControlType trackingControlType)
+        private VRC_AnimatorTrackingControl.TrackingType GetTrackingType(TrackingControlType trackingControlType)
         {
             switch (trackingControlType)
             {
@@ -1086,5 +1049,4 @@ namespace MitarashiDango.AvatarUtils
             return animationClip;
         }
     }
-#endif
 }

@@ -1,11 +1,9 @@
-using System.IO;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     [DisallowMultipleComponent, CustomEditor(typeof(FaceEmoteControl))]
     public class FaceEmoteControlEditor : Editor
     {
@@ -169,5 +167,4 @@ namespace MitarashiDango.AvatarUtils
             }
         }
     }
-#endif
 }

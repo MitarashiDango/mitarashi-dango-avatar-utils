@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using MitarashiDango.AvatarUtils;
 using nadena.dev.modular_avatar.core;
@@ -11,7 +10,6 @@ using VRC.SDK3.Dynamics.Contact.Components;
 
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     public class AvatarUtilsNDMFPlugin : Plugin<AvatarUtilsNDMFPlugin>
     {
         protected override void Configure()
@@ -40,7 +38,6 @@ namespace MitarashiDango.AvatarUtils
                 var faceEmoteLockIndicator = GenerateFaceEmoteLockIndicator(fecRootGameObject);
                 faceEmoteLockIndicator.transform.SetParent(faceEmoteControl.gameObject.transform);
 
-                // SetupFaceEmoteLockIndicator(faceEmoteControl, ctx.AvatarRootObject);
                 AddParameters(faceEmoteControl.gameObject);
                 AddMenuItems(faceEmoteControl.gameObject, faceEmoteControl);
                 AddAnimatorController(ctx.AvatarRootObject, faceEmoteControl, faceEmoteLockIndicator);
@@ -149,5 +146,4 @@ namespace MitarashiDango.AvatarUtils
             return mesh;
         }
     }
-#endif
 }

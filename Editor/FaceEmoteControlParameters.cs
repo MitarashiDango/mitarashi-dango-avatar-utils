@@ -1,11 +1,8 @@
-
-
 using System.Collections.Generic;
 using nadena.dev.modular_avatar.core;
 
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     public class FaceEmoteControlParameters
     {
         public static readonly string FEC_FACE_EMOTE_LOCKER_ENABLED = "FEC_FaceEmoteLockerEnabled";
@@ -90,5 +87,4 @@ namespace MitarashiDango.AvatarUtils
             return parameterConfigs;
         }
     }
-#endif
 }

@@ -1,10 +1,8 @@
-
 using UnityEditor;
 using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
 {
-#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(FaceEmote))]
     public class FaceEmotePropertyDrawer : PropertyDrawer
     {
@@ -80,5 +78,4 @@ namespace MitarashiDango.AvatarUtils
             return EditorGUIUtility.singleLineHeight * 5 + EditorGUIUtility.standardVerticalSpacing * 4;
         }
     }
-#endif
 }
