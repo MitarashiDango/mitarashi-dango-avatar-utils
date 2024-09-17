@@ -571,9 +571,30 @@ namespace MitarashiDango.AvatarUtils
             }
 
             // 追加の表情用ステートを追加する
-            for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
+            if (faceEmoteControl.faceEmoteGroups.Count > 0)
             {
-                addFixedFaceEmoteState(fixedFaceEmotesStateMachine, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(400, 60 * (i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER), 0));
+                List<FaceEmote> faceEmotes = new List<FaceEmote>();
+                foreach (var faceEmoteGroup in faceEmoteControl.faceEmoteGroups)
+                {
+                    if (faceEmoteGroup == null)
+                    {
+                        continue;
+                    }
+
+                    faceEmotes.AddRange(faceEmoteGroup.faceEmotes);
+                }
+
+                for (var i = 0; i < faceEmotes.Count; i++)
+                {
+                    addFixedFaceEmoteState(fixedFaceEmotesStateMachine, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(400, 60 * (i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER), 0));
+                }
+            }
+            else
+            {
+                for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
+                {
+                    addFixedFaceEmoteState(fixedFaceEmotesStateMachine, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(400, 60 * (i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER), 0));
+                }
             }
 
             return layer;
@@ -687,7 +708,15 @@ namespace MitarashiDango.AvatarUtils
             AddAFKState(layer.stateMachine, new Vector3(500, -60, 0));
             AddLeftGestureEmoteStates(layer.stateMachine, new Vector3(500, 60, 0), faceEmoteControl);
             AddRightGestureEmoteStates(layer.stateMachine, new Vector3(500, 120, 0), faceEmoteControl);
-            AddAdditionalEmoteStates(layer.stateMachine, new Vector3(500, 180, 0), faceEmoteControl);
+
+            if (faceEmoteControl.faceEmoteGroups.Count > 0)
+            {
+                AddFaceEmoteGroups(layer.stateMachine, faceEmoteControl, Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(500, 180, 0));
+            }
+            else
+            {
+                AddAdditionalEmoteStates(layer.stateMachine, new Vector3(500, 180, 0), faceEmoteControl);
+            }
 
             return layer;
         }
@@ -849,6 +878,50 @@ namespace MitarashiDango.AvatarUtils
                 var faceEmote = faceEmoteControl.additionalFaceEmotes[i];
                 var faceEmoteNumber = i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER;
                 AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
+                statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
+            }
+        }
+
+        private void AddFaceEmoteGroups(AnimatorStateMachine stateMachine, FaceEmoteControl faceEmoteControl, int startFaceEmoteNumber, Vector3 startPosition)
+        {
+            var stateMachinePosition = startPosition;
+            var statePosition = new Vector3(500, 0, 0);
+            AnimatorStateMachine currentStateMachine = null;
+
+            List<FaceEmote> faceEmotes = new List<FaceEmote>();
+            foreach (var faceEmoteGroup in faceEmoteControl.faceEmoteGroups)
+            {
+                if (faceEmoteGroup == null)
+                {
+                    continue;
+                }
+
+                faceEmotes.AddRange(faceEmoteGroup.faceEmotes);
+            }
+
+            for (var i = 0; i < faceEmotes.Count; i++)
+            {
+                var faceEmoteNumber = i + startFaceEmoteNumber;
+
+                if (i % 10 == 0)
+                {
+                    var start = i + 1;
+                    var end = Math.Min(start + 9, faceEmotes.Count);
+                    currentStateMachine = stateMachine.AddStateMachine($"Additional Face Emotes ({start} ~ {end})", stateMachinePosition);
+
+                    var fromEntryTransition1 = stateMachine.AddEntryTransition(currentStateMachine);
+                    fromEntryTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.AFK);
+                    fromEntryTransition1.AddCondition(AnimatorConditionMode.Greater, faceEmoteNumber - 1, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+                    fromEntryTransition1.AddCondition(AnimatorConditionMode.Less, faceEmoteNumber + 10, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+
+                    stateMachine.AddStateMachineExitTransition(currentStateMachine);
+
+                    stateMachinePosition = new Vector3(stateMachinePosition.x, stateMachinePosition.y + 60, stateMachinePosition.z);
+                    statePosition = new Vector3(500, 0, 0);
+                }
+
+                var faceEmote = faceEmotes[i];
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmote.motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }

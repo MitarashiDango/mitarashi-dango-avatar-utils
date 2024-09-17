@@ -75,10 +75,18 @@ namespace MitarashiDango.AvatarUtils
                 subMenuItems.Add(rightGestureFaceEmoteMenu);
             }
 
-            var additionalFaceEmoteMenu = GenerateAdditionalFaceEmoteMenu(faceEmoteControl);
-            if (additionalFaceEmoteMenu != null)
+            var faceEmoteGroupsMenu = GenerateFaceEmoteGroupsMenu(faceEmoteControl, Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER);
+            if (faceEmoteGroupsMenu != null)
             {
-                subMenuItems.Add(additionalFaceEmoteMenu);
+                subMenuItems.Add(faceEmoteGroupsMenu);
+            }
+            else
+            {
+                var additionalFaceEmoteMenu = GenerateAdditionalFaceEmoteMenu(faceEmoteControl);
+                if (additionalFaceEmoteMenu != null)
+                {
+                    subMenuItems.Add(additionalFaceEmoteMenu);
+                }
             }
 
             foreach (var subMenuItem in subMenuItems)
@@ -299,6 +307,38 @@ namespace MitarashiDango.AvatarUtils
             }
 
             return subMenu;
+        }
+
+        private GameObject GenerateFaceEmoteGroupsMenu(FaceEmoteControl faceEmoteControl, int startFaceEmoteNumber)
+        {
+            if (faceEmoteControl.faceEmoteGroups.Count == 0)
+            {
+                return null;
+            }
+
+            var addedFaceEmoteCount = 0;
+            var faceEmoteGroupsMenu = GenerateSubMenu("表情グループ", null);
+            for (var i = 0; i < faceEmoteControl.faceEmoteGroups.Count; i++)
+            {
+                var faceEmoteGroup = faceEmoteControl.faceEmoteGroups[i];
+                if (faceEmoteGroup == null)
+                {
+                    continue;
+                }
+
+                var faceEmoteGroupMenu = GenerateSubMenu(faceEmoteGroup.groupName != "" ? faceEmoteGroup.groupName : $"グループ {i + 1}", null);
+                faceEmoteGroupMenu.transform.SetParent(faceEmoteGroupsMenu.transform);
+
+                for (var j = 0; j < faceEmoteGroup.faceEmotes.Count; j++)
+                {
+                    var subMenuItem = GenerateFaceSelectMenuItem(faceEmoteGroup.faceEmotes[j], $"表情{j + 1}", addedFaceEmoteCount + startFaceEmoteNumber);
+                    subMenuItem.transform.SetParent(faceEmoteGroupMenu.transform);
+
+                    addedFaceEmoteCount++;
+                }
+            }
+
+            return faceEmoteGroupsMenu;
         }
 
         private GameObject GenerateFaceSelectMenuItem(FaceEmote faceEmote, string defaultName, float parameterValue)

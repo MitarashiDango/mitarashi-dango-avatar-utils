@@ -27,6 +27,7 @@ namespace MitarashiDango.AvatarUtils
         private SerializedProperty rightHandGun;
         private SerializedProperty rightThumbsUp;
         private SerializedProperty additionalFaceEmotes;
+        private SerializedProperty faceEmoteGroups;
 
         private ReorderableList reorderableList;
 
@@ -53,6 +54,8 @@ namespace MitarashiDango.AvatarUtils
             rightRockNRoll = serializedObject.FindProperty("rightRockNRoll");
             rightHandGun = serializedObject.FindProperty("rightHandGun");
             rightThumbsUp = serializedObject.FindProperty("rightThumbsUp");
+
+            faceEmoteGroups = serializedObject.FindProperty("faceEmoteGroups");
 
             additionalFaceEmotes = serializedObject.FindProperty("additionalFaceEmotes");
 
@@ -86,7 +89,7 @@ namespace MitarashiDango.AvatarUtils
 
             using (new EditorGUILayout.HorizontalScope())
             {
-                EditorGUILayout.PropertyField(leftFaceEmoteGestureGroup, new GUIContent("表情グループ"), false);
+                EditorGUILayout.PropertyField(leftFaceEmoteGestureGroup, new GUIContent("表情ジェスチャーグループ"), false);
 
                 if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
                 {
@@ -94,10 +97,36 @@ namespace MitarashiDango.AvatarUtils
                 }
             }
 
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Right hand", EditorStyles.boldLabel);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.PropertyField(rightFaceEmoteGestureGroup, new GUIContent("表情ジェスチャーグループ"), false);
+
+                if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
+                {
+                    rightFaceEmoteGestureGroup.objectReferenceValue = CreateNewFaceEmoteGestureGroup();
+                }
+            }
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.PropertyField(faceEmoteGroups, new GUIContent("表情グループ"));
+
+            EditorGUILayout.Space(50);
+
+            if (faceEmoteGroups.arraySize == 0 || leftFaceEmoteGestureGroup.objectReferenceValue == null || rightFaceEmoteGestureGroup.objectReferenceValue == null)
+            {
+                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。", MessageType.Info);
+            }
+
             if (leftFaceEmoteGestureGroup.objectReferenceValue == null)
             {
-                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情グループ設定を使用してください。", MessageType.Info);
+                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情ジェスチャーグループ設定を使用してください。", MessageType.Info);
 
+                EditorGUILayout.LabelField("Left hand", EditorStyles.boldLabel);
                 RenderGestureFaceEmoteItem("Left Fist", leftFist);
                 RenderGestureFaceEmoteItem("Left Hand Open", leftHandOpen);
                 RenderGestureFaceEmoteItem("Left Finger Point", leftFingerPoint);
@@ -107,24 +136,11 @@ namespace MitarashiDango.AvatarUtils
                 RenderGestureFaceEmoteItem("Left Thumbs Up", leftThumbsUp);
             }
 
-            EditorGUILayout.Space();
-
-            EditorGUILayout.LabelField("Right hand", EditorStyles.boldLabel);
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                EditorGUILayout.PropertyField(rightFaceEmoteGestureGroup, new GUIContent("表情グループ"), false);
-
-                if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
-                {
-                    rightFaceEmoteGestureGroup.objectReferenceValue = CreateNewFaceEmoteGestureGroup();
-                }
-            }
-
             if (rightFaceEmoteGestureGroup.objectReferenceValue == null)
             {
-                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情グループ設定を使用してください。", MessageType.Info);
+                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\n各ハンドサインへの表情設定は表情ジェスチャーグループ設定を使用してください。", MessageType.Info);
 
+                EditorGUILayout.LabelField("Right hand", EditorStyles.boldLabel);
                 RenderGestureFaceEmoteItem("Right Fist", rightFist);
                 RenderGestureFaceEmoteItem("Right Hand Open", rightHandOpen);
                 RenderGestureFaceEmoteItem("Right Finger Point", rightFingerPoint);
@@ -134,9 +150,11 @@ namespace MitarashiDango.AvatarUtils
                 RenderGestureFaceEmoteItem("Right Thumbs Up", rightThumbsUp);
             }
 
-            EditorGUILayout.Space();
-
-            reorderableList.DoLayoutList();
+            if (faceEmoteGroups.arraySize == 0)
+            {
+                EditorGUILayout.HelpBox("以下の項目は後方互換性のために残されている項目です。\nハンドサインへ割り当てない表情設定を追加する場合、表情グループ設定を使用してください。", MessageType.Info);
+                reorderableList.DoLayoutList();
+            }
 
             if (EditorApplication.isPlaying)
             {

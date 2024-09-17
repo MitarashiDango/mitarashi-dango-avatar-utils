@@ -59,6 +59,9 @@ namespace MitarashiDango.AvatarUtils
         public FaceEmote rightThumbsUp;
 
         [HideInInspector]
+        public List<FaceEmoteGroup> faceEmoteGroups;
+
+        [HideInInspector]
         public List<FaceEmote> additionalFaceEmotes;
 
         public bool IsLeftGestureAvailable
