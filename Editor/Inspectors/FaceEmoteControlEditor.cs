@@ -90,11 +90,6 @@ namespace MitarashiDango.AvatarUtils
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.PropertyField(leftFaceEmoteGestureGroup, new GUIContent("表情ジェスチャーグループ"), false);
-
-                if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
-                {
-                    leftFaceEmoteGestureGroup.objectReferenceValue = CreateNewFaceEmoteGestureGroup();
-                }
             }
 
             EditorGUILayout.Space();
@@ -104,11 +99,6 @@ namespace MitarashiDango.AvatarUtils
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.PropertyField(rightFaceEmoteGestureGroup, new GUIContent("表情ジェスチャーグループ"), false);
-
-                if (GUILayout.Button(new GUIContent("新規"), GUILayout.Width(50)))
-                {
-                    rightFaceEmoteGestureGroup.objectReferenceValue = CreateNewFaceEmoteGestureGroup();
-                }
             }
 
             EditorGUILayout.Space();
@@ -177,22 +167,6 @@ namespace MitarashiDango.AvatarUtils
                     }
                 }
             }
-        }
-
-        private FaceEmoteGestureGroup CreateNewFaceEmoteGestureGroup()
-        {
-            var obj = ScriptableObject.CreateInstance<FaceEmoteGestureGroup>();
-            for (var i = 0; ; i++)
-            {
-                var filename = $"New Face Emote Gesture Group{(i > 0 ? $" {i}" : "")}.asset";
-                var filepath = Path.Combine("Assets", filename);
-                if (!File.Exists(filepath))
-                {
-                    AssetDatabase.CreateAsset(obj, filepath);
-                    break;
-                }
-            }
-            return obj;
         }
     }
 #endif
