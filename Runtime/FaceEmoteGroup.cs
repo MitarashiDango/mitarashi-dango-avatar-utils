@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
@@ -6,18 +7,7 @@ namespace MitarashiDango.AvatarUtils
     public class FaceEmoteGroup : ScriptableObject
     {
         public string groupName;
-        public FaceEmote fist;
 
-        public FaceEmote handOpen;
-
-        public FaceEmote fingerPoint;
-
-        public FaceEmote victory;
-
-        public FaceEmote rockNRoll;
-
-        public FaceEmote handGun;
-
-        public FaceEmote thumbsUp;
+        public List<FaceEmote> faceEmotes;
     }
 }

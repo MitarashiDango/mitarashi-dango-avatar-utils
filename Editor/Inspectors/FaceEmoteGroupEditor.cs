@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
@@ -7,24 +8,29 @@ namespace MitarashiDango.AvatarUtils
     public class FaceEmoteGroupEditor : Editor
     {
         private SerializedProperty groupName;
-        private SerializedProperty fist;
-        private SerializedProperty handOpen;
-        private SerializedProperty fingerPoint;
-        private SerializedProperty victory;
-        private SerializedProperty rockNRoll;
-        private SerializedProperty handGun;
-        private SerializedProperty thumbsUp;
+        private SerializedProperty faceEmotes;
+
+        private ReorderableList reorderableList;
 
         private void OnEnable()
         {
             groupName = serializedObject.FindProperty("groupName");
-            fist = serializedObject.FindProperty("fist");
-            handOpen = serializedObject.FindProperty("handOpen");
-            fingerPoint = serializedObject.FindProperty("fingerPoint");
-            victory = serializedObject.FindProperty("victory");
-            rockNRoll = serializedObject.FindProperty("rockNRoll");
-            handGun = serializedObject.FindProperty("handGun");
-            thumbsUp = serializedObject.FindProperty("thumbsUp");
+            faceEmotes = serializedObject.FindProperty("faceEmotes");
+
+            reorderableList = new ReorderableList(serializedObject, faceEmotes)
+            {
+                drawElementCallback = (rect, index, active, focused) =>
+                {
+                    var additionalFaceEmote = faceEmotes.GetArrayElementAtIndex(index);
+                    var position = new Rect(rect)
+                    {
+                        y = rect.y + EditorGUIUtility.standardVerticalSpacing
+                    };
+                    EditorGUI.PropertyField(position, additionalFaceEmote);
+                },
+                drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "Face Emotes", EditorStyles.boldLabel),
+                elementHeightCallback = index => EditorGUI.GetPropertyHeight(faceEmotes.GetArrayElementAtIndex(index)) + EditorGUIUtility.standardVerticalSpacing * 2
+            };
         }
 
         public override void OnInspectorGUI()
@@ -37,13 +43,7 @@ namespace MitarashiDango.AvatarUtils
             EditorGUILayout.PropertyField(groupName, new GUIContent("グループ名"), false);
             EditorGUILayout.Space();
 
-            RenderGestureFaceEmoteItem("Fist", fist);
-            RenderGestureFaceEmoteItem("Hand Open", handOpen);
-            RenderGestureFaceEmoteItem("Finger Point", fingerPoint);
-            RenderGestureFaceEmoteItem("Victory", victory);
-            RenderGestureFaceEmoteItem("Rock N Roll", rockNRoll);
-            RenderGestureFaceEmoteItem("Hand Gun", handGun);
-            RenderGestureFaceEmoteItem("Thumbs Up", thumbsUp);
+            reorderableList.DoLayoutList();
 
             if (EditorApplication.isPlaying)
             {
@@ -51,21 +51,6 @@ namespace MitarashiDango.AvatarUtils
             }
 
             serializedObject.ApplyModifiedProperties();
-        }
-
-        private void RenderGestureFaceEmoteItem(string gestureName, SerializedProperty faceEmote)
-        {
-            using (new EditorGUILayout.VerticalScope("Helpbox"))
-            {
-                using (new EditorGUILayout.VerticalScope())
-                {
-                    EditorGUILayout.LabelField(new GUIContent(gestureName));
-                    using (new EditorGUI.IndentLevelScope())
-                    {
-                        EditorGUILayout.PropertyField(faceEmote, false);
-                    }
-                }
-            }
         }
     }
 }

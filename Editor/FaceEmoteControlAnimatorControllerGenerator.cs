@@ -571,9 +571,30 @@ namespace MitarashiDango.AvatarUtils
             }
 
             // 追加の表情用ステートを追加する
-            for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
+            if (faceEmoteControl.faceEmoteGroups.Count > 0)
             {
-                addFixedFaceEmoteState(fixedFaceEmotesStateMachine, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(400, 60 * (i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER), 0));
+                List<FaceEmote> faceEmotes = new List<FaceEmote>();
+                foreach (var faceEmoteGroup in faceEmoteControl.faceEmoteGroups)
+                {
+                    if (faceEmoteGroup == null)
+                    {
+                        continue;
+                    }
+
+                    faceEmotes.AddRange(faceEmoteGroup.faceEmotes);
+                }
+
+                for (var i = 0; i < faceEmotes.Count; i++)
+                {
+                    addFixedFaceEmoteState(fixedFaceEmotesStateMachine, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(400, 60 * (i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER), 0));
+                }
+            }
+            else
+            {
+                for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
+                {
+                    addFixedFaceEmoteState(fixedFaceEmotesStateMachine, i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(400, 60 * (i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER), 0));
+                }
             }
 
             return layer;
@@ -687,7 +708,15 @@ namespace MitarashiDango.AvatarUtils
             AddAFKState(layer.stateMachine, new Vector3(500, -60, 0));
             AddLeftGestureEmoteStates(layer.stateMachine, new Vector3(500, 60, 0), faceEmoteControl);
             AddRightGestureEmoteStates(layer.stateMachine, new Vector3(500, 120, 0), faceEmoteControl);
-            AddAdditionalEmoteStates(layer.stateMachine, new Vector3(500, 180, 0), faceEmoteControl);
+
+            if (faceEmoteControl.faceEmoteGroups.Count > 0)
+            {
+                AddFaceEmoteGroups(layer.stateMachine, faceEmoteControl, Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER, new Vector3(500, 180, 0));
+            }
+            else
+            {
+                AddAdditionalEmoteStates(layer.stateMachine, new Vector3(500, 180, 0), faceEmoteControl);
+            }
 
             return layer;
         }
@@ -761,15 +790,15 @@ namespace MitarashiDango.AvatarUtils
 
             stateMachine.AddStateMachineExitTransition(leftGestureEmoteStateMachine);
 
-            if (faceEmoteControl.leftFaceEmoteGroup != null)
+            if (faceEmoteControl.leftFaceEmoteGestureGroup != null)
             {
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Fist (Left Gesture)", 1, faceEmoteControl.leftFaceEmoteGroup.fist, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", 2, faceEmoteControl.leftFaceEmoteGroup.handOpen, new Vector3(500, 60, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", 3, faceEmoteControl.leftFaceEmoteGroup.fingerPoint, new Vector3(500, 120, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", 4, faceEmoteControl.leftFaceEmoteGroup.victory, new Vector3(500, 180, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", 5, faceEmoteControl.leftFaceEmoteGroup.rockNRoll, new Vector3(500, 240, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", 6, faceEmoteControl.leftFaceEmoteGroup.handGun, new Vector3(500, 300, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", 7, faceEmoteControl.leftFaceEmoteGroup.thumbsUp, new Vector3(500, 360, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Fist (Left Gesture)", 1, faceEmoteControl.leftFaceEmoteGestureGroup.fist, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", 2, faceEmoteControl.leftFaceEmoteGestureGroup.handOpen, new Vector3(500, 60, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", 3, faceEmoteControl.leftFaceEmoteGestureGroup.fingerPoint, new Vector3(500, 120, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", 4, faceEmoteControl.leftFaceEmoteGestureGroup.victory, new Vector3(500, 180, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", 5, faceEmoteControl.leftFaceEmoteGestureGroup.rockNRoll, new Vector3(500, 240, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", 6, faceEmoteControl.leftFaceEmoteGestureGroup.handGun, new Vector3(500, 300, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", 7, faceEmoteControl.leftFaceEmoteGestureGroup.thumbsUp, new Vector3(500, 360, 0));
             }
             else
             {
@@ -799,15 +828,15 @@ namespace MitarashiDango.AvatarUtils
 
             stateMachine.AddStateMachineExitTransition(rightGestureEmoteStateMachine);
 
-            if (faceEmoteControl.rightFaceEmoteGroup != null)
+            if (faceEmoteControl.rightFaceEmoteGestureGroup != null)
             {
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.rightFaceEmoteGroup.fist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.rightFaceEmoteGroup.handOpen, new Vector3(500, 60, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.rightFaceEmoteGroup.fingerPoint, new Vector3(500, 120, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.rightFaceEmoteGroup.victory, new Vector3(500, 180, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.rightFaceEmoteGroup.rockNRoll, new Vector3(500, 240, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.rightFaceEmoteGroup.handGun, new Vector3(500, 300, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.rightFaceEmoteGroup.thumbsUp, new Vector3(500, 360, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.rightFaceEmoteGestureGroup.fist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.rightFaceEmoteGestureGroup.handOpen, new Vector3(500, 60, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.rightFaceEmoteGestureGroup.fingerPoint, new Vector3(500, 120, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.rightFaceEmoteGestureGroup.victory, new Vector3(500, 180, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.rightFaceEmoteGestureGroup.rockNRoll, new Vector3(500, 240, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.rightFaceEmoteGestureGroup.handGun, new Vector3(500, 300, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.rightFaceEmoteGestureGroup.thumbsUp, new Vector3(500, 360, 0));
             }
             else
             {
@@ -849,6 +878,50 @@ namespace MitarashiDango.AvatarUtils
                 var faceEmote = faceEmoteControl.additionalFaceEmotes[i];
                 var faceEmoteNumber = i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER;
                 AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
+                statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
+            }
+        }
+
+        private void AddFaceEmoteGroups(AnimatorStateMachine stateMachine, FaceEmoteControl faceEmoteControl, int startFaceEmoteNumber, Vector3 startPosition)
+        {
+            var stateMachinePosition = startPosition;
+            var statePosition = new Vector3(500, 0, 0);
+            AnimatorStateMachine currentStateMachine = null;
+
+            List<FaceEmote> faceEmotes = new List<FaceEmote>();
+            foreach (var faceEmoteGroup in faceEmoteControl.faceEmoteGroups)
+            {
+                if (faceEmoteGroup == null)
+                {
+                    continue;
+                }
+
+                faceEmotes.AddRange(faceEmoteGroup.faceEmotes);
+            }
+
+            for (var i = 0; i < faceEmotes.Count; i++)
+            {
+                var faceEmoteNumber = i + startFaceEmoteNumber;
+
+                if (i % 10 == 0)
+                {
+                    var start = i + 1;
+                    var end = Math.Min(start + 9, faceEmotes.Count);
+                    currentStateMachine = stateMachine.AddStateMachine($"Additional Face Emotes ({start} ~ {end})", stateMachinePosition);
+
+                    var fromEntryTransition1 = stateMachine.AddEntryTransition(currentStateMachine);
+                    fromEntryTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.AFK);
+                    fromEntryTransition1.AddCondition(AnimatorConditionMode.Greater, faceEmoteNumber - 1, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+                    fromEntryTransition1.AddCondition(AnimatorConditionMode.Less, faceEmoteNumber + 10, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+
+                    stateMachine.AddStateMachineExitTransition(currentStateMachine);
+
+                    stateMachinePosition = new Vector3(stateMachinePosition.x, stateMachinePosition.y + 60, stateMachinePosition.z);
+                    statePosition = new Vector3(500, 0, 0);
+                }
+
+                var faceEmote = faceEmotes[i];
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmote.motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }
