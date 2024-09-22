@@ -30,16 +30,18 @@ namespace MitarashiDango.AvatarUtils
         private void ModifyAnimatorControllerProcess(BuildContext ctx)
         {
             var animatorControllerLayerModifiers = ctx.AvatarRootObject.GetComponentsInChildren<AnimatorControllerModifier>();
-            if (animatorControllerLayerModifiers.Length == 0)
+            if (animatorControllerLayerModifiers.Length > 0)
             {
-                return;
+                var layerModifyOptions = BuildLayerModifyOptions(animatorControllerLayerModifiers);
+                var avatarDescriptor = ctx.AvatarDescriptor;
+                ModifyAnimationLayers(avatarDescriptor.baseAnimationLayers, layerModifyOptions);
+                ModifyAnimationLayers(avatarDescriptor.specialAnimationLayers, layerModifyOptions);
             }
 
-            var layerModifyOptions = BuildLayerModifyOptions(animatorControllerLayerModifiers);
-
-            var avatarDescriptor = ctx.AvatarDescriptor;
-            ModifyAnimationLayers(avatarDescriptor.baseAnimationLayers, layerModifyOptions);
-            ModifyAnimationLayers(avatarDescriptor.specialAnimationLayers, layerModifyOptions);
+            foreach (var animatorControllerLayerModifier in animatorControllerLayerModifiers)
+            {
+                Object.DestroyImmediate(animatorControllerLayerModifier);
+            }
         }
 
         private Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerLayerModifyOption>> BuildLayerModifyOptions(AnimatorControllerModifier[] animatorControllerLayerModifiers)
