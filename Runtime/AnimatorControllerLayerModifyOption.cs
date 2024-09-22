@@ -3,7 +3,7 @@ using System;
 namespace MitarashiDango.AvatarUtils
 {
     [Serializable]
-    public class AnimatorControllerModifyOption
+    public class AnimatorControllerLayerModifyOption
     {
         public PlayableLayerType layerType;
 

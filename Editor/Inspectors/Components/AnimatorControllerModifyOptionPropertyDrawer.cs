@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
 {
-    [CustomPropertyDrawer(typeof(AnimatorControllerModifyOption))]
+    [CustomPropertyDrawer(typeof(AnimatorControllerLayerModifyOption))]
     public class AnimatorControllerModifyOptionPropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
