@@ -667,7 +667,7 @@ namespace MitarashiDango.AvatarUtils
             layer.stateMachine.exitPosition = new Vector3(1000, 0, 0);
             layer.stateMachine.anyStatePosition = new Vector3(0, -80, 0);
 
-            AddNeutralFaceEmoteState(layer.stateMachine, new Vector3(500, 0, 0));
+            AddNeutralFaceEmoteState(layer.stateMachine, faceEmoteControl, new Vector3(500, 0, 0));
             AddAFKState(layer.stateMachine, new Vector3(500, -60, 0));
             AddLeftGestureEmoteStates(layer.stateMachine, new Vector3(500, 60, 0), faceEmoteControl);
             AddRightGestureEmoteStates(layer.stateMachine, new Vector3(500, 120, 0), faceEmoteControl);
@@ -698,7 +698,7 @@ namespace MitarashiDango.AvatarUtils
             toExitTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.AFK);
         }
 
-        private void AddNeutralFaceEmoteState(AnimatorStateMachine stateMachine, Vector3 position)
+        private void AddNeutralFaceEmoteState(AnimatorStateMachine stateMachine, FaceEmoteControl faceEmoteControl, Vector3 position)
         {
             var state = stateMachine.AddState("Face Emote (Neutral)", position);
             state.writeDefaultValues = false;
@@ -726,7 +726,7 @@ namespace MitarashiDango.AvatarUtils
             toExitTransition1.hasExitTime = false;
             toExitTransition1.exitTime = 0;
             toExitTransition1.hasFixedDuration = true;
-            toExitTransition1.duration = 0.1f;
+            toExitTransition1.duration = faceEmoteControl.time;
             toExitTransition1.offset = 0;
             toExitTransition1.interruptionSource = TransitionInterruptionSource.None;
             toExitTransition1.orderedInterruption = true;
@@ -755,23 +755,23 @@ namespace MitarashiDango.AvatarUtils
 
             if (faceEmoteControl.leftFaceEmoteGestureGroup != null)
             {
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Fist (Left Gesture)", 1, faceEmoteControl.leftFaceEmoteGestureGroup.fist, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", 2, faceEmoteControl.leftFaceEmoteGestureGroup.handOpen, new Vector3(500, 60, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", 3, faceEmoteControl.leftFaceEmoteGestureGroup.fingerPoint, new Vector3(500, 120, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", 4, faceEmoteControl.leftFaceEmoteGestureGroup.victory, new Vector3(500, 180, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", 5, faceEmoteControl.leftFaceEmoteGestureGroup.rockNRoll, new Vector3(500, 240, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", 6, faceEmoteControl.leftFaceEmoteGestureGroup.handGun, new Vector3(500, 300, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", 7, faceEmoteControl.leftFaceEmoteGestureGroup.thumbsUp, new Vector3(500, 360, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Fist (Left Gesture)", faceEmoteControl, 1, faceEmoteControl.leftFaceEmoteGestureGroup.fist, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", faceEmoteControl, 2, faceEmoteControl.leftFaceEmoteGestureGroup.handOpen, new Vector3(500, 60, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", faceEmoteControl, 3, faceEmoteControl.leftFaceEmoteGestureGroup.fingerPoint, new Vector3(500, 120, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", faceEmoteControl, 4, faceEmoteControl.leftFaceEmoteGestureGroup.victory, new Vector3(500, 180, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", faceEmoteControl, 5, faceEmoteControl.leftFaceEmoteGestureGroup.rockNRoll, new Vector3(500, 240, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", faceEmoteControl, 6, faceEmoteControl.leftFaceEmoteGestureGroup.handGun, new Vector3(500, 300, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", faceEmoteControl, 7, faceEmoteControl.leftFaceEmoteGestureGroup.thumbsUp, new Vector3(500, 360, 0));
             }
             else
             {
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Fist (Left Gesture)", 1, faceEmoteControl.leftFist, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", 2, faceEmoteControl.leftHandOpen, new Vector3(500, 60, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", 3, faceEmoteControl.leftFingerPoint, new Vector3(500, 120, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", 4, faceEmoteControl.leftVictory, new Vector3(500, 180, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", 5, faceEmoteControl.leftRockNRoll, new Vector3(500, 240, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", 6, faceEmoteControl.leftHandGun, new Vector3(500, 300, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", 7, faceEmoteControl.leftThumbsUp, new Vector3(500, 360, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Fist (Left Gesture)", faceEmoteControl, 1, faceEmoteControl.leftFist, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandOpen (Left Gesture)", faceEmoteControl, 2, faceEmoteControl.leftHandOpen, new Vector3(500, 60, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "FingerPoint (Left Gesture)", faceEmoteControl, 3, faceEmoteControl.leftFingerPoint, new Vector3(500, 120, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "Victory (Left Gesture)", faceEmoteControl, 4, faceEmoteControl.leftVictory, new Vector3(500, 180, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "RockNRoll (Left Gesture)", faceEmoteControl, 5, faceEmoteControl.leftRockNRoll, new Vector3(500, 240, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "HandGun (Left Gesture)", faceEmoteControl, 6, faceEmoteControl.leftHandGun, new Vector3(500, 300, 0));
+                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, "ThumbsUp (Left Gesture)", faceEmoteControl, 7, faceEmoteControl.leftThumbsUp, new Vector3(500, 360, 0));
             }
         }
 
@@ -793,23 +793,23 @@ namespace MitarashiDango.AvatarUtils
 
             if (faceEmoteControl.rightFaceEmoteGestureGroup != null)
             {
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.rightFaceEmoteGestureGroup.fist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.rightFaceEmoteGestureGroup.handOpen, new Vector3(500, 60, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.rightFaceEmoteGestureGroup.fingerPoint, new Vector3(500, 120, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.rightFaceEmoteGestureGroup.victory, new Vector3(500, 180, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.rightFaceEmoteGestureGroup.rockNRoll, new Vector3(500, 240, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.rightFaceEmoteGestureGroup.handGun, new Vector3(500, 300, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.rightFaceEmoteGestureGroup.thumbsUp, new Vector3(500, 360, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", faceEmoteControl, 8, faceEmoteControl.rightFaceEmoteGestureGroup.fist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", faceEmoteControl, 9, faceEmoteControl.rightFaceEmoteGestureGroup.handOpen, new Vector3(500, 60, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", faceEmoteControl, 10, faceEmoteControl.rightFaceEmoteGestureGroup.fingerPoint, new Vector3(500, 120, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", faceEmoteControl, 11, faceEmoteControl.rightFaceEmoteGestureGroup.victory, new Vector3(500, 180, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", faceEmoteControl, 12, faceEmoteControl.rightFaceEmoteGestureGroup.rockNRoll, new Vector3(500, 240, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", faceEmoteControl, 13, faceEmoteControl.rightFaceEmoteGestureGroup.handGun, new Vector3(500, 300, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", faceEmoteControl, 14, faceEmoteControl.rightFaceEmoteGestureGroup.thumbsUp, new Vector3(500, 360, 0));
             }
             else
             {
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", 8, faceEmoteControl.rightFist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", 9, faceEmoteControl.rightHandOpen, new Vector3(500, 60, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", 10, faceEmoteControl.rightFingerPoint, new Vector3(500, 120, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", 11, faceEmoteControl.rightVictory, new Vector3(500, 180, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", 12, faceEmoteControl.rightRockNRoll, new Vector3(500, 240, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", 13, faceEmoteControl.rightHandGun, new Vector3(500, 300, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", 14, faceEmoteControl.rightThumbsUp, new Vector3(500, 360, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Fist (Right Gesture)", faceEmoteControl, 8, faceEmoteControl.rightFist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandOpen (Right Gesture)", faceEmoteControl, 9, faceEmoteControl.rightHandOpen, new Vector3(500, 60, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "FingerPoint (Right Gesture)", faceEmoteControl, 10, faceEmoteControl.rightFingerPoint, new Vector3(500, 120, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "Victory (Right Gesture)", faceEmoteControl, 11, faceEmoteControl.rightVictory, new Vector3(500, 180, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "RockNRoll (Right Gesture)", faceEmoteControl, 12, faceEmoteControl.rightRockNRoll, new Vector3(500, 240, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "HandGun (Right Gesture)", faceEmoteControl, 13, faceEmoteControl.rightHandGun, new Vector3(500, 300, 0));
+                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, "ThumbsUp (Right Gesture)", faceEmoteControl, 14, faceEmoteControl.rightThumbsUp, new Vector3(500, 360, 0));
             }
         }
 
@@ -840,7 +840,7 @@ namespace MitarashiDango.AvatarUtils
 
                 var faceEmote = faceEmoteControl.additionalFaceEmotes[i];
                 var faceEmoteNumber = i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER;
-                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteControl, faceEmoteNumber, faceEmoteControl.additionalFaceEmotes[i].motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }
@@ -884,39 +884,40 @@ namespace MitarashiDango.AvatarUtils
                 }
 
                 var faceEmote = faceEmotes[i];
-                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteNumber, faceEmote.motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
+                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteControl, faceEmoteNumber, faceEmote.motion, faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }
 
-        private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, FaceEmote faceEmote, Vector3 position)
+        private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, int faceEmoteNumber, FaceEmote faceEmote, Vector3 position)
         {
             if (faceEmote == null || faceEmote.motion == null)
             {
                 return;
             }
 
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, "", faceEmote.eyeControlType, faceEmote.mouthControlType, position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmoteNumber, faceEmote.motion, "", faceEmote.eyeControlType, faceEmote.mouthControlType, position);
         }
 
-        private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, FaceEmote faceEmote, string motionTimeParameter, Vector3 position)
+        private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, int faceEmoteNumber, FaceEmote faceEmote, string motionTimeParameter, Vector3 position)
         {
             if (faceEmote == null || faceEmote.motion == null)
             {
                 return;
             }
 
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, faceEmote.motion, motionTimeParameter, faceEmote.eyeControlType, faceEmote.mouthControlType, position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmoteNumber, faceEmote.motion, motionTimeParameter, faceEmote.eyeControlType, faceEmote.mouthControlType, position);
         }
 
-        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, TrackingControlType eyeTrackingType, TrackingControlType mouthTrackingType, Vector3 position)
+        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, int faceEmoteNumber, Motion motion, TrackingControlType eyeTrackingType, TrackingControlType mouthTrackingType, Vector3 position)
         {
-            AddFaceEmoteState(stateMachine, name, faceEmoteNumber, motion, "", eyeTrackingType, mouthTrackingType, position);
+            AddFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmoteNumber, motion, "", eyeTrackingType, mouthTrackingType, position);
         }
 
-        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, int faceEmoteNumber, Motion motion, string motionTimeParameter, TrackingControlType eyeTrackingType, TrackingControlType mouthTrackingType, Vector3 position)
+        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, int faceEmoteNumber, Motion motion, string motionTimeParameter, TrackingControlType eyeTrackingType, TrackingControlType mouthTrackingType, Vector3 position)
         {
             var state = stateMachine.AddState(name, position);
+            state.speed = 1 / faceEmoteControl.time;
             state.writeDefaultValues = false;
             state.motion = motion != null ? motion : blankAnimationClip;
             if (motionTimeParameter != "")
@@ -948,7 +949,7 @@ namespace MitarashiDango.AvatarUtils
             toExitTransition1.hasExitTime = false;
             toExitTransition1.exitTime = 0;
             toExitTransition1.hasFixedDuration = true;
-            toExitTransition1.duration = 0.1f;
+            toExitTransition1.duration = faceEmoteControl.time;
             toExitTransition1.offset = 0;
             toExitTransition1.interruptionSource = TransitionInterruptionSource.None;
             toExitTransition1.orderedInterruption = true;
