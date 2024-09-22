@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using MitarashiDango.AvatarUtils;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Animations;
 using VRC.SDK3.Dynamics.Contact.Components;
+using static VRC.SDK3.Avatars.Components.VRCAvatarDescriptor;
 
 [assembly: ExportsPlugin(typeof(AvatarUtilsNDMFPlugin))]
 
@@ -21,7 +23,110 @@ namespace MitarashiDango.AvatarUtils
 
         private void Processing(BuildContext ctx)
         {
+            ModifyAnimatorControllerProcess(ctx);
             FaceEmoteControlProcess(ctx);
+        }
+
+        private void ModifyAnimatorControllerProcess(BuildContext ctx)
+        {
+            var animatorControllerLayerModifiers = ctx.AvatarRootObject.GetComponentsInChildren<AnimatorControllerModifier>();
+            if (animatorControllerLayerModifiers.Length == 0)
+            {
+                return;
+            }
+
+            var modifierOptions = BuildModifierOptions(animatorControllerLayerModifiers);
+
+            var avatarDescriptor = ctx.AvatarDescriptor;
+            ModifyAnimationLayers(avatarDescriptor.baseAnimationLayers, modifierOptions);
+            ModifyAnimationLayers(avatarDescriptor.specialAnimationLayers, modifierOptions);
+        }
+
+        private Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerModifyOption>> BuildModifierOptions(AnimatorControllerModifier[] animatorControllerLayerModifiers)
+        {
+            var modifierOptions = new Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerModifyOption>>();
+
+            foreach (var animatorControllerModifier in animatorControllerLayerModifiers)
+            {
+                foreach (var modifierOption in animatorControllerModifier.modifierOptions)
+                {
+                    AnimLayerType playableLayerType;
+                    switch (modifierOption.layerType)
+                    {
+                        case PlayableLayerType.Action:
+                            playableLayerType = AnimLayerType.Action;
+                            break;
+                        case PlayableLayerType.Additive:
+                            playableLayerType = AnimLayerType.Additive;
+                            break;
+                        case PlayableLayerType.Base:
+                            playableLayerType = AnimLayerType.Base;
+                            break;
+                        case PlayableLayerType.FX:
+                            playableLayerType = AnimLayerType.FX;
+                            break;
+                        case PlayableLayerType.Gesture:
+                            playableLayerType = AnimLayerType.Gesture;
+                            break;
+                        case PlayableLayerType.IKPose:
+                            playableLayerType = AnimLayerType.IKPose;
+                            break;
+                        case PlayableLayerType.Sitting:
+                            playableLayerType = AnimLayerType.Sitting;
+                            break;
+                        case PlayableLayerType.TPose:
+                            playableLayerType = AnimLayerType.TPose;
+                            break;
+                        default:
+                            continue;
+                    }
+
+                    if (!modifierOptions.ContainsKey(playableLayerType))
+                    {
+                        modifierOptions.Add(playableLayerType, new Dictionary<string, AnimatorControllerModifyOption>());
+                    }
+
+                    modifierOptions[playableLayerType].Add(modifierOption.layerName, modifierOption);
+                }
+            }
+
+            return modifierOptions;
+        }
+
+        private void ModifyAnimationLayers(CustomAnimLayer[] customAnimLayers, Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerModifyOption>> modifierOptions)
+        {
+            for (var i = 0; i < customAnimLayers.Length; i++)
+            {
+                var layer = customAnimLayers[i];
+
+                if (!modifierOptions.ContainsKey(layer.type))
+                {
+                    continue;
+                }
+
+                if (layer.animatorController is AnimatorController c)
+                {
+                    for (var j = 0; j < c.layers.Length;)
+                    {
+                        var targetLayer = c.layers[j];
+                        if (!modifierOptions[layer.type].ContainsKey(targetLayer.name))
+                        {
+                            j++;
+                            continue;
+                        }
+
+                        var modifierOption = modifierOptions[layer.type][targetLayer.name];
+
+                        if (modifierOption.removeLayer)
+                        {
+                            c.RemoveLayer(j);
+                            continue;
+                        }
+
+                        j++;
+                    }
+                }
+            }
         }
 
         private void FaceEmoteControlProcess(BuildContext ctx)
