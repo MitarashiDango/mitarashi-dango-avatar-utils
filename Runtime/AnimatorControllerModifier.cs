@@ -7,6 +7,6 @@ namespace MitarashiDango.AvatarUtils
     [AddComponentMenu("MitarashiDango AvatarUtils/Animator Controller Modifier")]
     public class AnimatorControllerModifier : MonoBehaviour, IEditorOnly
     {
-        public List<AnimatorControllerModifyOption> modifierOptions;
+        public List<AnimatorControllerLayerModifyOption> layerModifyOptions;
     }
 }

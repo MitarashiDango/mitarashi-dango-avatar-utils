@@ -35,23 +35,23 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
-            var modifierOptions = BuildModifierOptions(animatorControllerLayerModifiers);
+            var layerModifyOptions = BuildLayerModifyOptions(animatorControllerLayerModifiers);
 
             var avatarDescriptor = ctx.AvatarDescriptor;
-            ModifyAnimationLayers(avatarDescriptor.baseAnimationLayers, modifierOptions);
-            ModifyAnimationLayers(avatarDescriptor.specialAnimationLayers, modifierOptions);
+            ModifyAnimationLayers(avatarDescriptor.baseAnimationLayers, layerModifyOptions);
+            ModifyAnimationLayers(avatarDescriptor.specialAnimationLayers, layerModifyOptions);
         }
 
-        private Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerModifyOption>> BuildModifierOptions(AnimatorControllerModifier[] animatorControllerLayerModifiers)
+        private Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerLayerModifyOption>> BuildLayerModifyOptions(AnimatorControllerModifier[] animatorControllerLayerModifiers)
         {
-            var modifierOptions = new Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerModifyOption>>();
+            var layerModifyOptions = new Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerLayerModifyOption>>();
 
             foreach (var animatorControllerModifier in animatorControllerLayerModifiers)
             {
-                foreach (var modifierOption in animatorControllerModifier.modifierOptions)
+                foreach (var layerModifyOption in animatorControllerModifier.layerModifyOptions)
                 {
                     AnimLayerType playableLayerType;
-                    switch (modifierOption.layerType)
+                    switch (layerModifyOption.layerType)
                     {
                         case PlayableLayerType.Action:
                             playableLayerType = AnimLayerType.Action;
@@ -81,19 +81,19 @@ namespace MitarashiDango.AvatarUtils
                             continue;
                     }
 
-                    if (!modifierOptions.ContainsKey(playableLayerType))
+                    if (!layerModifyOptions.ContainsKey(playableLayerType))
                     {
-                        modifierOptions.Add(playableLayerType, new Dictionary<string, AnimatorControllerModifyOption>());
+                        layerModifyOptions.Add(playableLayerType, new Dictionary<string, AnimatorControllerLayerModifyOption>());
                     }
 
-                    modifierOptions[playableLayerType].Add(modifierOption.layerName, modifierOption);
+                    layerModifyOptions[playableLayerType].Add(layerModifyOption.layerName, layerModifyOption);
                 }
             }
 
-            return modifierOptions;
+            return layerModifyOptions;
         }
 
-        private void ModifyAnimationLayers(CustomAnimLayer[] customAnimLayers, Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerModifyOption>> modifierOptions)
+        private void ModifyAnimationLayers(CustomAnimLayer[] customAnimLayers, Dictionary<AnimLayerType, Dictionary<string, AnimatorControllerLayerModifyOption>> modifierOptions)
         {
             for (var i = 0; i < customAnimLayers.Length; i++)
             {
