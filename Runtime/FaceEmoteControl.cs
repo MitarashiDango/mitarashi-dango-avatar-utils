@@ -12,6 +12,9 @@ namespace MitarashiDango.AvatarUtils
         public Motion defaultFaceMotion;
 
         [HideInInspector]
+        public float time = 0.1f;
+
+        [HideInInspector]
         public FaceEmoteGestureGroup leftFaceEmoteGestureGroup;
 
         [HideInInspector]

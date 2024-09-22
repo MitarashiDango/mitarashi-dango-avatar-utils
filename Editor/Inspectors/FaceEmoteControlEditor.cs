@@ -8,6 +8,7 @@ namespace MitarashiDango.AvatarUtils
     public class FaceEmoteControlEditor : Editor
     {
         private SerializedProperty defaultFaceMotion;
+        private SerializedProperty time;
         private SerializedProperty leftFaceEmoteGestureGroup;
         private SerializedProperty leftFist;
         private SerializedProperty leftHandOpen;
@@ -32,6 +33,8 @@ namespace MitarashiDango.AvatarUtils
         private void OnEnable()
         {
             defaultFaceMotion = serializedObject.FindProperty("defaultFaceMotion");
+
+            time = serializedObject.FindProperty("time");
 
             leftFaceEmoteGestureGroup = serializedObject.FindProperty("leftFaceEmoteGestureGroup");
 
@@ -80,6 +83,8 @@ namespace MitarashiDango.AvatarUtils
             EditorGUILayout.LabelField("表情設定", EditorStyles.boldLabel);
 
             EditorGUILayout.PropertyField(defaultFaceMotion, new GUIContent("Default Face"), false);
+
+            EditorGUILayout.PropertyField(time, new GUIContent("Time"), false);
 
             EditorGUILayout.Space();
 
