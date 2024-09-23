@@ -78,14 +78,6 @@ namespace MitarashiDango.AvatarUtils
             {
                 subMenuItems.Add(faceEmoteGroupsMenu);
             }
-            else
-            {
-                var additionalFaceEmoteMenu = GenerateAdditionalFaceEmoteMenu(faceEmoteControl);
-                if (additionalFaceEmoteMenu != null)
-                {
-                    subMenuItems.Add(additionalFaceEmoteMenu);
-                }
-            }
 
             foreach (var subMenuItem in subMenuItems)
             {
@@ -105,82 +97,41 @@ namespace MitarashiDango.AvatarUtils
             var subMenu = GenerateSubMenu("左手", null);
             var subMenuItems = new List<GameObject>();
 
-            if (faceEmoteControl.leftFaceEmoteGestureGroup != null)
+            var faceEmoteGestureGroup = faceEmoteControl?.leftFaceEmoteGestureGroup;
+            if (faceEmoteGestureGroup?.fist?.motion != null)
             {
-                var faceEmoteGestureGroup = faceEmoteControl?.leftFaceEmoteGestureGroup;
-                if (faceEmoteGestureGroup?.fist?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fist, "Fist", 1));
-                }
-
-                if (faceEmoteGestureGroup?.handOpen?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handOpen, "HandOpen", 2));
-                }
-
-                if (faceEmoteGestureGroup?.fingerPoint?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fingerPoint, "FingerPoint", 3));
-                }
-
-                if (faceEmoteGestureGroup?.victory?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.victory, "Victory", 4));
-                }
-
-                if (faceEmoteGestureGroup?.rockNRoll?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.rockNRoll, "RockNRoll", 5));
-                }
-
-                if (faceEmoteGestureGroup?.handGun?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handGun, "HandGun", 6));
-                }
-
-                if (faceEmoteGestureGroup?.thumbsUp?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.thumbsUp, "ThumbsUp", 7));
-                }
-            }
-            else
-            {
-                if (faceEmoteControl.leftFist != null && faceEmoteControl.leftFist.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftFist, "Fist", 1));
-                }
-
-                if (faceEmoteControl.leftHandOpen != null && faceEmoteControl.leftHandOpen.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftHandOpen, "HandOpen", 2));
-                }
-
-                if (faceEmoteControl.leftFingerPoint != null && faceEmoteControl.leftFingerPoint.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftFingerPoint, "FingerPoint", 3));
-                }
-
-                if (faceEmoteControl.leftVictory != null && faceEmoteControl.leftVictory.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftVictory, "Victory", 4));
-                }
-
-                if (faceEmoteControl.leftRockNRoll != null && faceEmoteControl.leftRockNRoll.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftRockNRoll, "RockNRoll", 5));
-                }
-
-                if (faceEmoteControl.leftHandGun != null && faceEmoteControl.leftHandGun.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftHandGun, "HandGun", 6));
-                }
-
-                if (faceEmoteControl.leftThumbsUp != null && faceEmoteControl.leftThumbsUp.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.leftThumbsUp, "ThumbsUp", 7));
-                }
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fist, "Fist", 1));
             }
 
+            if (faceEmoteGestureGroup?.handOpen?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handOpen, "HandOpen", 2));
+            }
+
+            if (faceEmoteGestureGroup?.fingerPoint?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fingerPoint, "FingerPoint", 3));
+            }
+
+            if (faceEmoteGestureGroup?.victory?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.victory, "Victory", 4));
+            }
+
+            if (faceEmoteGestureGroup?.rockNRoll?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.rockNRoll, "RockNRoll", 5));
+            }
+
+            if (faceEmoteGestureGroup?.handGun?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handGun, "HandGun", 6));
+            }
+
+            if (faceEmoteGestureGroup?.thumbsUp?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.thumbsUp, "ThumbsUp", 7));
+            }
 
             foreach (var subMenuItem in subMenuItems)
             {
@@ -200,103 +151,40 @@ namespace MitarashiDango.AvatarUtils
             var subMenu = GenerateSubMenu("右手", null);
             var subMenuItems = new List<GameObject>();
 
-            if (faceEmoteControl.rightFaceEmoteGestureGroup != null)
+            var faceEmoteGestureGroup = faceEmoteControl?.rightFaceEmoteGestureGroup;
+            if (faceEmoteGestureGroup?.fist?.motion != null)
             {
-                var faceEmoteGestureGroup = faceEmoteControl?.rightFaceEmoteGestureGroup;
-                if (faceEmoteGestureGroup?.fist?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fist, "Fist", 8));
-                }
-
-                if (faceEmoteGestureGroup?.handOpen?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handOpen, "HandOpen", 9));
-                }
-
-                if (faceEmoteGestureGroup?.fingerPoint?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fingerPoint, "FingerPoint", 10));
-                }
-
-                if (faceEmoteGestureGroup?.victory?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.victory, "Victory", 11));
-                }
-
-                if (faceEmoteGestureGroup?.rockNRoll?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.rockNRoll, "RockNRoll", 12));
-                }
-
-                if (faceEmoteGestureGroup?.handGun?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handGun, "HandGun", 13));
-                }
-
-                if (faceEmoteGestureGroup?.thumbsUp?.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.thumbsUp, "ThumbsUp", 14));
-                }
-            }
-            else
-            {
-                if (faceEmoteControl.rightFist != null && faceEmoteControl.rightFist.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightFist, "Fist", 8));
-                }
-
-                if (faceEmoteControl.rightHandOpen != null && faceEmoteControl.rightHandOpen.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightHandOpen, "HandOpen", 9));
-                }
-
-                if (faceEmoteControl.rightFingerPoint != null && faceEmoteControl.rightFingerPoint.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightFingerPoint, "FingerPoint", 10));
-                }
-
-                if (faceEmoteControl.rightVictory != null && faceEmoteControl.rightVictory.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightVictory, "Victory", 11));
-                }
-
-                if (faceEmoteControl.rightRockNRoll != null && faceEmoteControl.rightRockNRoll.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightRockNRoll, "RockNRoll", 12));
-                }
-
-                if (faceEmoteControl.rightHandGun != null && faceEmoteControl.rightHandGun.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightHandGun, "HandGun", 13));
-                }
-
-                if (faceEmoteControl.rightThumbsUp != null && faceEmoteControl.rightThumbsUp.motion != null)
-                {
-                    subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.rightThumbsUp, "ThumbsUp", 14));
-                }
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fist, "Fist", 8));
             }
 
-            foreach (var subMenuItem in subMenuItems)
+            if (faceEmoteGestureGroup?.handOpen?.motion != null)
             {
-                subMenuItem.transform.parent = subMenu.transform;
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handOpen, "HandOpen", 9));
             }
 
-            return subMenu;
-        }
-
-        private GameObject GenerateAdditionalFaceEmoteMenu(FaceEmoteControl faceEmoteControl)
-        {
-            if (faceEmoteControl.additionalFaceEmotes.Count == 0)
+            if (faceEmoteGestureGroup?.fingerPoint?.motion != null)
             {
-                return null;
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.fingerPoint, "FingerPoint", 10));
             }
 
-            var subMenu = GenerateSubMenu("追加の表情", null);
-            var subMenuItems = new List<GameObject>();
-
-            for (var i = 0; i < faceEmoteControl.additionalFaceEmotes.Count; i++)
+            if (faceEmoteGestureGroup?.victory?.motion != null)
             {
-                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteControl.additionalFaceEmotes[i], $"表情{i + 1}", i + Constants.ADDITIONAL_FACE_EMOTE_MIN_NUMBER));
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.victory, "Victory", 11));
+            }
+
+            if (faceEmoteGestureGroup?.rockNRoll?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.rockNRoll, "RockNRoll", 12));
+            }
+
+            if (faceEmoteGestureGroup?.handGun?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.handGun, "HandGun", 13));
+            }
+
+            if (faceEmoteGestureGroup?.thumbsUp?.motion != null)
+            {
+                subMenuItems.Add(GenerateFaceSelectMenuItem(faceEmoteGestureGroup.thumbsUp, "ThumbsUp", 14));
             }
 
             foreach (var subMenuItem in subMenuItems)
