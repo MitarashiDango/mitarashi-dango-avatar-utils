@@ -10,6 +10,8 @@ namespace MitarashiDango.AvatarUtils
         public static readonly string FEC_FACE_EMOTE_LOCKED = "FEC_FaceEmoteLocked";
         public static readonly string FEC_SELECTED_GESTURE_LEFT = "FEC_SelectedGestureLeft";
         public static readonly string FEC_SELECTED_GESTURE_RIGHT = "FEC_SelectedGestureRight";
+        public static readonly string FEC_SELECTED_LEFT_GESTURE_GROUP = "FEC_SelectedLeftGestureGroup";
+        public static readonly string FEC_SELECTED_RIGHT_GESTURE_GROUP = "FEC_SelectedRightGestureGroup";
         public static readonly string FEC_FIXED_FACE_EMOTE = "FEC_FixedFaceEmote";
         public static readonly string FEC_FACE_EMOTE_LOCKER_AUTO_DISABLE_ON_SIT = "FEC_FaceEmoteLockerAutoDisableOnSit";
         public static readonly string FEC_SELECTED_FACE_EMOTE = "FEC_SelectedFaceEmote";
@@ -53,6 +55,22 @@ namespace MitarashiDango.AvatarUtils
                 new ParameterConfig
                 {
                     nameOrPrefix = FEC_SELECTED_GESTURE_RIGHT,
+                    defaultValue = 0,
+                    syncType = ParameterSyncType.Int,
+                    saved = true,
+                    localOnly = true,
+                },
+                new ParameterConfig
+                {
+                    nameOrPrefix = FEC_SELECTED_LEFT_GESTURE_GROUP,
+                    defaultValue = 0,
+                    syncType = ParameterSyncType.Int,
+                    saved = true,
+                    localOnly = true,
+                },
+                new ParameterConfig
+                {
+                    nameOrPrefix = FEC_SELECTED_RIGHT_GESTURE_GROUP,
                     defaultValue = 0,
                     syncType = ParameterSyncType.Int,
                     saved = true,

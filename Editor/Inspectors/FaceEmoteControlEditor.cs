@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
@@ -9,8 +8,7 @@ namespace MitarashiDango.AvatarUtils
     {
         private SerializedProperty defaultFaceMotion;
         private SerializedProperty time;
-        private SerializedProperty leftFaceEmoteGestureGroup;
-        private SerializedProperty rightFaceEmoteGestureGroup;
+        private SerializedProperty faceEmoteGestureGroups;
         private SerializedProperty faceEmoteGroups;
 
         private void OnEnable()
@@ -19,9 +17,7 @@ namespace MitarashiDango.AvatarUtils
 
             time = serializedObject.FindProperty("time");
 
-            leftFaceEmoteGestureGroup = serializedObject.FindProperty("leftFaceEmoteGestureGroup");
-
-            rightFaceEmoteGestureGroup = serializedObject.FindProperty("rightFaceEmoteGestureGroup");
+            faceEmoteGestureGroups = serializedObject.FindProperty("faceEmoteGestureGroups");
 
             faceEmoteGroups = serializedObject.FindProperty("faceEmoteGroups");
         }
@@ -38,21 +34,7 @@ namespace MitarashiDango.AvatarUtils
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField("Left hand", EditorStyles.boldLabel);
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                EditorGUILayout.PropertyField(leftFaceEmoteGestureGroup, new GUIContent("表情ジェスチャーグループ"), false);
-            }
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.LabelField("Right hand", EditorStyles.boldLabel);
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                EditorGUILayout.PropertyField(rightFaceEmoteGestureGroup, new GUIContent("表情ジェスチャーグループ"), false);
-            }
+            EditorGUILayout.PropertyField(faceEmoteGestureGroups, new GUIContent("表情ジェスチャーグループ"));
 
             EditorGUILayout.Space();
 
