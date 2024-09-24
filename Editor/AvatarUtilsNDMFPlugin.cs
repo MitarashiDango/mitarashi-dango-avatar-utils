@@ -25,6 +25,7 @@ namespace MitarashiDango.AvatarUtils
         {
             ModifyAnimatorControllerProcess(ctx);
             FaceEmoteControlProcess(ctx);
+            PhysBonesSwitcherProcess(ctx);
         }
 
         private void ModifyAnimatorControllerProcess(BuildContext ctx)
@@ -150,6 +151,20 @@ namespace MitarashiDango.AvatarUtils
                 AddAnimatorController(ctx.AvatarRootObject, faceEmoteControl, faceEmoteLockIndicator);
                 Object.DestroyImmediate(faceEmoteControl);
             }
+        }
+
+        private void PhysBonesSwitcherProcess(BuildContext ctx)
+        {
+            var physBonesSwitcher = ctx.AvatarRootObject.GetComponentInChildren<PhysBonesSwitcher>();
+            if (physBonesSwitcher == null)
+            {
+                return;
+            }
+
+            var processor = new PhysBonesSwitcherProcessor();
+            processor.Run(ctx, physBonesSwitcher);
+
+            Object.DestroyImmediate(physBonesSwitcher);
         }
 
         private void AddParameters(GameObject obj)
