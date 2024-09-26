@@ -13,31 +13,7 @@ namespace MitarashiDango.AvatarUtils
         /// <returns></returns>
         public static string GetPathInHierarchy(GameObject targetObject, GameObject rootObject)
         {
-            if (targetObject == null)
-            {
-                return null;
-            }
-
-            var objectNames = new List<string>();
-            var currentTransform = targetObject.transform;
-            var rootTransform = rootObject?.transform;
-
-            while (true)
-            {
-                if (rootTransform != null && currentTransform == rootTransform)
-                {
-                    return string.Join("/", objectNames);
-                }
-
-                objectNames.Insert(0, currentTransform.name);
-
-                if (currentTransform.parent == null)
-                {
-                    return string.Join("/", objectNames);
-                }
-
-                currentTransform = currentTransform.parent;
-            }
+            return GetPathInHierarchy(targetObject?.transform, rootObject?.transform);
         }
 
         /// <summary>
@@ -61,18 +37,20 @@ namespace MitarashiDango.AvatarUtils
             {
                 if (rootTransform != null && currentTransform == rootTransform)
                 {
-                    return string.Join("/", objectNames);
+                    break;
                 }
 
                 objectNames.Insert(0, currentTransform.name);
 
                 if (currentTransform.parent == null)
                 {
-                    return string.Join("/", objectNames);
+                    break;
                 }
 
                 currentTransform = currentTransform.parent;
             }
+
+            return string.Join("/", objectNames);
         }
     }
 }
