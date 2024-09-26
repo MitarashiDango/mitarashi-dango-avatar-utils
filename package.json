@@ -1,7 +1,7 @@
 {
-  "name": "com.matcha-soft.mitarashi-dango-avatar-utils",
-  "version": "1.3.0",
-  "displayName": "MitarashiDango Avatar Utils",
+  "name": "com.matcha-soft.vrchat-avatar-utils",
+  "version": "1.4.0",
+  "displayName": "MitarashiDango's Avatar Utils",
   "description": "",
   "unity": "2019.1",
   "unityRelease": "0b5",

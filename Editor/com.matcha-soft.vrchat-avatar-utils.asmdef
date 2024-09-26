@@ -1,11 +1,11 @@
 {
-    "name": "com.matcha-soft.mitarashi-dango-avatar-utils",
+    "name": "com.matcha-soft.vrchat-avatar-utils",
     "rootNamespace": "",
     "references": [
         "nadena.dev.ndmf",
         "nadena.dev.ndmf.runtime",
         "nadena.dev.modular-avatar.core",
-        "com.matcha-soft.mitarashi-dango-avatar-utils.runtime"
+        "com.matcha-soft.vrchat-avatar-utils.runtime"
     ],
     "includePlatforms": [
         "Editor"
