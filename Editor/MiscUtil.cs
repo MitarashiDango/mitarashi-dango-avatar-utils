@@ -52,5 +52,13 @@ namespace MitarashiDango.AvatarUtils
 
             return string.Join("/", objectNames);
         }
+
+        public static Mesh CreatePrimitiveMesh(PrimitiveType type)
+        {
+            var go = GameObject.CreatePrimitive(type);
+            var mesh = go.GetComponent<MeshFilter>().sharedMesh;
+            GameObject.DestroyImmediate(go);
+            return mesh;
+        }
     }
 }

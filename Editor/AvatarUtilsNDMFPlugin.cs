@@ -139,7 +139,7 @@ namespace MitarashiDango.AvatarUtils
             iconGameObject.transform.localScale = new Vector3(0.0015f, 0.0015f, 0.0015f);
 
             var meshFilter = iconGameObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = CreatePrimitiveMesh(PrimitiveType.Plane);
+            meshFilter.sharedMesh = MiscUtil.CreatePrimitiveMesh(PrimitiveType.Plane);
 
             var iconMaterial = AssetUtil.LoadAssetAtGUID<Material>(Constants.ASSET_GUID_FACE_EMOTE_LOCKING_ICON);
             var renderer = iconGameObject.AddComponent<MeshRenderer>();
@@ -150,14 +150,6 @@ namespace MitarashiDango.AvatarUtils
             renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
 
             return go;
-        }
-
-        private Mesh CreatePrimitiveMesh(PrimitiveType type)
-        {
-            var go = GameObject.CreatePrimitive(type);
-            var mesh = go.GetComponent<MeshFilter>().sharedMesh;
-            GameObject.DestroyImmediate(go);
-            return mesh;
         }
     }
 }
