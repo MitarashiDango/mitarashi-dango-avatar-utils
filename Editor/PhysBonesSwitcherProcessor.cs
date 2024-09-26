@@ -10,8 +10,14 @@ namespace MitarashiDango.AvatarUtils
 {
     public class PhysBonesSwitcherProcessor
     {
-        public void Run(BuildContext ctx, PhysBonesSwitcher physBonesSwitcher)
+        public void Run(BuildContext ctx)
         {
+            var physBonesSwitcher = ctx.AvatarRootObject.GetComponentInChildren<PhysBonesSwitcher>();
+            if (physBonesSwitcher == null)
+            {
+                return;
+            }
+
             AddParameters(physBonesSwitcher);
             AddMenuItems(physBonesSwitcher);
 
@@ -23,6 +29,8 @@ namespace MitarashiDango.AvatarUtils
             mergeAnimator.layerType = AnimLayerType.FX;
             mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
             mergeAnimator.matchAvatarWriteDefaults = true;
+
+            Object.DestroyImmediate(physBonesSwitcher);
         }
 
         private void AddParameters(PhysBonesSwitcher physBonesSwitcher)
