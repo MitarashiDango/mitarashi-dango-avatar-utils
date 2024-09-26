@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using MitarashiDango.AvatarUtils;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Animations;
 using VRC.SDK3.Dynamics.Contact.Components;
-using static VRC.SDK3.Avatars.Components.VRCAvatarDescriptor;
 
 [assembly: ExportsPlugin(typeof(AvatarUtilsNDMFPlugin))]
 
@@ -57,16 +55,8 @@ namespace MitarashiDango.AvatarUtils
 
         private void PhysBonesSwitcherProcess(BuildContext ctx)
         {
-            var physBonesSwitcher = ctx.AvatarRootObject.GetComponentInChildren<PhysBonesSwitcher>();
-            if (physBonesSwitcher == null)
-            {
-                return;
-            }
-
             var processor = new PhysBonesSwitcherProcessor();
-            processor.Run(ctx, physBonesSwitcher);
-
-            Object.DestroyImmediate(physBonesSwitcher);
+            processor.Run(ctx);
         }
 
         private void AddParameters(GameObject obj)
