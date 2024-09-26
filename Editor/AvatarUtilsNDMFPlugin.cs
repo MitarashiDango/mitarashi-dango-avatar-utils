@@ -16,7 +16,7 @@ namespace MitarashiDango.AvatarUtils
         {
             InPhase(BuildPhase.Generating)
                 .BeforePlugin("nadena.dev.modular-avatar")
-                .Run("Generate face emote controller assets", ctx => Processing(ctx));
+                .Run("Run MitarashiDango's Avatar Utils Processes", ctx => Processing(ctx));
         }
 
         private void Processing(BuildContext ctx)
