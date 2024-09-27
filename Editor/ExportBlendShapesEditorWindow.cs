@@ -9,7 +9,6 @@ namespace MitarashiDango.AvatarUtils
         private int _pathTypeIndex;
         private bool _excludeZeroWeightBlendShapes;
         private string _excludeBlendShapeNameStartWith = "";
-
         private string _excludeBlendShapeNameEndWith = "";
 
         [MenuItem("GameObject/Export BlendShapes", false, 0)]
