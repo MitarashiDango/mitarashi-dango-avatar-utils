@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using VRC.SDK3.Avatars.Components;
 
 namespace MitarashiDango.AvatarUtils
 {
@@ -59,6 +60,26 @@ namespace MitarashiDango.AvatarUtils
             var mesh = go.GetComponent<MeshFilter>().sharedMesh;
             GameObject.DestroyImmediate(go);
             return mesh;
+        }
+
+        public static GameObject GetAvatarRoot(Transform transform)
+        {
+            GameObject avatarRootObject = null;
+            var currentTransform = transform;
+
+            while (currentTransform != null)
+            {
+                var avatarDescriptor = currentTransform.gameObject.GetComponent<VRCAvatarDescriptor>();
+                if (avatarDescriptor != null)
+                {
+                    avatarRootObject = currentTransform.gameObject;
+                    break;
+                }
+
+                currentTransform = currentTransform.parent;
+            }
+
+            return avatarRootObject;
         }
     }
 }
