@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,9 +8,17 @@ namespace MitarashiDango.AvatarUtils
     {
         private GameObject _gameObject;
         private int _pathTypeIndex;
-        private bool _excludeZeroWeightBlendShapes;
-        private string _excludeBlendShapeNameStartWith = "";
-        private string _excludeBlendShapeNameEndWith = "";
+        private int _zeroWeightBlendShapesIncludeOptionIndex;
+        private int _vrcVisemeBlendShapesIncludeOptionIndex;
+        private int _mmdBlendShapesIncludeOptionIndex;
+
+        [SerializeField]
+        private string[] _excludeBlendShapeNamesStartWith = new string[] { };
+
+        [SerializeField]
+        private string[] _excludeBlendShapeNamesEndWith = new string[] { };
+
+        private Vector2 _scrollPosition = Vector2.zero;
 
         [MenuItem("GameObject/Export BlendShapes", false, 0)]
         internal static void OpenWindow()
@@ -21,8 +30,8 @@ namespace MitarashiDango.AvatarUtils
             }
 
             var pos = window.position;
-            pos.width = 350;
-            pos.height = 160;
+            pos.width = 400;
+            pos.height = 280;
             window.position = pos;
 
             window.Show();
@@ -36,21 +45,36 @@ namespace MitarashiDango.AvatarUtils
                 new GUIContent("このオブジェクトからのパス"),
             };
 
-            _gameObject = (GameObject)EditorGUILayout.ObjectField(_gameObject, typeof(GameObject), true);
-            _pathTypeIndex = EditorGUILayout.Popup(new GUIContent("パス出力モード"), _pathTypeIndex, pathTypeOptions);
-
-            EditorGUILayout.LabelField("出力対象外とするシェイプキー");
-
-            EditorGUI.indentLevel++;
-            _excludeZeroWeightBlendShapes = EditorGUILayout.Toggle("値が0のシェイプキー", _excludeZeroWeightBlendShapes);
-            _excludeBlendShapeNameStartWith = EditorGUILayout.TextField("名前のプレフィックス", _excludeBlendShapeNameStartWith);
-            _excludeBlendShapeNameEndWith = EditorGUILayout.TextField("名前のサフィックス", _excludeBlendShapeNameEndWith);
-            EditorGUI.indentLevel--;
-
-            var generateButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
-            if (GUI.Button(generateButtonRect, new GUIContent("アニメーションクリップ生成")))
+            var excludeOptions = new GUIContent[]
             {
-                ExportBlendShapes();
+                new GUIContent("出力対象に含める"),
+                new GUIContent("出力対象外とする"),
+            };
+
+            _gameObject = (GameObject)EditorGUILayout.ObjectField(_gameObject, typeof(GameObject), true);
+
+            using (var scrollViewScope = new EditorGUILayout.ScrollViewScope(_scrollPosition))
+            {
+                _scrollPosition = scrollViewScope.scrollPosition;
+
+                var so = new SerializedObject(this);
+                so.Update();
+
+                _pathTypeIndex = EditorGUILayout.Popup(new GUIContent("パス出力モード"), _pathTypeIndex, pathTypeOptions);
+                _zeroWeightBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("値が0のシェイプキー"), _zeroWeightBlendShapesIncludeOptionIndex, excludeOptions);
+                _vrcVisemeBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("vrc.で始まるシェイプキー"), _vrcVisemeBlendShapesIncludeOptionIndex, excludeOptions);
+                _mmdBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("MMD用シェイプキー"), _mmdBlendShapesIncludeOptionIndex, excludeOptions);
+
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("出力対象外とする名前のプレフィックス"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("出力対象外とする名前のサフィックス"), true);
+
+                so.ApplyModifiedProperties();
+
+                var generateButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
+                if (GUI.Button(generateButtonRect, new GUIContent("アニメーションクリップ生成")))
+                {
+                    ExportBlendShapes();
+                }
             }
         }
 
@@ -82,13 +106,19 @@ namespace MitarashiDango.AvatarUtils
             for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
             {
                 var blendShapeName = skinnedMesh.GetBlendShapeName(i);
-                if ((_excludeBlendShapeNameStartWith != "" && blendShapeName.StartsWith(_excludeBlendShapeNameStartWith))
-                    || (_excludeBlendShapeNameEndWith != "" && blendShapeName.EndsWith(_excludeBlendShapeNameEndWith)))
+                if (_excludeBlendShapeNamesStartWith.ToList().Exists(name => name != "" && blendShapeName.StartsWith(name))
+                    || _excludeBlendShapeNamesEndWith.ToList().Exists(name => name != "" && blendShapeName.EndsWith(name))
+                    || (_vrcVisemeBlendShapesIncludeOptionIndex == 1 && blendShapeName.StartsWith("vrc."))
+                    || (_mmdBlendShapesIncludeOptionIndex == 1 && Constants.MMD_BLEND_SHAPE_NAMES.ToList().Exists(name => blendShapeName == name)))
                 {
                     continue;
                 }
 
                 var blendShapeWeight = skinnedMeshRenderer.GetBlendShapeWeight(i);
+                if (_zeroWeightBlendShapesIncludeOptionIndex == 1 && blendShapeWeight == 0)
+                {
+                    continue;
+                }
 
                 var animationCurve = new AnimationCurve();
                 animationCurve.AddKey(0, blendShapeWeight);
