@@ -97,6 +97,15 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
+            var filePath = EditorUtility.SaveFilePanelInProject("名前を付けて保存", $"AnimationClip_{_gameObject.name}", "anim", "アニメーションクリップの保存先を選択してください", "Assets");
+            if (filePath == "")
+            {
+                EditorUtility.DisplayDialog("情報", "キャンセルされました", "OK");
+                return;
+            }
+
+            EditorUtility.DisplayProgressBar("処理中", "", 0);
+
             var skinnedMesh = skinnedMeshRenderer.sharedMesh;
 
             var animationClip = new AnimationClip()
@@ -109,6 +118,9 @@ namespace MitarashiDango.AvatarUtils
 
             for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
             {
+                float progress = i / (float)skinnedMesh.blendShapeCount;
+                EditorUtility.DisplayProgressBar("処理中", $"{i} {skinnedMesh.blendShapeCount} ({(int)(progress * 100)}%)", progress);
+
                 var blendShapeName = skinnedMesh.GetBlendShapeName(i);
                 if (_excludeBlendShapeNames.ToList().Exists(name => blendShapeName == name)
                     || _excludeBlendShapeNamesStartWith.ToList().Exists(name => name != "" && blendShapeName.StartsWith(name))
@@ -131,12 +143,7 @@ namespace MitarashiDango.AvatarUtils
                 animationClip.SetCurve(objectPath, typeof(SkinnedMeshRenderer), $"blendShape.{blendShapeName}", animationCurve);
             }
 
-            var filePath = EditorUtility.SaveFilePanelInProject("名前を付けて保存", $"AnimationClip_{_gameObject.name}", "anim", "アニメーションクリップの保存先を選択してください", "Assets");
-            if (filePath == "")
-            {
-                EditorUtility.DisplayDialog("情報", "キャンセルされました", "OK");
-                return;
-            }
+            EditorUtility.ClearProgressBar();
 
             AssetDatabase.CreateAsset(animationClip, filePath);
             AssetDatabase.SaveAssets();
