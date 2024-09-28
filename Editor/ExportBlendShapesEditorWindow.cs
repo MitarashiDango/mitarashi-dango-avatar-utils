@@ -13,6 +13,9 @@ namespace MitarashiDango.AvatarUtils
         private int _mmdBlendShapesIncludeOptionIndex;
 
         [SerializeField]
+        private string[] _excludeBlendShapeNames = new string[] { };
+
+        [SerializeField]
         private string[] _excludeBlendShapeNamesStartWith = new string[] { };
 
         [SerializeField]
@@ -65,8 +68,9 @@ namespace MitarashiDango.AvatarUtils
                 _vrcVisemeBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("vrc.で始まるシェイプキー"), _vrcVisemeBlendShapesIncludeOptionIndex, excludeOptions);
                 _mmdBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("MMD用シェイプキー"), _mmdBlendShapesIncludeOptionIndex, excludeOptions);
 
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("出力対象外とする名前のプレフィックス"), true);
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("出力対象外とする名前のサフィックス"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNames"), new GUIContent("出力対象外とするシェイプキー"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("出力対象外とするシェイプキーのプレフィックス"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("出力対象外とするシェイプキーのサフィックス"), true);
 
                 so.ApplyModifiedProperties();
 
@@ -106,7 +110,8 @@ namespace MitarashiDango.AvatarUtils
             for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
             {
                 var blendShapeName = skinnedMesh.GetBlendShapeName(i);
-                if (_excludeBlendShapeNamesStartWith.ToList().Exists(name => name != "" && blendShapeName.StartsWith(name))
+                if (_excludeBlendShapeNames.ToList().Exists(name => blendShapeName == name)
+                    || _excludeBlendShapeNamesStartWith.ToList().Exists(name => name != "" && blendShapeName.StartsWith(name))
                     || _excludeBlendShapeNamesEndWith.ToList().Exists(name => name != "" && blendShapeName.EndsWith(name))
                     || (_vrcVisemeBlendShapesIncludeOptionIndex == 1 && blendShapeName.StartsWith("vrc."))
                     || (_mmdBlendShapesIncludeOptionIndex == 1 && Constants.MMD_BLEND_SHAPE_NAMES.ToList().Exists(name => blendShapeName == name)))
