@@ -16,7 +16,7 @@ namespace MitarashiDango.AvatarUtils
         public static readonly string FEC_FACE_EMOTE_LOCKER_AUTO_DISABLE_ON_SIT = "FEC_FaceEmoteLockerAutoDisableOnSit";
         public static readonly string FEC_SELECTED_FACE_EMOTE = "FEC_SelectedFaceEmote";
 
-        public List<ParameterConfig> GetParameterConfigs()
+        public List<ParameterConfig> GetParameterConfigs(FaceEmoteControl faceEmoteControl)
         {
             var parameterConfigs = new List<ParameterConfig>
             {
@@ -63,7 +63,7 @@ namespace MitarashiDango.AvatarUtils
                 new ParameterConfig
                 {
                     nameOrPrefix = FEC_SELECTED_LEFT_GESTURE_GROUP,
-                    defaultValue = 0,
+                    defaultValue = faceEmoteControl.leftFaceEmoteGestureGroupNumber,
                     syncType = ParameterSyncType.Int,
                     saved = true,
                     localOnly = true,
@@ -71,7 +71,7 @@ namespace MitarashiDango.AvatarUtils
                 new ParameterConfig
                 {
                     nameOrPrefix = FEC_SELECTED_RIGHT_GESTURE_GROUP,
-                    defaultValue = 0,
+                    defaultValue = faceEmoteControl.rightFaceEmoteGestureGroupNumber,
                     syncType = ParameterSyncType.Int,
                     saved = true,
                     localOnly = true,

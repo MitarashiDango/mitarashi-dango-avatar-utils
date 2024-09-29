@@ -76,9 +76,13 @@ namespace MitarashiDango.AvatarUtils
         {
             var subMenu = GenerateSubMenu("左手", null);
 
+            var noSelectionMenuItem = GenerateToggleMenuItem("未割り当て", null, FaceEmoteControlParameters.FEC_SELECTED_LEFT_GESTURE_GROUP, 0);
+            noSelectionMenuItem.transform.parent = subMenu.transform;
+
             foreach ((var faceEmoteGestureGroup, var index) in faceEmoteControl.faceEmoteGestureGroups.Select((v, i) => (v, i)))
             {
-                var subMenuItem = GenerateToggleMenuItem(faceEmoteGestureGroup.name != "" ? faceEmoteGestureGroup.name : $"ジェスチャー{index + 1}", null, FaceEmoteControlParameters.FEC_SELECTED_LEFT_GESTURE_GROUP, index);
+                var groupName = faceEmoteGestureGroup.groupName != "" ? faceEmoteGestureGroup.groupName : $"表情ジェスチャーグループ{index + 1}";
+                var subMenuItem = GenerateToggleMenuItem(groupName, null, FaceEmoteControlParameters.FEC_SELECTED_LEFT_GESTURE_GROUP, index + 1);
                 subMenuItem.transform.parent = subMenu.transform;
             }
 
@@ -89,9 +93,13 @@ namespace MitarashiDango.AvatarUtils
         {
             var subMenu = GenerateSubMenu("右手", null);
 
+            var noSelectionMenuItem = GenerateToggleMenuItem("未割り当て", null, FaceEmoteControlParameters.FEC_SELECTED_RIGHT_GESTURE_GROUP, 0);
+            noSelectionMenuItem.transform.parent = subMenu.transform;
+
             foreach ((var faceEmoteGestureGroup, var index) in faceEmoteControl.faceEmoteGestureGroups.Select((v, i) => (v, i)))
             {
-                var subMenuItem = GenerateToggleMenuItem(faceEmoteGestureGroup.name != "" ? faceEmoteGestureGroup.name : $"ジェスチャー{index + 1}", null, FaceEmoteControlParameters.FEC_SELECTED_RIGHT_GESTURE_GROUP, index);
+                var groupName = faceEmoteGestureGroup.groupName != "" ? faceEmoteGestureGroup.groupName : $"表情ジェスチャーグループ{index + 1}";
+                var subMenuItem = GenerateToggleMenuItem(groupName, null, FaceEmoteControlParameters.FEC_SELECTED_RIGHT_GESTURE_GROUP, index + 1);
                 subMenuItem.transform.parent = subMenu.transform;
             }
 
@@ -134,7 +142,8 @@ namespace MitarashiDango.AvatarUtils
             foreach ((var faceEmoteGestureGroup, var index) in faceEmoteControl.faceEmoteGestureGroups.Select((v, i) => (v, i)))
             {
                 var gestureMenuItems = new List<GameObject>();
-                var gestureMenu = GenerateSubMenu(faceEmoteGestureGroup.name != "" ? faceEmoteGestureGroup.name : $"ジェスチャー{index + 1}", null);
+                var groupName = faceEmoteGestureGroup.groupName != "" ? faceEmoteGestureGroup.groupName : $"表情ジェスチャーグループ{index + 1}";
+                var gestureMenu = GenerateSubMenu(groupName, null);
 
                 if (faceEmoteGestureGroup?.fist?.motion != null)
                 {
