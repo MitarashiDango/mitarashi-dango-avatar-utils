@@ -9,16 +9,17 @@ namespace MitarashiDango.AvatarUtils
         private SerializedProperty defaultFaceMotion;
         private SerializedProperty time;
         private SerializedProperty faceEmoteGestureGroups;
+        private SerializedProperty leftFaceEmoteGestureGroupNumber;
+        private SerializedProperty rightFaceEmoteGestureGroupNumber;
         private SerializedProperty faceEmoteGroups;
 
         private void OnEnable()
         {
             defaultFaceMotion = serializedObject.FindProperty("defaultFaceMotion");
-
             time = serializedObject.FindProperty("time");
-
             faceEmoteGestureGroups = serializedObject.FindProperty("faceEmoteGestureGroups");
-
+            leftFaceEmoteGestureGroupNumber = serializedObject.FindProperty("leftFaceEmoteGestureGroupNumber");
+            rightFaceEmoteGestureGroupNumber = serializedObject.FindProperty("rightFaceEmoteGestureGroupNumber");
             faceEmoteGroups = serializedObject.FindProperty("faceEmoteGroups");
         }
 
@@ -35,6 +36,42 @@ namespace MitarashiDango.AvatarUtils
             EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(faceEmoteGestureGroups, new GUIContent("表情ジェスチャーグループ"));
+
+            var faceEmoteGestureGroupNames = new GUIContent[faceEmoteGestureGroups.arraySize + 1];
+            faceEmoteGestureGroupNames[0] = new GUIContent("未割り当て");
+            for (var i = 0; i < faceEmoteGestureGroups.arraySize; i++)
+            {
+                var elem = faceEmoteGestureGroups.GetArrayElementAtIndex(i);
+                var groupName = "";
+                if (elem?.objectReferenceValue != null)
+                {
+                    var faceEmoteGestureGroup = new SerializedObject(elem.objectReferenceValue);
+                    groupName = faceEmoteGestureGroup.FindProperty("groupName")?.stringValue ?? "";
+                }
+
+                if (groupName == "")
+                {
+                    groupName = $"表情ジェスチャーグループ{i + 1}";
+                }
+
+                faceEmoteGestureGroupNames[i + 1] = new GUIContent($"{i + 1}:{groupName}");
+            }
+
+            EditorGUILayout.LabelField("デフォルトの表情ジェスチャーグループ割り当て設定");
+            if (leftFaceEmoteGestureGroupNumber.intValue > faceEmoteGestureGroups.arraySize)
+            {
+                leftFaceEmoteGestureGroupNumber.intValue = 0;
+            }
+
+            if (rightFaceEmoteGestureGroupNumber.intValue > faceEmoteGestureGroups.arraySize)
+            {
+                rightFaceEmoteGestureGroupNumber.intValue = 0;
+            }
+
+            EditorGUI.indentLevel++;
+            leftFaceEmoteGestureGroupNumber.intValue = EditorGUILayout.Popup(new GUIContent("左手"), leftFaceEmoteGestureGroupNumber.intValue, faceEmoteGestureGroupNames);
+            rightFaceEmoteGestureGroupNumber.intValue = EditorGUILayout.Popup(new GUIContent("右手"), rightFaceEmoteGestureGroupNumber.intValue, faceEmoteGestureGroupNames);
+            EditorGUI.indentLevel--;
 
             EditorGUILayout.Space();
 

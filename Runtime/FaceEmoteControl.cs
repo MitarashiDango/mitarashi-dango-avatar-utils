@@ -18,6 +18,12 @@ namespace MitarashiDango.AvatarUtils
         public List<FaceEmoteGestureGroup> faceEmoteGestureGroups;
 
         [HideInInspector]
+        public int leftFaceEmoteGestureGroupNumber;
+
+        [HideInInspector]
+        public int rightFaceEmoteGestureGroupNumber;
+
+        [HideInInspector]
         public List<FaceEmoteGroup> faceEmoteGroups;
     }
 }
