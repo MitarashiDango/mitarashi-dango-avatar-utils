@@ -9,5 +9,6 @@ namespace MitarashiDango.AvatarUtils
         public static readonly string GESTURE_RIGHT_WEIGHT = "GestureRightWeight";
         public static readonly string IS_LOCAL = "IsLocal";
         public static readonly string IN_STATION = "InStation";
+        public static readonly string SEATED = "Seated";
     }
 }
