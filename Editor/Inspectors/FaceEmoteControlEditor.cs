@@ -57,7 +57,7 @@ namespace MitarashiDango.AvatarUtils
                 faceEmoteGestureGroupNames[i + 1] = new GUIContent($"{i + 1}:{groupName}");
             }
 
-            EditorGUILayout.LabelField("デフォルトの表情ジェスチャーグループ割り当て設定");
+            EditorGUILayout.LabelField("デフォルトの表情ジェスチャーグループ割り当て設定", EditorStyles.boldLabel);
             if (leftFaceEmoteGestureGroupNumber.intValue > faceEmoteGestureGroups.arraySize)
             {
                 leftFaceEmoteGestureGroupNumber.intValue = 0;
@@ -69,8 +69,26 @@ namespace MitarashiDango.AvatarUtils
             }
 
             EditorGUI.indentLevel++;
-            leftFaceEmoteGestureGroupNumber.intValue = EditorGUILayout.Popup(new GUIContent("左手"), leftFaceEmoteGestureGroupNumber.intValue, faceEmoteGestureGroupNames);
-            rightFaceEmoteGestureGroupNumber.intValue = EditorGUILayout.Popup(new GUIContent("右手"), rightFaceEmoteGestureGroupNumber.intValue, faceEmoteGestureGroupNames);
+            var leftFaceEmoteGestureGroupNumberFieldRect = EditorGUILayout.GetControlRect();
+            using (var scope = new EditorGUI.PropertyScope(leftFaceEmoteGestureGroupNumberFieldRect, GUIContent.none, leftFaceEmoteGestureGroupNumber))
+            {
+                var changedValue = EditorGUI.Popup(leftFaceEmoteGestureGroupNumberFieldRect, new GUIContent("左手"), leftFaceEmoteGestureGroupNumber.intValue, faceEmoteGestureGroupNames);
+                if (changedValue != leftFaceEmoteGestureGroupNumber.intValue)
+                {
+                    leftFaceEmoteGestureGroupNumber.intValue = changedValue;
+                }
+            }
+
+            var rightFaceEmoteGestureGroupNumberFieldRect = EditorGUILayout.GetControlRect();
+            using (var scope = new EditorGUI.PropertyScope(rightFaceEmoteGestureGroupNumberFieldRect, GUIContent.none, rightFaceEmoteGestureGroupNumber))
+            {
+                var changedValue = EditorGUI.Popup(rightFaceEmoteGestureGroupNumberFieldRect, new GUIContent("右手"), rightFaceEmoteGestureGroupNumber.intValue, faceEmoteGestureGroupNames);
+                if (changedValue != rightFaceEmoteGestureGroupNumber.intValue)
+                {
+                    rightFaceEmoteGestureGroupNumber.intValue = changedValue;
+                }
+            }
+
             EditorGUI.indentLevel--;
 
             EditorGUILayout.Space();
