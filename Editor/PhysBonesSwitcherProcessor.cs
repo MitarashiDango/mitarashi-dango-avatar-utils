@@ -131,23 +131,23 @@ namespace MitarashiDango.AvatarUtils
             };
 
             layer.stateMachine.entryPosition = new Vector3(0, 0, 0);
-            layer.stateMachine.anyStatePosition = new Vector3(0, -40, 0);
-            layer.stateMachine.exitPosition = new Vector3(800, 0, 0);
+            layer.stateMachine.exitPosition = new Vector3(0, -40, 0);
+            layer.stateMachine.anyStatePosition = new Vector3(0, -80, 0);
 
             var (blankAnimationClip, toEnableAnimationClip, toDisableAnimationClip) = GenerateAnimationClips(ctx);
 
-            var initialState = layer.stateMachine.AddState("Initial State", new Vector3(200, 0, 0));
+            var initialState = layer.stateMachine.AddState("Initial State", new Vector3(-20, 60, 0));
             initialState.writeDefaultValues = false;
             initialState.motion = blankAnimationClip;
 
-            var physBonesOnState = layer.stateMachine.AddState("PhysBones_ON", new Vector3(400, 0, 0));
+            var physBonesOnState = layer.stateMachine.AddState("PhysBones_ON", new Vector3(220, 60, 0));
             physBonesOnState.motion = toEnableAnimationClip;
 
             var physBonesOnTransition = initialState.AddTransition(physBonesOnState);
             SetImmediateTransitionSetting(physBonesOnTransition);
             physBonesOnTransition.AddCondition(AnimatorConditionMode.IfNot, 0, PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF);
 
-            var physBonesOffState = layer.stateMachine.AddState("PhysBones_OFF", new Vector3(200, 60, 0));
+            var physBonesOffState = layer.stateMachine.AddState("PhysBones_OFF", new Vector3(-20, 140, 0));
             physBonesOffState.motion = toDisableAnimationClip;
 
             var physBonesOffTransition = initialState.AddTransition(physBonesOffState);
