@@ -1030,7 +1030,7 @@ namespace MitarashiDango.AvatarUtils
             unlockStateToLockStateTransition2.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
 
             var lockStateToUnlockStateTransition1 = lockedState.AddTransition(unlockState);
-            SetImmediateTransitionSetting(lockStateToUnlockStateTransition1);
+            AddCommonTransitionOptions(lockStateToUnlockStateTransition1);
             lockStateToUnlockStateTransition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
             lockStateToUnlockStateTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED);
             lockStateToUnlockStateTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
