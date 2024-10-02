@@ -8,6 +8,7 @@ namespace MitarashiDango.AvatarUtils
     {
         private SerializedProperty defaultFaceMotion;
         private SerializedProperty time;
+        private SerializedProperty defaultFixedGestureWeight;
         private SerializedProperty faceEmoteGestureGroups;
         private SerializedProperty leftFaceEmoteGestureGroupNumber;
         private SerializedProperty rightFaceEmoteGestureGroupNumber;
@@ -17,6 +18,7 @@ namespace MitarashiDango.AvatarUtils
         {
             defaultFaceMotion = serializedObject.FindProperty("defaultFaceMotion");
             time = serializedObject.FindProperty("time");
+            defaultFixedGestureWeight = serializedObject.FindProperty("defaultFixedGestureWeight");
             faceEmoteGestureGroups = serializedObject.FindProperty("faceEmoteGestureGroups");
             leftFaceEmoteGestureGroupNumber = serializedObject.FindProperty("leftFaceEmoteGestureGroupNumber");
             rightFaceEmoteGestureGroupNumber = serializedObject.FindProperty("rightFaceEmoteGestureGroupNumber");
@@ -32,6 +34,8 @@ namespace MitarashiDango.AvatarUtils
             EditorGUILayout.PropertyField(defaultFaceMotion, new GUIContent("Default Face"), false);
 
             EditorGUILayout.PropertyField(time, new GUIContent("Time"), false);
+
+            EditorGUILayout.PropertyField(defaultFixedGestureWeight, new GUIContent("既定のジェスチャーウェイト"), false);
 
             EditorGUILayout.Space();
 

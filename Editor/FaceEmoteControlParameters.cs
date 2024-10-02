@@ -15,6 +15,7 @@ namespace MitarashiDango.AvatarUtils
         public static readonly string FEC_FIXED_FACE_EMOTE = "FEC_FixedFaceEmote";
         public static readonly string FEC_FACE_EMOTE_LOCKER_AUTO_DISABLE_ON_SIT = "FEC_FaceEmoteLockerAutoDisableOnSit";
         public static readonly string FEC_SELECTED_FACE_EMOTE = "FEC_SelectedFaceEmote";
+        public static readonly string FEC_FIXED_GESTURE_WEIGHT = "FEC_FixedGestureWeight";
 
         public List<ParameterConfig> GetParameterConfigs(FaceEmoteControl faceEmoteControl)
         {
@@ -42,7 +43,7 @@ namespace MitarashiDango.AvatarUtils
                     defaultValue = 0,
                     syncType = ParameterSyncType.Bool,
                     saved = true,
-                    localOnly = true,
+                    localOnly = false,
                 },
                 new ParameterConfig
                 {
@@ -82,7 +83,7 @@ namespace MitarashiDango.AvatarUtils
                     defaultValue = 0,
                     syncType = ParameterSyncType.Int,
                     saved = true,
-                    localOnly = true,
+                    localOnly = false,
                 },
                 new ParameterConfig
                 {
@@ -99,7 +100,15 @@ namespace MitarashiDango.AvatarUtils
                     syncType = ParameterSyncType.Int,
                     saved = true,
                     localOnly = false,
-                }
+                },
+                new ParameterConfig
+                {
+                    nameOrPrefix = FEC_FIXED_GESTURE_WEIGHT,
+                    defaultValue = 1,
+                    syncType = ParameterSyncType.Float,
+                    saved = true,
+                    localOnly = false,
+                },
             };
 
             return parameterConfigs;

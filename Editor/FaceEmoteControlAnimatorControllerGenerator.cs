@@ -132,6 +132,11 @@ namespace MitarashiDango.AvatarUtils
                     type = AnimatorControllerParameterType.Int,
                     defaultInt = 0,
                 },
+                new AnimatorControllerParameter{
+                    name = FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT,
+                    type = AnimatorControllerParameterType.Float,
+                    defaultInt = 1,
+                },
             };
         }
 

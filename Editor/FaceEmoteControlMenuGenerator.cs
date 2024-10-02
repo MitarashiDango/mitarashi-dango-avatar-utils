@@ -22,6 +22,7 @@ namespace MitarashiDango.AvatarUtils
 
             var subMenuItems = new List<GameObject>
             {
+                GenerateRadialPuppetMenuItem("表情固定・ロック時のジェスチャーウェイト調整", null, FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT, 1),
                 GenerateFaceLockMenu(),
                 GenerateFaceGestureGroupSelectMenu(faceEmoteControl),
                 GenerateFaceSelectMenu(faceEmoteControl),
@@ -255,6 +256,25 @@ namespace MitarashiDango.AvatarUtils
             modularAvatarMenuItem.Control.parameter = new VRCExpressionsMenu.Control.Parameter
             {
                 name = parameterName,
+            };
+            modularAvatarMenuItem.Control.value = parameterValue;
+            modularAvatarMenuItem.Control.icon = icon;
+
+            return go;
+        }
+
+        private GameObject GenerateRadialPuppetMenuItem(string name, Texture2D icon, string parameterName, float parameterValue)
+        {
+            var go = new GameObject(name);
+            var modularAvatarMenuItem = go.AddComponent<ModularAvatarMenuItem>();
+
+            modularAvatarMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.RadialPuppet;
+            modularAvatarMenuItem.Control.subParameters = new VRCExpressionsMenu.Control.Parameter[]
+            {
+                new VRCExpressionsMenu.Control.Parameter
+                {
+                    name = parameterName,
+                }
             };
             modularAvatarMenuItem.Control.value = parameterValue;
             modularAvatarMenuItem.Control.icon = icon;
