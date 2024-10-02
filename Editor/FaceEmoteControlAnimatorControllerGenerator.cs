@@ -132,6 +132,11 @@ namespace MitarashiDango.AvatarUtils
                     type = AnimatorControllerParameterType.Int,
                     defaultInt = 0,
                 },
+                new AnimatorControllerParameter{
+                    name = FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT,
+                    type = AnimatorControllerParameterType.Float,
+                    defaultInt = 1,
+                },
             };
         }
 
@@ -895,13 +900,13 @@ namespace MitarashiDango.AvatarUtils
             foreach ((var faceEmoteGestureGroup, var index) in faceEmoteControl.faceEmoteGestureGroups.Select((v, i) => (v, i)))
             {
                 var faceEmoteNumberOffset = index * 7;
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, $"Fist {index + 1} (Left Gesture)", faceEmoteControl, 1 + faceEmoteNumberOffset, faceEmoteGestureGroup?.fist, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, $"HandOpen {index + 1} (Left Gesture)", faceEmoteControl, 2 + faceEmoteNumberOffset, faceEmoteGestureGroup?.handOpen, new Vector3(500, 60 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, $"FingerPoint {index + 1} (Left Gesture)", faceEmoteControl, 3 + faceEmoteNumberOffset, faceEmoteGestureGroup?.fingerPoint, new Vector3(500, 120 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, $"Victory {index + 1} (Left Gesture)", faceEmoteControl, 4 + faceEmoteNumberOffset, faceEmoteGestureGroup?.victory, new Vector3(500, 180 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, $"RockNRoll {index + 1} (Left Gesture)", faceEmoteControl, 5 + faceEmoteNumberOffset, faceEmoteGestureGroup?.rockNRoll, new Vector3(500, 240 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, $"HandGun {index + 1} (Left Gesture)", faceEmoteControl, 6 + faceEmoteNumberOffset, faceEmoteGestureGroup?.handGun, new Vector3(500, 300 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(leftGestureEmoteStateMachine, $"ThumbsUp {index + 1} (Left Gesture)", faceEmoteControl, 7 + faceEmoteNumberOffset, faceEmoteGestureGroup?.thumbsUp, new Vector3(500, 360 + 60 * index * 7, 0));
+                AddGestureFaceEmoteStates(leftGestureEmoteStateMachine, $"Fist {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.fist, 1 + faceEmoteNumberOffset, VRCParameters.GESTURE_LEFT_WEIGHT, new Vector3(500, 0 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(leftGestureEmoteStateMachine, $"HandOpen {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.handOpen, 2 + faceEmoteNumberOffset, "", new Vector3(500, 120 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(leftGestureEmoteStateMachine, $"FingerPoint {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.fingerPoint, 3 + faceEmoteNumberOffset, "", new Vector3(500, 240 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(leftGestureEmoteStateMachine, $"Victory {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.victory, 4 + faceEmoteNumberOffset, "", new Vector3(500, 360 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(leftGestureEmoteStateMachine, $"RockNRoll {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.rockNRoll, 5 + faceEmoteNumberOffset, "", new Vector3(500, 480 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(leftGestureEmoteStateMachine, $"HandGun {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.handGun, 6 + faceEmoteNumberOffset, "", new Vector3(500, 600 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(leftGestureEmoteStateMachine, $"ThumbsUp {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.thumbsUp, 7 + faceEmoteNumberOffset, "", new Vector3(500, 720 + 120 * index * 7, 0));
             }
         }
 
@@ -935,13 +940,13 @@ namespace MitarashiDango.AvatarUtils
             foreach ((var faceEmoteGestureGroup, var index) in faceEmoteControl.faceEmoteGestureGroups.Select((v, i) => (v, i)))
             {
                 var faceEmoteNumberOffset = index * 7 + faceEmoteControl.faceEmoteGestureGroups.Count * 7;
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, $"Fist {index + 1} (Right Gesture)", faceEmoteControl, 1 + faceEmoteNumberOffset, faceEmoteGestureGroup?.fist, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, $"HandOpen {index + 1} (Right Gesture)", faceEmoteControl, 2 + faceEmoteNumberOffset, faceEmoteGestureGroup?.handOpen, new Vector3(500, 60 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, $"FingerPoint {index + 1} (Right Gesture)", faceEmoteControl, 3 + faceEmoteNumberOffset, faceEmoteGestureGroup?.fingerPoint, new Vector3(500, 120 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, $"Victory {index + 1} (Right Gesture)", faceEmoteControl, 4 + faceEmoteNumberOffset, faceEmoteGestureGroup?.victory, new Vector3(500, 180 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, $"RockNRoll {index + 1} (Right Gesture)", faceEmoteControl, 5 + faceEmoteNumberOffset, faceEmoteGestureGroup?.rockNRoll, new Vector3(500, 240 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, $"HandGun {index + 1} (Right Gesture)", faceEmoteControl, 6 + faceEmoteNumberOffset, faceEmoteGestureGroup?.handGun, new Vector3(500, 300 + 60 * index * 7, 0));
-                AddGestureFaceEmoteState(rightGestureEmoteStateMachine, $"ThumbsUp {index + 1} (Right Gesture)", faceEmoteControl, 7 + faceEmoteNumberOffset, faceEmoteGestureGroup?.thumbsUp, new Vector3(500, 360 + 60 * index * 7, 0));
+                AddGestureFaceEmoteStates(rightGestureEmoteStateMachine, $"Fist {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.fist, 1 + faceEmoteNumberOffset, VRCParameters.GESTURE_RIGHT_WEIGHT, new Vector3(500, 0 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(rightGestureEmoteStateMachine, $"HandOpen {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.handOpen, 2 + faceEmoteNumberOffset, "", new Vector3(500, 120 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(rightGestureEmoteStateMachine, $"FingerPoint {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.fingerPoint, 3 + faceEmoteNumberOffset, "", new Vector3(500, 240 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(rightGestureEmoteStateMachine, $"Victory {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.victory, 4 + faceEmoteNumberOffset, "", new Vector3(500, 360 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(rightGestureEmoteStateMachine, $"RockNRoll {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.rockNRoll, 5 + faceEmoteNumberOffset, "", new Vector3(500, 480 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(rightGestureEmoteStateMachine, $"HandGun {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.handGun, 6 + faceEmoteNumberOffset, "", new Vector3(500, 600 + 120 * index * 7, 0));
+                AddGestureFaceEmoteStates(rightGestureEmoteStateMachine, $"ThumbsUp {index + 1}", faceEmoteControl, faceEmoteGestureGroup?.thumbsUp, 7 + faceEmoteNumberOffset, "", new Vector3(500, 720 + 120 * index * 7, 0));
             }
         }
 
@@ -995,44 +1000,174 @@ namespace MitarashiDango.AvatarUtils
                 }
 
                 var faceEmote = faceEmotes[i];
-                AddFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteControl, faceEmoteNumber, faceEmote.motion, "", faceEmote.eyeControlType, faceEmote.mouthControlType, statePosition);
+                AddFixedFaceEmoteState(currentStateMachine, $"Additional Face Emote {i + 1} ({faceEmoteNumber})", faceEmoteControl, faceEmote, faceEmoteNumber, statePosition);
                 statePosition = new Vector3(statePosition.x, statePosition.y + 60, statePosition.z);
             }
         }
 
-        private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, int faceEmoteNumber, FaceEmote faceEmote, Vector3 position)
+        private void AddGestureFaceEmoteStates(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, FaceEmote faceEmote, int faceEmoteNumber, string motionTimeParameter, Vector3 position)
         {
-            if (faceEmote?.motion == null)
-            {
-                AddFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmoteNumber, null, "", TrackingControlType.Tracking, TrackingControlType.Tracking, position);
-                return;
-            }
+            var unlockState = AddUnlockedGestureFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmote, faceEmoteNumber, motionTimeParameter, position);
+            var lockedState = AddLockedGestureFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmote, faceEmoteNumber, motionTimeParameter != "" ? FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT : "", new Vector3(position.x, position.y + 60, position.z));
 
-            AddFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmoteNumber, faceEmote.motion, "", faceEmote.eyeControlType, faceEmote.mouthControlType, position);
+            Action<AnimatorStateTransition> AddCommonTransitionOptions = (AnimatorStateTransition transition) =>
+            {
+                transition.hasExitTime = false;
+                transition.exitTime = 0;
+                transition.hasFixedDuration = true;
+                transition.duration = faceEmoteControl.time;
+                transition.offset = 0;
+                transition.interruptionSource = TransitionInterruptionSource.None;
+                transition.orderedInterruption = true;
+            };
+
+            var unlockStateToLockStateTransition1 = unlockState.AddTransition(lockedState);
+            AddCommonTransitionOptions(unlockStateToLockStateTransition1);
+            unlockStateToLockStateTransition1.AddCondition(AnimatorConditionMode.If, 0, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED);
+
+            var unlockStateToLockStateTransition2 = unlockState.AddTransition(lockedState);
+            AddCommonTransitionOptions(unlockStateToLockStateTransition2);
+            unlockStateToLockStateTransition2.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
+
+            var lockStateToUnlockStateTransition1 = lockedState.AddTransition(unlockState);
+            AddCommonTransitionOptions(lockStateToUnlockStateTransition1);
+            lockStateToUnlockStateTransition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+            lockStateToUnlockStateTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED);
+            lockStateToUnlockStateTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
+            if (motionTimeParameter != "")
+            {
+                lockStateToUnlockStateTransition1.AddCondition(AnimatorConditionMode.Greater, 0, motionTimeParameter);
+            }
         }
 
-        private void AddGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, int faceEmoteNumber, FaceEmote faceEmote, string motionTimeParameter, Vector3 position)
+        private AnimatorState AddUnlockedGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, FaceEmote faceEmote, int faceEmoteNumber, string motionTimeParameter, Vector3 position)
         {
-            if (faceEmote?.motion == null)
-            {
-                AddFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmoteNumber, null, motionTimeParameter, TrackingControlType.Tracking, TrackingControlType.Tracking, position);
-                return;
-            }
-
-            AddFaceEmoteState(stateMachine, name, faceEmoteControl, faceEmoteNumber, faceEmote.motion, motionTimeParameter, faceEmote.eyeControlType, faceEmote.mouthControlType, position);
-        }
-
-        private void AddFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, int faceEmoteNumber, Motion motion, string motionTimeParameter, TrackingControlType eyeTrackingType, TrackingControlType mouthTrackingType, Vector3 position)
-        {
-            var state = stateMachine.AddState(name, position);
+            var state = stateMachine.AddState($"{name} (Unlocked)", position);
             state.speed = 1 / faceEmoteControl.time;
             state.writeDefaultValues = false;
-            state.motion = motion != null ? motion : blankAnimationClip;
+            state.motion = faceEmote?.motion != null ? faceEmote?.motion : blankAnimationClip;
             if (motionTimeParameter != "")
             {
                 state.timeParameterActive = true;
                 state.timeParameter = motionTimeParameter;
             }
+
+            state.behaviours = new StateMachineBehaviour[]
+            {
+                new VRCAnimatorTrackingControl()
+                {
+                    trackingHead = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingHip = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingEyes = GetTrackingType(faceEmote?.eyeControlType ?? TrackingControlType.Tracking),
+                    trackingMouth = GetTrackingType(faceEmote?.mouthControlType ?? TrackingControlType.Tracking),
+                }
+            };
+
+            var fromEntryTransition1 = stateMachine.AddEntryTransition(state);
+            fromEntryTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.AFK);
+            fromEntryTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED);
+            fromEntryTransition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+            fromEntryTransition1.AddCondition(AnimatorConditionMode.Equals, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
+
+            var toExitTransition1 = state.AddExitTransition();
+            toExitTransition1.hasExitTime = false;
+            toExitTransition1.exitTime = 0;
+            toExitTransition1.hasFixedDuration = true;
+            toExitTransition1.duration = faceEmoteControl.time;
+            toExitTransition1.offset = 0;
+            toExitTransition1.interruptionSource = TransitionInterruptionSource.None;
+            toExitTransition1.orderedInterruption = true;
+            toExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+
+            var toExitTransition2 = state.AddExitTransition();
+            SetImmediateTransitionSetting(toExitTransition2);
+            toExitTransition2.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.AFK);
+
+            var toExitTransition3 = state.AddExitTransition();
+            SetImmediateTransitionSetting(toExitTransition3);
+            toExitTransition3.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.IN_STATION);
+            toExitTransition3.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.SEATED);
+
+            return state;
+        }
+
+        private AnimatorState AddLockedGestureFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, FaceEmote faceEmote, int faceEmoteNumber, string motionTimeParameter, Vector3 position)
+        {
+            var state = stateMachine.AddState($"{name} (Locked)", position);
+            state.speed = 1 / faceEmoteControl.time;
+            state.writeDefaultValues = false;
+            state.motion = faceEmote?.motion != null ? faceEmote?.motion : blankAnimationClip;
+            if (motionTimeParameter != "")
+            {
+                state.timeParameterActive = true;
+                state.timeParameter = motionTimeParameter;
+            }
+
+            state.behaviours = new StateMachineBehaviour[]
+            {
+                new VRCAnimatorTrackingControl()
+                {
+                    trackingHead = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightHand = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingHip = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingLeftFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingRightFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
+                    trackingEyes = GetTrackingType(faceEmote?.eyeControlType ?? TrackingControlType.Tracking),
+                    trackingMouth = GetTrackingType(faceEmote?.mouthControlType ?? TrackingControlType.Tracking),
+                }
+            };
+
+            // 表情ロック時
+            var fromEntryTransition1 = stateMachine.AddEntryTransition(state);
+            fromEntryTransition1.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.AFK);
+            fromEntryTransition1.AddCondition(AnimatorConditionMode.If, 0, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED);
+            fromEntryTransition1.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+
+            // 表情固定時
+            var fromEntryTransition2 = stateMachine.AddEntryTransition(state);
+            fromEntryTransition2.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.AFK);
+            fromEntryTransition2.AddCondition(AnimatorConditionMode.NotEqual, 0, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE);
+            fromEntryTransition2.AddCondition(AnimatorConditionMode.Equals, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+
+            var toExitTransition1 = state.AddExitTransition();
+            toExitTransition1.hasExitTime = false;
+            toExitTransition1.exitTime = 0;
+            toExitTransition1.hasFixedDuration = true;
+            toExitTransition1.duration = faceEmoteControl.time;
+            toExitTransition1.offset = 0;
+            toExitTransition1.interruptionSource = TransitionInterruptionSource.None;
+            toExitTransition1.orderedInterruption = true;
+            toExitTransition1.AddCondition(AnimatorConditionMode.NotEqual, faceEmoteNumber, FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE);
+
+            var toExitTransition2 = state.AddExitTransition();
+            SetImmediateTransitionSetting(toExitTransition2);
+            toExitTransition2.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.AFK);
+
+            var toExitTransition3 = state.AddExitTransition();
+            SetImmediateTransitionSetting(toExitTransition3);
+            toExitTransition3.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.IN_STATION);
+            toExitTransition3.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.SEATED);
+
+            return state;
+        }
+
+        private AnimatorState AddFixedFaceEmoteState(AnimatorStateMachine stateMachine, string name, FaceEmoteControl faceEmoteControl, FaceEmote faceEmote, int faceEmoteNumber, Vector3 position)
+        {
+            var state = stateMachine.AddState(name, position);
+            state.speed = 1 / faceEmoteControl.time;
+            state.writeDefaultValues = false;
+            state.motion = faceEmote?.motion != null ? faceEmote?.motion : blankAnimationClip;
+            state.timeParameterActive = true;
+            state.timeParameter = FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT;
 
             state.behaviours = new StateMachineBehaviour[]{
                 new VRCAnimatorTrackingControl(){
@@ -1044,8 +1179,8 @@ namespace MitarashiDango.AvatarUtils
                     trackingRightFoot = VRC_AnimatorTrackingControl.TrackingType.NoChange,
                     trackingLeftFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
                     trackingRightFingers = VRC_AnimatorTrackingControl.TrackingType.NoChange,
-                    trackingEyes = GetTrackingType(eyeTrackingType),
-                    trackingMouth = GetTrackingType(mouthTrackingType),
+                    trackingEyes = GetTrackingType(faceEmote?.eyeControlType ?? TrackingControlType.Tracking),
+                    trackingMouth = GetTrackingType(faceEmote?.mouthControlType ?? TrackingControlType.Tracking),
                 }
             };
 
@@ -1071,8 +1206,9 @@ namespace MitarashiDango.AvatarUtils
             SetImmediateTransitionSetting(toExitTransition3);
             toExitTransition3.AddCondition(AnimatorConditionMode.If, 0, VRCParameters.IN_STATION);
             toExitTransition3.AddCondition(AnimatorConditionMode.IfNot, 0, VRCParameters.SEATED);
-        }
 
+            return state;
+        }
         private VRC_AnimatorTrackingControl.TrackingType GetTrackingType(TrackingControlType trackingControlType)
         {
             switch (trackingControlType)

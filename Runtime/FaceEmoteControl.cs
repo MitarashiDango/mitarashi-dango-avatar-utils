@@ -15,6 +15,10 @@ namespace MitarashiDango.AvatarUtils
         public float time = 0.1f;
 
         [HideInInspector]
+        [Range(0, 1)]
+        public float defaultFixedGestureWeight = 1;
+
+        [HideInInspector]
         public List<FaceEmoteGestureGroup> faceEmoteGestureGroups;
 
         [HideInInspector]
