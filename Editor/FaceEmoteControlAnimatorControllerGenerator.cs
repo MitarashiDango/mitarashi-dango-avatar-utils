@@ -817,12 +817,14 @@ namespace MitarashiDango.AvatarUtils
             // Sit状態かつSeatedな状態になった場合、ステートから退出する
             AnimatorTransitionUtil.AddExitTransition(state)
                 .If(VRCParameters.IN_STATION)
-                .If(VRCParameters.SEATED);
+                .If(VRCParameters.SEATED)
+                .SetImmediateTransitionSettings();
 
             // Sit状態ではなくなった場合、ステートから退出する
             AnimatorTransitionUtil.AddExitTransition(state)
                 .IfNot(VRCParameters.IN_STATION)
-                .IfNot(VRCParameters.SEATED);
+                .IfNot(VRCParameters.SEATED)
+                .SetImmediateTransitionSettings();
         }
 
         private void AddAFKState(AnimatorStateMachine stateMachine, Vector3 position)
