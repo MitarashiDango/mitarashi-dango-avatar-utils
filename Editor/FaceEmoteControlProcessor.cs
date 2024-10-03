@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
 using UnityEngine;
-using UnityEngine.Animations;
 using VRC.SDK3.Dynamics.Contact.Components;
 
 namespace MitarashiDango.AvatarUtils
@@ -23,12 +22,9 @@ namespace MitarashiDango.AvatarUtils
             var faceEmoteLocker = GenerateFaceEmoteLocker(fecRootGameObject);
             faceEmoteLocker.transform.SetParent(faceEmoteControl.gameObject.transform);
 
-            var faceEmoteLockIndicator = GenerateFaceEmoteLockIndicator(fecRootGameObject);
-            faceEmoteLockIndicator.transform.SetParent(faceEmoteControl.gameObject.transform);
-
             AddParameters(faceEmoteControl.gameObject, faceEmoteControl);
             AddMenuItems(faceEmoteControl.gameObject, faceEmoteControl);
-            AddAnimatorController(ctx.AvatarRootObject, faceEmoteControl, faceEmoteLockIndicator);
+            AddAnimatorController(faceEmoteControl);
             Object.DestroyImmediate(faceEmoteControl);
         }
 
@@ -45,11 +41,11 @@ namespace MitarashiDango.AvatarUtils
             menuBuilder.GenerateMenus(faceEmoteControl).transform.parent = obj.transform;
         }
 
-        private void AddAnimatorController(GameObject avatarRoot, FaceEmoteControl faceEmoteControl, GameObject faceEmoteLockIndicator)
+        private void AddAnimatorController(FaceEmoteControl faceEmoteControl)
         {
             var faceEmoteSettingsAnimatorControllerBuilder = new FaceEmoteControlAnimatorControllerGenerator();
             var mergeAnimator = faceEmoteControl.gameObject.AddComponent<ModularAvatarMergeAnimator>();
-            mergeAnimator.animator = faceEmoteSettingsAnimatorControllerBuilder.GenerateAnimatorController(avatarRoot, faceEmoteControl, faceEmoteLockIndicator);
+            mergeAnimator.animator = faceEmoteSettingsAnimatorControllerBuilder.GenerateAnimatorController(faceEmoteControl);
             mergeAnimator.layerType = VRC.SDK3.Avatars.Components.VRCAvatarDescriptor.AnimLayerType.FX;
             mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
             mergeAnimator.matchAvatarWriteDefaults = true;
@@ -85,42 +81,6 @@ namespace MitarashiDango.AvatarUtils
             };
             vrcContactReceiver.receiverType = VRC.Dynamics.ContactReceiver.ReceiverType.Constant;
             vrcContactReceiver.parameter = FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_CONTACT;
-
-            return go;
-        }
-
-        private GameObject GenerateFaceEmoteLockIndicator(GameObject sourceGameObject)
-        {
-            var go = new GameObject("FaceEmoteLockIndicator");
-            go.SetActive(false);
-
-            var parentConstraint = go.AddComponent<ParentConstraint>();
-            parentConstraint.constraintActive = true;
-            parentConstraint.weight = 1;
-            parentConstraint.locked = true;
-            parentConstraint.AddSource(new ConstraintSource()
-            {
-                sourceTransform = sourceGameObject.transform,
-                weight = 1
-            });
-
-            var iconGameObject = new GameObject("FaceEmoteLockingIcon");
-            iconGameObject.transform.SetParent(go.transform);
-
-            iconGameObject.transform.position = new Vector3(0.06f, -0.05f, 0.3f);
-            iconGameObject.transform.rotation = Quaternion.Euler(90, 180, 0);
-            iconGameObject.transform.localScale = new Vector3(0.0015f, 0.0015f, 0.0015f);
-
-            var meshFilter = iconGameObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = MiscUtil.CreatePrimitiveMesh(PrimitiveType.Plane);
-
-            var iconMaterial = AssetUtil.LoadAssetAtGUID<Material>(Constants.ASSET_GUID_FACE_EMOTE_LOCKING_ICON);
-            var renderer = iconGameObject.AddComponent<MeshRenderer>();
-            renderer.material = iconMaterial;
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            renderer.receiveShadows = false;
-            renderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-            renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
 
             return go;
         }

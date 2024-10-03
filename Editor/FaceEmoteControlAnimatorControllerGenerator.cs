@@ -15,7 +15,7 @@ namespace MitarashiDango.AvatarUtils
             name = "blank"
         };
 
-        public AnimatorController GenerateAnimatorController(GameObject avatarRoot, FaceEmoteControl faceEmoteControl, GameObject faceEmoteLockIndicator)
+        public AnimatorController GenerateAnimatorController(FaceEmoteControl faceEmoteControl)
         {
             var animatorController = new AnimatorController
             {
@@ -32,7 +32,6 @@ namespace MitarashiDango.AvatarUtils
             animatorController.AddLayer(GenerateHandGestureLayer("FEC_LEFT_HAND_GESTURE", FaceEmoteControlParameters.FEC_SELECTED_GESTURE_LEFT, VRCParameters.GESTURE_LEFT));
             animatorController.AddLayer(GenerateHandGestureLayer("FEC_RIGHT_HAND_GESTURE", FaceEmoteControlParameters.FEC_SELECTED_GESTURE_RIGHT, VRCParameters.GESTURE_RIGHT));
             animatorController.AddLayer(GenerateSetFaceEmoteTypeLayer(faceEmoteControl));
-            animatorController.AddLayer(GenerateFaceEmoteLockIndicatorControlLayer(avatarRoot, faceEmoteLockIndicator));
             animatorController.AddLayer(GenerateDefaultFaceEmoteLayer(faceEmoteControl));
             animatorController.AddLayer(GenerateFaceEmoteSettingsLayer(faceEmoteControl));
 
@@ -682,74 +681,6 @@ namespace MitarashiDango.AvatarUtils
             return layer;
         }
 
-        private AnimatorControllerLayer GenerateFaceEmoteLockIndicatorControlLayer(GameObject avatarRoot, GameObject faceEmoteLockIndicator)
-        {
-            var objectHierarchyPath = MiscUtil.GetPathInHierarchy(faceEmoteLockIndicator, avatarRoot);
-            var hideLockIndicatorAnimationClip = GenerateHideLockIndicatorAnimationClip(objectHierarchyPath);
-            var showLockIndicatorAnimationClip = GenerateShowLockIndicatorAnimationClip(objectHierarchyPath);
-            var flashLockIndicatorAnimationClip = GenerateFlashLockIndicatorAnimationClip(objectHierarchyPath);
-
-            var layer = new AnimatorControllerLayer
-            {
-                name = "FEC_FACE_EMOTE_LOCK_INDICATOR_CONTROL",
-                defaultWeight = 1,
-                stateMachine = new AnimatorStateMachine(),
-            };
-
-            layer.stateMachine.entryPosition = new Vector3(0, 0, 0);
-            layer.stateMachine.exitPosition = new Vector3(0, -40, 0);
-            layer.stateMachine.anyStatePosition = new Vector3(0, -80, 0);
-
-            var initialState = layer.stateMachine.AddState("Initial State", new Vector3(-20, 60, 0));
-            initialState.writeDefaultValues = false;
-            initialState.motion = hideLockIndicatorAnimationClip;
-
-            var unlockState = layer.stateMachine.AddState("Unlock", new Vector3(220, 60, 0));
-            unlockState.writeDefaultValues = false;
-            unlockState.motion = hideLockIndicatorAnimationClip;
-
-            var lockState = layer.stateMachine.AddState("Lock", new Vector3(-20, 140, 0));
-            lockState.writeDefaultValues = false;
-            lockState.motion = showLockIndicatorAnimationClip;
-
-            var unlockToLockFlashState = layer.stateMachine.AddState("Flash (Unlock to Lock)", new Vector3(220, 140, 0));
-            unlockToLockFlashState.writeDefaultValues = false;
-            unlockToLockFlashState.motion = flashLockIndicatorAnimationClip;
-
-            AnimatorTransitionUtil.AddTransition(initialState, unlockState)
-                .If(VRCParameters.IS_LOCAL)
-                .IfNot(FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED)
-                .SetImmediateTransitionSettings();
-
-            AnimatorTransitionUtil.AddTransition(initialState, lockState)
-                .If(VRCParameters.IS_LOCAL)
-                .If(FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED)
-                .SetImmediateTransitionSettings();
-
-            AnimatorTransitionUtil.AddTransition(lockState, unlockState)
-                .IfNot(FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED)
-                .SetImmediateTransitionSettings();
-
-            AnimatorTransitionUtil.AddTransition(unlockState, unlockToLockFlashState)
-                .If(FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED)
-                .SetImmediateTransitionSettings();
-
-            AnimatorTransitionUtil.AddTransition(unlockState, lockState)
-                .Exec((builder) =>
-                {
-                    var transition = builder.Transition;
-                    transition.hasExitTime = true;
-                    transition.exitTime = 1.0f;
-                    transition.hasFixedDuration = true;
-                    transition.duration = 0;
-                    transition.offset = 0;
-                    transition.interruptionSource = TransitionInterruptionSource.None;
-                    transition.orderedInterruption = true;
-                });
-
-            return layer;
-        }
-
         private AnimatorControllerLayer GenerateDefaultFaceEmoteLayer(FaceEmoteControl faceEmoteControl)
         {
             var layer = new AnimatorControllerLayer
@@ -1277,6 +1208,7 @@ namespace MitarashiDango.AvatarUtils
 
             return state;
         }
+
         private VRC_AnimatorTrackingControl.TrackingType GetTrackingType(TrackingControlType trackingControlType)
         {
             switch (trackingControlType)
@@ -1305,55 +1237,6 @@ namespace MitarashiDango.AvatarUtils
                     }
                 }
             };
-        }
-
-        private AnimationClip GenerateHideLockIndicatorAnimationClip(string objectHierarchyPath)
-        {
-            var animationCurve = new AnimationCurve();
-            animationCurve.AddKey(0, 0);
-            var animationClip = new AnimationClip
-            {
-                name = "LockIndicator_OFF",
-                frameRate = 60
-            };
-            animationClip.SetCurve(objectHierarchyPath, typeof(GameObject), "m_IsActive", animationCurve);
-
-            return animationClip;
-        }
-
-        private AnimationClip GenerateShowLockIndicatorAnimationClip(string objectHierarchyPath)
-        {
-            var animationCurve = new AnimationCurve();
-            animationCurve.AddKey(0, 1);
-            var animationClip = new AnimationClip
-            {
-                name = "LockIndicator_ON",
-                frameRate = 60
-            };
-            animationClip.SetCurve(objectHierarchyPath, typeof(GameObject), "m_IsActive", animationCurve);
-
-            return animationClip;
-        }
-
-        private AnimationClip GenerateFlashLockIndicatorAnimationClip(string objectHierarchyPath)
-        {
-            var animationCurve = new AnimationCurve();
-            animationCurve.AddKey(new Keyframe(0, 0, float.PositiveInfinity, float.PositiveInfinity));
-            animationCurve.AddKey(new Keyframe(0, 0, float.PositiveInfinity, float.PositiveInfinity));
-            animationCurve.AddKey(new Keyframe(0.16666667f, 1, float.PositiveInfinity, float.PositiveInfinity));
-            animationCurve.AddKey(new Keyframe(0.33333334f, 0, float.PositiveInfinity, float.PositiveInfinity));
-            animationCurve.AddKey(new Keyframe(0.5f, 1, float.PositiveInfinity, float.PositiveInfinity));
-            animationCurve.AddKey(new Keyframe(0.6666667f, 0, float.PositiveInfinity, float.PositiveInfinity));
-            animationCurve.AddKey(new Keyframe(0.8333333f, 1, float.PositiveInfinity, float.PositiveInfinity));
-            animationCurve.AddKey(new Keyframe(1, 0, float.PositiveInfinity, float.PositiveInfinity));
-            var animationClip = new AnimationClip
-            {
-                name = "LockIndicator_FLASH",
-                frameRate = 60
-            };
-            animationClip.SetCurve(objectHierarchyPath, typeof(GameObject), "m_IsActive", animationCurve);
-
-            return animationClip;
         }
     }
 }
