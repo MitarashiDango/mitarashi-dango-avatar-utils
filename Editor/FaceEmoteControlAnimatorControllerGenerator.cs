@@ -256,24 +256,32 @@ namespace MitarashiDango.AvatarUtils
                 .SetImmediateTransitionSettings();
 
             // [Set Disable] -> [Sleep (Lock to Unlock)]
-            var setDisableToLockToUnlockSleepTransition1 = setDisableState.AddTransition(lockToUnlockSleepState);
-            setDisableToLockToUnlockSleepTransition1.hasExitTime = true;
-            setDisableToLockToUnlockSleepTransition1.exitTime = 0.5f;
-            setDisableToLockToUnlockSleepTransition1.hasFixedDuration = true;
-            setDisableToLockToUnlockSleepTransition1.duration = 0;
-            setDisableToLockToUnlockSleepTransition1.offset = 0;
-            setDisableToLockToUnlockSleepTransition1.interruptionSource = TransitionInterruptionSource.None;
-            setDisableToLockToUnlockSleepTransition1.orderedInterruption = true;
+            AnimatorTransitionUtil.AddTransition(setDisableState, lockToUnlockSleepState)
+                .Exec((builder) =>
+                {
+                    var transition = builder.Transition;
+                    transition.hasExitTime = true;
+                    transition.exitTime = 0.5f;
+                    transition.hasFixedDuration = true;
+                    transition.duration = 0;
+                    transition.offset = 0;
+                    transition.interruptionSource = TransitionInterruptionSource.None;
+                    transition.orderedInterruption = true;
+                });
 
             // [Set Enable] -> [Sleep (Unlock to Lock)]
-            var setEnableToUnlockToLockSleepTransition1 = setEnableState.AddTransition(unlockToLockSleepState);
-            setEnableToUnlockToLockSleepTransition1.hasExitTime = true;
-            setEnableToUnlockToLockSleepTransition1.exitTime = 0.5f;
-            setEnableToUnlockToLockSleepTransition1.hasFixedDuration = true;
-            setEnableToUnlockToLockSleepTransition1.duration = 0;
-            setEnableToUnlockToLockSleepTransition1.offset = 0;
-            setEnableToUnlockToLockSleepTransition1.interruptionSource = TransitionInterruptionSource.None;
-            setEnableToUnlockToLockSleepTransition1.orderedInterruption = true;
+            AnimatorTransitionUtil.AddTransition(setEnableState, unlockToLockSleepState)
+                .Exec((builder) =>
+                {
+                    var transition = builder.Transition;
+                    transition.hasExitTime = true;
+                    transition.exitTime = 0.5f;
+                    transition.hasFixedDuration = true;
+                    transition.duration = 0;
+                    transition.offset = 0;
+                    transition.interruptionSource = TransitionInterruptionSource.None;
+                    transition.orderedInterruption = true;
+                });
 
             // [Sleep (Lock to Unlock)] -> [Gesture Lock Disabled]
             AnimatorTransitionUtil.AddTransition(lockToUnlockSleepState, gestureLockDisabledState)
@@ -726,14 +734,18 @@ namespace MitarashiDango.AvatarUtils
                 .If(FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED)
                 .SetImmediateTransitionSettings();
 
-            var unlockToLockFlashStateToLockStateTransition1 = unlockToLockFlashState.AddTransition(lockState);
-            unlockToLockFlashStateToLockStateTransition1.hasExitTime = true;
-            unlockToLockFlashStateToLockStateTransition1.exitTime = 1.0f;
-            unlockToLockFlashStateToLockStateTransition1.hasFixedDuration = true;
-            unlockToLockFlashStateToLockStateTransition1.duration = 0;
-            unlockToLockFlashStateToLockStateTransition1.offset = 0;
-            unlockToLockFlashStateToLockStateTransition1.interruptionSource = TransitionInterruptionSource.None;
-            unlockToLockFlashStateToLockStateTransition1.orderedInterruption = true;
+            AnimatorTransitionUtil.AddTransition(unlockState, lockState)
+                .Exec((builder) =>
+                {
+                    var transition = builder.Transition;
+                    transition.hasExitTime = true;
+                    transition.exitTime = 1.0f;
+                    transition.hasFixedDuration = true;
+                    transition.duration = 0;
+                    transition.offset = 0;
+                    transition.interruptionSource = TransitionInterruptionSource.None;
+                    transition.orderedInterruption = true;
+                });
 
             return layer;
         }
@@ -1293,17 +1305,6 @@ namespace MitarashiDango.AvatarUtils
                     }
                 }
             };
-        }
-
-        private void SetImmediateTransitionSetting(AnimatorStateTransition ast)
-        {
-            ast.hasExitTime = false;
-            ast.exitTime = 0;
-            ast.hasFixedDuration = true;
-            ast.duration = 0;
-            ast.offset = 0;
-            ast.interruptionSource = TransitionInterruptionSource.None;
-            ast.orderedInterruption = true;
         }
 
         private AnimationClip GenerateHideLockIndicatorAnimationClip(string objectHierarchyPath)
