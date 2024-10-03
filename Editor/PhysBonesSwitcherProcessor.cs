@@ -143,37 +143,26 @@ namespace MitarashiDango.AvatarUtils
             var physBonesOnState = layer.stateMachine.AddState("PhysBones_ON", new Vector3(220, 60, 0));
             physBonesOnState.motion = toEnableAnimationClip;
 
-            var physBonesOnTransition = initialState.AddTransition(physBonesOnState);
-            SetImmediateTransitionSetting(physBonesOnTransition);
-            physBonesOnTransition.AddCondition(AnimatorConditionMode.IfNot, 0, PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF);
+            AnimatorTransitionUtil.AddTransition(initialState, physBonesOnState)
+                .IfNot(PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF)
+                .SetImmediateTransitionSettings();
 
             var physBonesOffState = layer.stateMachine.AddState("PhysBones_OFF", new Vector3(-20, 140, 0));
             physBonesOffState.motion = toDisableAnimationClip;
 
-            var physBonesOffTransition = initialState.AddTransition(physBonesOffState);
-            SetImmediateTransitionSetting(physBonesOffTransition);
-            physBonesOffTransition.AddCondition(AnimatorConditionMode.If, 0, PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF);
+            AnimatorTransitionUtil.AddTransition(initialState, physBonesOffState)
+                .If(PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF)
+                .SetImmediateTransitionSettings();
 
-            var physBonesOnToOffTransition = physBonesOnState.AddTransition(physBonesOffState);
-            SetImmediateTransitionSetting(physBonesOnToOffTransition);
-            physBonesOnToOffTransition.AddCondition(AnimatorConditionMode.If, 0, PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF);
+            AnimatorTransitionUtil.AddTransition(physBonesOnState, physBonesOffState)
+                .If(PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF)
+                .SetImmediateTransitionSettings();
 
-            var physBonesOffToOnTransition = physBonesOffState.AddTransition(physBonesOnState);
-            SetImmediateTransitionSetting(physBonesOffToOnTransition);
-            physBonesOffToOnTransition.AddCondition(AnimatorConditionMode.IfNot, 0, PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF);
+            AnimatorTransitionUtil.AddTransition(physBonesOffState, physBonesOnState)
+                .IfNot(PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF)
+                .SetImmediateTransitionSettings();
 
             return layer;
-        }
-
-        private void SetImmediateTransitionSetting(AnimatorStateTransition ast)
-        {
-            ast.hasExitTime = false;
-            ast.exitTime = 0;
-            ast.hasFixedDuration = true;
-            ast.duration = 0;
-            ast.offset = 0;
-            ast.interruptionSource = TransitionInterruptionSource.None;
-            ast.orderedInterruption = true;
         }
     }
 }
