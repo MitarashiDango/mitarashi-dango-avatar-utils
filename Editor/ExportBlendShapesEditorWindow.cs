@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -104,13 +105,16 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
+            var filename = Path.GetFileNameWithoutExtension(filePath);
+
             EditorUtility.DisplayProgressBar("処理中", "", 0);
 
             var skinnedMesh = skinnedMeshRenderer.sharedMesh;
 
             var animationClip = new AnimationClip()
             {
-                frameRate = 60
+                frameRate = 60,
+                name = filename,
             };
 
             var rootObject = _pathTypeIndex == 0 ? MiscUtil.GetAvatarRoot(_gameObject.transform) : _gameObject;
@@ -145,9 +149,20 @@ namespace MitarashiDango.AvatarUtils
 
             EditorUtility.ClearProgressBar();
 
-            AssetDatabase.CreateAsset(animationClip, filePath);
-            AssetDatabase.SaveAssets();
+            // ファイル保存
+            var asset = AssetDatabase.LoadAssetAtPath(filePath, typeof(AnimationClip));
+            if (asset == null)
+            {
+                AssetDatabase.CreateAsset(animationClip, filePath);
+            }
+            else
+            {
+                EditorUtility.CopySerialized(animationClip, asset);
+                AssetDatabase.SaveAssets();
+            }
+
             AssetDatabase.Refresh();
+            return;
         }
     }
 }
