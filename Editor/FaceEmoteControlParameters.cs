@@ -83,7 +83,7 @@ namespace MitarashiDango.AvatarUtils
                     defaultValue = 0,
                     syncType = ParameterSyncType.Int,
                     saved = true,
-                    localOnly = false,
+                    localOnly = true,
                 },
                 new ParameterConfig
                 {
