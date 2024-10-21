@@ -75,15 +75,99 @@ namespace MitarashiDango.AvatarUtils
 
                 so.ApplyModifiedProperties();
 
-                var generateButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
-                if (GUI.Button(generateButtonRect, new GUIContent("アニメーションクリップ生成")))
+                var exportBlendShapeButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
+                if (GUI.Button(exportBlendShapeButtonRect, new GUIContent("エクスポート")))
                 {
                     ExportBlendShapes();
+                }
+
+                var generateAnimationClipButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
+                if (GUI.Button(generateAnimationClipButtonRect, new GUIContent("アニメーションクリップ生成")))
+                {
+                    ExportToAnimationClip();
                 }
             }
         }
 
         private void ExportBlendShapes()
+        {
+            if (_gameObject == null)
+            {
+                EditorUtility.DisplayDialog("エラー", "オブジェクトが指定されていません", "OK");
+                return;
+            }
+
+            var skinnedMeshRenderer = _gameObject.GetComponent<SkinnedMeshRenderer>();
+            if (skinnedMeshRenderer == null)
+            {
+                EditorUtility.DisplayDialog("エラー", "指定されたオブジェクトにSkinnedMeshRendererが存在しません", "OK");
+                return;
+            }
+
+            var filePath = EditorUtility.SaveFilePanelInProject("名前を付けて保存", $"AnimationClip_{_gameObject.name}", "asset", "ブレンドシェイプのエクスポート先を選択してください", "Assets");
+            if (filePath == "")
+            {
+                EditorUtility.DisplayDialog("情報", "キャンセルされました", "OK");
+                return;
+            }
+
+            var filename = Path.GetFileNameWithoutExtension(filePath);
+
+            EditorUtility.DisplayProgressBar("処理中", "", 0);
+
+            var skinnedMesh = skinnedMeshRenderer.sharedMesh;
+
+            var blendShapeSet = new BlendShapeSet
+            {
+                name = filename,
+            };
+
+            var rootObject = _pathTypeIndex == 0 ? MiscUtil.GetAvatarRoot(_gameObject.transform) : _gameObject;
+            var objectPath = MiscUtil.GetPathInHierarchy(_gameObject, rootObject);
+
+            for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
+            {
+                float progress = i / (float)skinnedMesh.blendShapeCount;
+                EditorUtility.DisplayProgressBar("処理中", $"{i} {skinnedMesh.blendShapeCount} ({(int)(progress * 100)}%)", progress);
+
+                var blendShapeName = skinnedMesh.GetBlendShapeName(i);
+                if (_excludeBlendShapeNames.ToList().Exists(name => blendShapeName == name)
+                    || _excludeBlendShapeNamesStartWith.ToList().Exists(name => name != "" && blendShapeName.StartsWith(name))
+                    || _excludeBlendShapeNamesEndWith.ToList().Exists(name => name != "" && blendShapeName.EndsWith(name))
+                    || (_vrcVisemeBlendShapesIncludeOptionIndex == 1 && blendShapeName.StartsWith("vrc."))
+                    || (_mmdBlendShapesIncludeOptionIndex == 1 && Constants.MMD_BLEND_SHAPE_NAMES.ToList().Exists(name => blendShapeName == name)))
+                {
+                    continue;
+                }
+
+                var blendShapeWeight = skinnedMeshRenderer.GetBlendShapeWeight(i);
+                if (_zeroWeightBlendShapesIncludeOptionIndex == 1 && blendShapeWeight == 0)
+                {
+                    continue;
+                }
+
+                blendShapeSet.Set(blendShapeName, blendShapeWeight);
+            }
+
+            EditorUtility.ClearProgressBar();
+
+            // ファイル保存
+            var asset = AssetDatabase.LoadAssetAtPath(filePath, typeof(BlendShapeSet));
+            if (asset == null)
+            {
+                AssetDatabase.CreateAsset(blendShapeSet, filePath);
+            }
+            else
+            {
+                EditorUtility.CopySerialized(blendShapeSet, asset);
+                AssetDatabase.SaveAssets();
+            }
+
+            AssetDatabase.Refresh();
+            return;
+        }
+
+        private void ExportToAnimationClip()
         {
             if (_gameObject == null)
             {
