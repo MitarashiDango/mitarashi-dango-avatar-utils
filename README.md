@@ -29,7 +29,12 @@
 
 ### Export BlendShapes
 
-- 指定したオブジェクトのシェイプキーをもとに AnimationClip を生成する機能
+- 指定したオブジェクトのブレンドシェイプの値をインポート可能な形式でエクスポートする機能
+- AnimationClip の生成も可能
+
+### Import BlendShapes
+
+- Export BlendShapes でエクスポートしたブレンドシェイプの値をオブジェクトへ反映する機能
 
 ## つかいかた
 
