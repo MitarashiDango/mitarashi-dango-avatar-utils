@@ -5,6 +5,7 @@ namespace MitarashiDango.AvatarUtils
 {
     public class FaceEmoteControlParameters
     {
+        public static readonly string FEC_ON = "FEC_ON";
         public static readonly string FEC_FACE_EMOTE_LOCKER_ENABLED = "FEC_FaceEmoteLockerEnabled";
         public static readonly string FEC_FACE_EMOTE_LOCKER_CONTACT = "FEC_FaceEmoteLockerContact";
         public static readonly string FEC_FACE_EMOTE_LOCKED = "FEC_FaceEmoteLocked";
@@ -21,6 +22,14 @@ namespace MitarashiDango.AvatarUtils
         {
             var parameterConfigs = new List<ParameterConfig>
             {
+                new ParameterConfig
+                {
+                    nameOrPrefix = FEC_ON,
+                    defaultValue = 1,
+                    syncType = ParameterSyncType.Bool,
+                    saved = true,
+                    localOnly = false,
+                },
                 new ParameterConfig
                 {
                     nameOrPrefix = FEC_FACE_EMOTE_LOCKER_ENABLED,

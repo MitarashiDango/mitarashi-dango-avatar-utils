@@ -92,6 +92,12 @@ namespace MitarashiDango.AvatarUtils
                 },
                 new AnimatorControllerParameter
                 {
+                    name = FaceEmoteControlParameters.FEC_ON,
+                    type = AnimatorControllerParameterType.Bool,
+                    defaultBool = true,
+                },
+                new AnimatorControllerParameter
+                {
                     name = FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE,
                     type = AnimatorControllerParameterType.Int,
                     defaultInt = 0,
@@ -732,6 +738,21 @@ namespace MitarashiDango.AvatarUtils
                 setDefaultFaceEmoteState.motion = blankAnimationClip;
             }
 
+            var unsetDefaultFaceEmoteState = layer.stateMachine.AddState("Unset Defalut Face Emote", new Vector3(240, 60, 0));
+            unsetDefaultFaceEmoteState.writeDefaultValues = false;
+            unsetDefaultFaceEmoteState.motion = blankAnimationClip;
+
+            AnimatorTransitionUtil.AddEntryTransition(layer.stateMachine, unsetDefaultFaceEmoteState)
+                .IfNot(FaceEmoteControlParameters.FEC_ON);
+
+            AnimatorTransitionUtil.AddTransition(setDefaultFaceEmoteState, unsetDefaultFaceEmoteState)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
+
+            AnimatorTransitionUtil.AddTransition(unsetDefaultFaceEmoteState, setDefaultFaceEmoteState)
+                .If(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
+
             return layer;
         }
 
@@ -751,11 +772,26 @@ namespace MitarashiDango.AvatarUtils
             AddNeutralFaceEmoteState(layer.stateMachine, faceEmoteControl, new Vector3(500, 0, 0));
             AddAFKState(layer.stateMachine, new Vector3(500, -60, 0));
             AddMMDState(layer.stateMachine, new Vector3(500, -120, 0));
+            AddFaceEmoteControlOffState(layer.stateMachine, new Vector3(500, -180, 0));
             AddLeftGestureEmoteStates(layer.stateMachine, new Vector3(500, 60, 0), faceEmoteControl);
             AddRightGestureEmoteStates(layer.stateMachine, new Vector3(500, 60 + 60 * faceEmoteControl.faceEmoteGestureGroups.Count, 0), faceEmoteControl);
             AddFixedFaceEmotes(layer.stateMachine, faceEmoteControl, faceEmoteControl.faceEmoteGestureGroups.Count * 14, new Vector3(500, 60 + 120 * faceEmoteControl.faceEmoteGestureGroups.Count, 0));
 
             return layer;
+        }
+
+        private void AddFaceEmoteControlOffState(AnimatorStateMachine stateMachine, Vector3 position)
+        {
+            var state = stateMachine.AddState("FEC_OFF", position);
+            state.writeDefaultValues = false;
+            state.motion = blankAnimationClip;
+
+            AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+                .IfNot(FaceEmoteControlParameters.FEC_ON);
+
+            AnimatorTransitionUtil.AddExitTransition(state)
+                .If(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
         }
 
         private void AddMMDState(AnimatorStateMachine stateMachine, Vector3 position)
@@ -782,8 +818,13 @@ namespace MitarashiDango.AvatarUtils
 
             // MMDダンスワールドなどでワールド側のアニメーションが適用されている場合（Sit判定かつSeatedではない状態）、ステートへ進入させる
             AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+                .If(FaceEmoteControlParameters.FEC_ON)
                 .If(VRCParameters.IN_STATION)
                 .IfNot(VRCParameters.SEATED);
+
+            AnimatorTransitionUtil.AddExitTransition(state)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
 
             // Sit状態かつSeatedな状態になった場合、ステートから退出する
             AnimatorTransitionUtil.AddExitTransition(state)
@@ -806,15 +847,21 @@ namespace MitarashiDango.AvatarUtils
 
             // Sit状態ではない場合
             AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+                .If(FaceEmoteControlParameters.FEC_ON)
                 .If(VRCParameters.AFK)
                 .IfNot(VRCParameters.IN_STATION)
                 .IfNot(VRCParameters.SEATED);
 
             // Sit状態（Seatedではない場合を除く）
             AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+                .If(FaceEmoteControlParameters.FEC_ON)
                 .If(VRCParameters.AFK)
                 .If(VRCParameters.IN_STATION)
                 .If(VRCParameters.SEATED);
+
+            AnimatorTransitionUtil.AddExitTransition(state)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
 
             AnimatorTransitionUtil.AddExitTransition(state)
                 .IfNot(VRCParameters.AFK)
@@ -850,6 +897,7 @@ namespace MitarashiDango.AvatarUtils
 
             // Sit状態ではない場合
             AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+                .If(FaceEmoteControlParameters.FEC_ON)
                 .IfNot(VRCParameters.AFK)
                 .Equals(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 0)
                 .IfNot(VRCParameters.IN_STATION)
@@ -857,6 +905,7 @@ namespace MitarashiDango.AvatarUtils
 
             // Sit状態（Seatedではない場合を除く）
             AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+                .If(FaceEmoteControlParameters.FEC_ON)
                 .IfNot(VRCParameters.AFK)
                 .Equals(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 0)
                 .If(VRCParameters.IN_STATION)
@@ -875,6 +924,10 @@ namespace MitarashiDango.AvatarUtils
                     transition.interruptionSource = TransitionInterruptionSource.None;
                     transition.orderedInterruption = true;
                 });
+
+            AnimatorTransitionUtil.AddExitTransition(state)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
 
             AnimatorTransitionUtil.AddExitTransition(state)
                 .If(VRCParameters.AFK)
@@ -899,6 +952,7 @@ namespace MitarashiDango.AvatarUtils
 
                 // Sit状態ではない場合
                 AnimatorTransitionUtil.AddEntryTransition(stateMachine, leftGestureEmoteStateMachine)
+                    .If(FaceEmoteControlParameters.FEC_ON)
                     .IfNot(VRCParameters.AFK)
                     .Greater(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * index)
                     .Less(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * (index + 1) + 1)
@@ -907,6 +961,7 @@ namespace MitarashiDango.AvatarUtils
 
                 // Sit状態（Seatedではない場合を除く）
                 AnimatorTransitionUtil.AddEntryTransition(stateMachine, leftGestureEmoteStateMachine)
+                    .If(FaceEmoteControlParameters.FEC_ON)
                     .IfNot(VRCParameters.AFK)
                     .Greater(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * index)
                     .Less(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * (index + 1) + 1)
@@ -939,6 +994,7 @@ namespace MitarashiDango.AvatarUtils
 
                 // Sit状態ではない場合
                 AnimatorTransitionUtil.AddEntryTransition(stateMachine, rightGestureEmoteStateMachine)
+                    .If(FaceEmoteControlParameters.FEC_ON)
                     .IfNot(VRCParameters.AFK)
                     .Greater(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * index + faceEmoteControl.faceEmoteGestureGroups.Count * 7)
                     .Less(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * (index + 1) + 1 + faceEmoteControl.faceEmoteGestureGroups.Count * 7)
@@ -947,6 +1003,7 @@ namespace MitarashiDango.AvatarUtils
 
                 // Sit状態（Seatedではない場合を除く）
                 AnimatorTransitionUtil.AddEntryTransition(stateMachine, rightGestureEmoteStateMachine)
+                    .If(FaceEmoteControlParameters.FEC_ON)
                     .IfNot(VRCParameters.AFK)
                     .Greater(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * index + faceEmoteControl.faceEmoteGestureGroups.Count * 7)
                     .Less(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, 7 * (index + 1) + 1 + faceEmoteControl.faceEmoteGestureGroups.Count * 7)
@@ -1009,6 +1066,7 @@ namespace MitarashiDango.AvatarUtils
 
                     // Sit状態ではない場合
                     AnimatorTransitionUtil.AddEntryTransition(stateMachine, currentStateMachine)
+                        .If(FaceEmoteControlParameters.FEC_ON)
                         .IfNot(VRCParameters.AFK)
                         .Greater(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, faceEmoteNumber - 1)
                         .Less(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, faceEmoteNumber + 10)
@@ -1017,6 +1075,7 @@ namespace MitarashiDango.AvatarUtils
 
                     // Sit状態（Seatedではない場合を除く）
                     AnimatorTransitionUtil.AddEntryTransition(stateMachine, currentStateMachine)
+                        .If(FaceEmoteControlParameters.FEC_ON)
                         .IfNot(VRCParameters.AFK)
                         .Greater(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, faceEmoteNumber - 1)
                         .Less(FaceEmoteControlParameters.FEC_SELECTED_FACE_EMOTE, faceEmoteNumber + 10)
@@ -1115,6 +1174,10 @@ namespace MitarashiDango.AvatarUtils
                 });
 
             AnimatorTransitionUtil.AddExitTransition(state)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
+
+            AnimatorTransitionUtil.AddExitTransition(state)
                 .If(VRCParameters.AFK)
                 .SetImmediateTransitionSettings();
 
@@ -1176,6 +1239,10 @@ namespace MitarashiDango.AvatarUtils
                 });
 
             AnimatorTransitionUtil.AddExitTransition(state)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
+
+            AnimatorTransitionUtil.AddExitTransition(state)
                 .If(VRCParameters.AFK)
                 .SetImmediateTransitionSettings();
 
@@ -1230,6 +1297,10 @@ namespace MitarashiDango.AvatarUtils
                     transition.interruptionSource = TransitionInterruptionSource.None;
                     transition.orderedInterruption = true;
                 });
+
+            AnimatorTransitionUtil.AddExitTransition(state)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
 
             AnimatorTransitionUtil.AddExitTransition(state)
                 .If(VRCParameters.AFK)
