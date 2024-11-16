@@ -22,6 +22,7 @@ namespace MitarashiDango.AvatarUtils
 
             var subMenuItems = new List<GameObject>
             {
+                GenerateToggleMenuItem("表情コントロールON", null, FaceEmoteControlParameters.FEC_ON, 1),
                 GenerateRadialPuppetMenuItem("表情固定・ロック時のジェスチャーウェイト調整", null, FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT, 1),
                 GenerateFaceLockMenu(),
                 GenerateFaceGestureGroupSelectMenu(faceEmoteControl),
