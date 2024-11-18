@@ -727,7 +727,7 @@ namespace MitarashiDango.AvatarUtils
             layer.stateMachine.exitPosition = new Vector3(0, -40, 0);
             layer.stateMachine.anyStatePosition = new Vector3(0, -80, 0);
 
-            var setDefaultFaceEmoteState = layer.stateMachine.AddState("Set Default Face Emote", new Vector3(-20, 60, 0));
+            var setDefaultFaceEmoteState = layer.stateMachine.AddState("Set Default Face Emote", new Vector3(-20, 120, 0));
             setDefaultFaceEmoteState.writeDefaultValues = false;
             if (faceEmoteControl.defaultFaceMotion != null)
             {
@@ -738,20 +738,93 @@ namespace MitarashiDango.AvatarUtils
                 setDefaultFaceEmoteState.motion = blankAnimationClip;
             }
 
-            var unsetDefaultFaceEmoteState = layer.stateMachine.AddState("Unset Defalut Face Emote", new Vector3(240, 60, 0));
-            unsetDefaultFaceEmoteState.writeDefaultValues = false;
-            unsetDefaultFaceEmoteState.motion = blankAnimationClip;
+            var faceEmoteControlOFFState = layer.stateMachine.AddState("Face Emote Control OFF", new Vector3(360, 0, 0));
+            faceEmoteControlOFFState.writeDefaultValues = false;
+            faceEmoteControlOFFState.motion = blankAnimationClip;
 
-            AnimatorTransitionUtil.AddEntryTransition(layer.stateMachine, unsetDefaultFaceEmoteState)
+            AnimatorTransitionUtil.AddEntryTransition(layer.stateMachine, faceEmoteControlOFFState)
                 .IfNot(FaceEmoteControlParameters.FEC_ON);
 
-            AnimatorTransitionUtil.AddTransition(setDefaultFaceEmoteState, unsetDefaultFaceEmoteState)
+            AnimatorTransitionUtil.AddTransition(setDefaultFaceEmoteState, faceEmoteControlOFFState)
                 .IfNot(FaceEmoteControlParameters.FEC_ON)
                 .SetImmediateTransitionSettings();
 
-            AnimatorTransitionUtil.AddTransition(unsetDefaultFaceEmoteState, setDefaultFaceEmoteState)
+            AnimatorTransitionUtil.AddTransition(faceEmoteControlOFFState, setDefaultFaceEmoteState)
                 .If(FaceEmoteControlParameters.FEC_ON)
+                .IfNot(VRCParameters.AFK)
                 .SetImmediateTransitionSettings();
+
+            var afkONState = layer.stateMachine.AddState("AFK ON", new Vector3(720, 120, 0));
+            afkONState.writeDefaultValues = false;
+            afkONState.motion = blankAnimationClip;
+
+            AnimatorTransitionUtil.AddEntryTransition(layer.stateMachine, afkONState)
+                .If(FaceEmoteControlParameters.FEC_ON)
+                .If(VRCParameters.AFK);
+
+            AnimatorTransitionUtil.AddTransition(setDefaultFaceEmoteState, afkONState)
+                .If(FaceEmoteControlParameters.FEC_ON)
+                .If(VRCParameters.AFK)
+                .SetImmediateTransitionSettings();
+
+            AnimatorTransitionUtil.AddTransition(faceEmoteControlOFFState, afkONState)
+                .If(FaceEmoteControlParameters.FEC_ON)
+                .If(VRCParameters.AFK)
+                .SetImmediateTransitionSettings();
+
+            AnimatorTransitionUtil.AddTransition(afkONState, faceEmoteControlOFFState)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
+
+            if (faceEmoteControl.waitTimeAfterAFKOff > 0)
+            {
+                var waitingAfterAFKOFFState = layer.stateMachine.AddState("Waiting After AFK OFF", new Vector3(720, 240, 0));
+                waitingAfterAFKOFFState.writeDefaultValues = false;
+                waitingAfterAFKOFFState.motion = blankAnimationClip;
+
+                AnimatorTransitionUtil.AddTransition(afkONState, waitingAfterAFKOFFState)
+                    .IfNot(VRCParameters.AFK)
+                    .SetImmediateTransitionSettings();
+
+                AnimatorTransitionUtil.AddTransition(waitingAfterAFKOFFState, afkONState)
+                    .If(VRCParameters.AFK)
+                    .SetImmediateTransitionSettings();
+
+                AnimatorTransitionUtil.AddTransition(waitingAfterAFKOFFState, faceEmoteControlOFFState)
+                    .IfNot(FaceEmoteControlParameters.FEC_ON)
+                    .Exec((builder) =>
+                    {
+                        var transition = builder.Transition;
+                        transition.hasExitTime = true;
+                        transition.exitTime = faceEmoteControl.waitTimeAfterAFKOff;
+                        transition.hasFixedDuration = true;
+                        transition.duration = 0;
+                        transition.offset = 0;
+                        transition.interruptionSource = TransitionInterruptionSource.None;
+                        transition.orderedInterruption = true;
+                    });
+
+                AnimatorTransitionUtil.AddTransition(waitingAfterAFKOFFState, setDefaultFaceEmoteState)
+                    .If(FaceEmoteControlParameters.FEC_ON)
+                    .Exec((builder) =>
+                    {
+                        var transition = builder.Transition;
+                        transition.hasExitTime = true;
+                        transition.exitTime = faceEmoteControl.waitTimeAfterAFKOff;
+                        transition.hasFixedDuration = true;
+                        transition.duration = 0;
+                        transition.offset = 0;
+                        transition.interruptionSource = TransitionInterruptionSource.None;
+                        transition.orderedInterruption = true;
+                    });
+            }
+            else
+            {
+                AnimatorTransitionUtil.AddTransition(afkONState, setDefaultFaceEmoteState)
+                    .If(FaceEmoteControlParameters.FEC_ON)
+                    .IfNot(VRCParameters.AFK)
+                    .SetImmediateTransitionSettings();
+            }
 
             return layer;
         }
@@ -770,7 +843,7 @@ namespace MitarashiDango.AvatarUtils
             layer.stateMachine.anyStatePosition = new Vector3(0, -80, 0);
 
             AddNeutralFaceEmoteState(layer.stateMachine, faceEmoteControl, new Vector3(500, 0, 0));
-            AddAFKState(layer.stateMachine, new Vector3(500, -60, 0));
+            AddAFKState(layer.stateMachine, faceEmoteControl, new Vector3(500, -60, 0));
             AddMMDState(layer.stateMachine, new Vector3(500, -120, 0));
             AddFaceEmoteControlOffState(layer.stateMachine, new Vector3(500, -180, 0));
             AddLeftGestureEmoteStates(layer.stateMachine, new Vector3(500, 60, 0), faceEmoteControl);
@@ -839,38 +912,83 @@ namespace MitarashiDango.AvatarUtils
                 .SetImmediateTransitionSettings();
         }
 
-        private void AddAFKState(AnimatorStateMachine stateMachine, Vector3 position)
+        private AnimatorStateMachine AddAFKSubStateMachine(AnimatorStateMachine stateMachine, FaceEmoteControl faceEmoteControl, Vector3 position)
         {
-            var state = stateMachine.AddState("AFK", position);
-            state.writeDefaultValues = false;
-            state.motion = blankAnimationClip;
+            var subStateMachine = stateMachine.AddStateMachine("AFK", position);
+
+            subStateMachine.entryPosition = new Vector3(0, 0, 0);
+            subStateMachine.exitPosition = new Vector3(800, 0, 0);
+            subStateMachine.anyStatePosition = new Vector3(0, -80, 0);
+            subStateMachine.parentStateMachinePosition = new Vector3(800, 100, 0);
+
+            var afkONState = subStateMachine.AddState("AFK ON", new Vector3(400, 0, 0));
+            afkONState.writeDefaultValues = false;
+            afkONState.motion = blankAnimationClip;
+
+            if (faceEmoteControl.waitTimeAfterAFKOff > 0)
+            {
+                var waitingAfterAFKOFFState = subStateMachine.AddState("Waiting After AFK OFF", new Vector3(400, 80, 0));
+                waitingAfterAFKOFFState.writeDefaultValues = false;
+                waitingAfterAFKOFFState.motion = blankAnimationClip;
+
+                AnimatorTransitionUtil.AddTransition(afkONState, waitingAfterAFKOFFState)
+                    .IfNot(VRCParameters.AFK)
+                    .SetImmediateTransitionSettings();
+
+                AnimatorTransitionUtil.AddTransition(waitingAfterAFKOFFState, afkONState)
+                    .If(VRCParameters.AFK)
+                    .SetImmediateTransitionSettings();
+
+                AnimatorTransitionUtil.AddExitTransition(waitingAfterAFKOFFState)
+                    .Exec((builder) =>
+                    {
+                        var transition = builder.Transition;
+                        transition.hasExitTime = true;
+                        transition.exitTime = faceEmoteControl.waitTimeAfterAFKOff;
+                        transition.hasFixedDuration = true;
+                        transition.duration = 0;
+                        transition.offset = 0;
+                        transition.interruptionSource = TransitionInterruptionSource.None;
+                        transition.orderedInterruption = true;
+                    });
+            }
+            else
+            {
+                AnimatorTransitionUtil.AddExitTransition(afkONState)
+                    .IfNot(VRCParameters.AFK);
+            }
+
+            AnimatorTransitionUtil.AddExitTransition(afkONState)
+                .IfNot(FaceEmoteControlParameters.FEC_ON)
+                .SetImmediateTransitionSettings();
+
+            AnimatorTransitionUtil.AddExitTransition(afkONState)
+                .If(VRCParameters.IN_STATION)
+                .IfNot(VRCParameters.SEATED)
+                .SetImmediateTransitionSettings();
+
+            return subStateMachine;
+        }
+
+        private void AddAFKState(AnimatorStateMachine stateMachine, FaceEmoteControl faceEmoteControl, Vector3 position)
+        {
+            var subStateMachine = AddAFKSubStateMachine(stateMachine, faceEmoteControl, position);
 
             // Sit状態ではない場合
-            AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+            AnimatorTransitionUtil.AddEntryTransition(stateMachine, subStateMachine)
                 .If(FaceEmoteControlParameters.FEC_ON)
                 .If(VRCParameters.AFK)
                 .IfNot(VRCParameters.IN_STATION)
                 .IfNot(VRCParameters.SEATED);
 
             // Sit状態（Seatedではない場合を除く）
-            AnimatorTransitionUtil.AddEntryTransition(stateMachine, state)
+            AnimatorTransitionUtil.AddEntryTransition(stateMachine, subStateMachine)
                 .If(FaceEmoteControlParameters.FEC_ON)
                 .If(VRCParameters.AFK)
                 .If(VRCParameters.IN_STATION)
                 .If(VRCParameters.SEATED);
 
-            AnimatorTransitionUtil.AddExitTransition(state)
-                .IfNot(FaceEmoteControlParameters.FEC_ON)
-                .SetImmediateTransitionSettings();
-
-            AnimatorTransitionUtil.AddExitTransition(state)
-                .IfNot(VRCParameters.AFK)
-                .SetImmediateTransitionSettings();
-
-            AnimatorTransitionUtil.AddExitTransition(state)
-                .If(VRCParameters.IN_STATION)
-                .IfNot(VRCParameters.SEATED)
-                .SetImmediateTransitionSettings();
+            AnimatorTransitionUtil.AddExitTransition(subStateMachine, stateMachine);
         }
 
         private void AddNeutralFaceEmoteState(AnimatorStateMachine stateMachine, FaceEmoteControl faceEmoteControl, Vector3 position)

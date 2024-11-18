@@ -13,6 +13,7 @@ namespace MitarashiDango.AvatarUtils
         private SerializedProperty leftFaceEmoteGestureGroupNumber;
         private SerializedProperty rightFaceEmoteGestureGroupNumber;
         private SerializedProperty faceEmoteGroups;
+        private SerializedProperty waitTimeAfterAFKOff;
 
         private void OnEnable()
         {
@@ -23,6 +24,7 @@ namespace MitarashiDango.AvatarUtils
             leftFaceEmoteGestureGroupNumber = serializedObject.FindProperty("leftFaceEmoteGestureGroupNumber");
             rightFaceEmoteGestureGroupNumber = serializedObject.FindProperty("rightFaceEmoteGestureGroupNumber");
             faceEmoteGroups = serializedObject.FindProperty("faceEmoteGroups");
+            waitTimeAfterAFKOff = serializedObject.FindProperty("waitTimeAfterAFKOff");
         }
 
         public override void OnInspectorGUI()
@@ -98,6 +100,15 @@ namespace MitarashiDango.AvatarUtils
             EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(faceEmoteGroups, new GUIContent("表情グループ"));
+
+            EditorGUILayout.LabelField(new GUIContent("AFK設定"), EditorStyles.boldLabel);
+
+            EditorGUILayout.PropertyField(waitTimeAfterAFKOff, new GUIContent("AFKオフ後の待機時間 (s)"));
+
+            if (waitTimeAfterAFKOff.floatValue < 0)
+            {
+                waitTimeAfterAFKOff.floatValue = 0;
+            }
 
             if (EditorApplication.isPlaying)
             {

@@ -29,5 +29,8 @@ namespace MitarashiDango.AvatarUtils
 
         [HideInInspector]
         public List<FaceEmoteGroup> faceEmoteGroups;
+
+        [HideInInspector]
+        public float waitTimeAfterAFKOff = 0;
     }
 }
