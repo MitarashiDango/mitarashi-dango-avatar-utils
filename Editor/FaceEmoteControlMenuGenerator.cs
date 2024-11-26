@@ -229,7 +229,7 @@ namespace MitarashiDango.AvatarUtils
 
         private GameObject GenerateFixedFaceEmoteMenuItem(FaceEmote faceEmote, string defaultName, float parameterValue)
         {
-            var name = faceEmote.name != "" ? faceEmote.name : defaultName;
+            var name = faceEmote.FaceEmoteName != "" ? faceEmote.FaceEmoteName : defaultName;
             return GenerateToggleMenuItem(name, faceEmote.icon, FaceEmoteControlParameters.FEC_FIXED_FACE_EMOTE, parameterValue);
         }
 
