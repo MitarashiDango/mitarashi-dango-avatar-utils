@@ -21,6 +21,6 @@ namespace MitarashiDango.AvatarUtils
         [HideInInspector]
         public TrackingControlType mouthControlType;
 
-        public string FaceEmoteName => (name != "" ? name : motion?.name) ?? "";
+        public string FaceEmoteName => !string.IsNullOrEmpty(name) ? name : motion?.name ?? "";
     }
 }
