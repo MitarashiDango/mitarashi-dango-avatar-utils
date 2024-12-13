@@ -16,11 +16,11 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
-            var fecRootGameObject = GenerateHeadBoneChildObject();
-            fecRootGameObject.transform.SetParent(faceEmoteControl.gameObject.transform);
+            var headProxyGameObject = GenerateHeadBoneChildObject();
+            headProxyGameObject.transform.SetParent(ctx.AvatarRootObject.transform);
 
-            var faceEmoteLocker = GenerateFaceEmoteLocker(fecRootGameObject);
-            faceEmoteLocker.transform.SetParent(faceEmoteControl.gameObject.transform);
+            var faceEmoteLocker = GenerateFaceEmoteLocker(headProxyGameObject);
+            faceEmoteLocker.transform.SetParent(ctx.AvatarRootObject.transform);
 
             AddParameters(faceEmoteControl.gameObject, faceEmoteControl);
             AddMenuItems(faceEmoteControl.gameObject, faceEmoteControl);
@@ -53,7 +53,7 @@ namespace MitarashiDango.AvatarUtils
 
         private GameObject GenerateHeadBoneChildObject()
         {
-            var go = new GameObject("FaceEmoteControl_Root");
+            var go = new GameObject("$$FaceEmoteControl$$HeadProxy");
 
             var modularAvatarBoneProxy = go.AddComponent<ModularAvatarBoneProxy>();
             modularAvatarBoneProxy.attachmentMode = BoneProxyAttachmentMode.AsChildAtRoot;
@@ -64,7 +64,7 @@ namespace MitarashiDango.AvatarUtils
 
         private GameObject GenerateFaceEmoteLocker(GameObject rootGameObject)
         {
-            var go = new GameObject("FaceEmoteLocker");
+            var go = new GameObject("$$FaceEmoteControl$$FaceEmoteLockContactReceiver");
 
             var vrcContactReceiver = go.AddComponent<VRCContactReceiver>();
             vrcContactReceiver.rootTransform = rootGameObject.transform;
