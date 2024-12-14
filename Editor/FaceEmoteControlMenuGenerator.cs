@@ -8,18 +8,17 @@ namespace MitarashiDango.AvatarUtils
 {
     public class FaceEmoteControlMenuGenerator
     {
-        public GameObject GenerateMenus(FaceEmoteControl faceEmoteControl)
+        public void GenerateMenu(FaceEmoteControl faceEmoteControl)
         {
-            var menuTree = GenerateFaceEmoteControlMenu(faceEmoteControl);
-            menuTree.AddComponent<ModularAvatarMenuInstaller>();
+            var modularAvatarMenuItem = faceEmoteControl.gameObject.AddComponent<ModularAvatarMenuItem>();
+            modularAvatarMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.SubMenu;
+            modularAvatarMenuItem.MenuSource = SubmenuSource.Children;
 
-            return menuTree;
+            GenerateFaceEmoteControlMenuItems(faceEmoteControl);
         }
 
-        private GameObject GenerateFaceEmoteControlMenu(FaceEmoteControl faceEmoteControl)
+        private void GenerateFaceEmoteControlMenuItems(FaceEmoteControl faceEmoteControl)
         {
-            var subMenu = GenerateSubMenu("表情操作", null);
-
             var subMenuItems = new List<GameObject>
             {
                 GenerateToggleMenuItem("表情コントロールON", null, FaceEmoteControlParameters.FEC_ON, 1),
@@ -31,10 +30,8 @@ namespace MitarashiDango.AvatarUtils
 
             foreach (var subMenuItem in subMenuItems)
             {
-                subMenuItem.transform.parent = subMenu.transform;
+                subMenuItem.transform.parent = faceEmoteControl.transform;
             }
-
-            return subMenu;
         }
 
         private GameObject GenerateFaceLockMenu()
