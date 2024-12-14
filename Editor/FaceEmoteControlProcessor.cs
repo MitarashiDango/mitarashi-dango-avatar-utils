@@ -23,7 +23,7 @@ namespace MitarashiDango.AvatarUtils
             faceEmoteLocker.transform.SetParent(ctx.AvatarRootObject.transform);
 
             AddParameters(faceEmoteControl.gameObject, faceEmoteControl);
-            AddMenuItems(faceEmoteControl.gameObject, faceEmoteControl);
+            GenerateMenu(faceEmoteControl);
             AddAnimatorController(faceEmoteControl);
             Object.DestroyImmediate(faceEmoteControl);
         }
@@ -35,10 +35,10 @@ namespace MitarashiDango.AvatarUtils
             modularAvatarParameters.parameters = parameters.GetParameterConfigs(faceEmoteControl);
         }
 
-        private void AddMenuItems(GameObject obj, FaceEmoteControl faceEmoteControl)
+        private void GenerateMenu(FaceEmoteControl faceEmoteControl)
         {
             var menuBuilder = new FaceEmoteControlMenuGenerator();
-            menuBuilder.GenerateMenus(faceEmoteControl).transform.parent = obj.transform;
+            menuBuilder.GenerateMenu(faceEmoteControl);
         }
 
         private void AddAnimatorController(FaceEmoteControl faceEmoteControl)
