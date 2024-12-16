@@ -24,7 +24,7 @@ namespace MitarashiDango.AvatarUtils
 
         private Vector2 _scrollPosition = Vector2.zero;
 
-        [MenuItem("GameObject/Import BlendShapes", false, 0)]
+        [MenuItem("GameObject/MitarashiDango Avatar Utils/Import BlendShapes", false, 0)]
         internal static void OpenWindow()
         {
             var window = GetWindow<ImportBlendShapesEditorWindow>("Import BlendShapes");
