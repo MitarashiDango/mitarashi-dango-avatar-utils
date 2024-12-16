@@ -42,12 +42,7 @@ namespace MitarashiDango.AvatarUtils
 
         private void AddMenuItems(PhysBonesSwitcher physBonesSwitcher)
         {
-            var menuObject = new GameObject("PhysBonesSwitcherMenu");
-            menuObject.AddComponent<ModularAvatarMenuInstaller>();
-            menuObject.AddComponent<ModularAvatarMenuGroup>();
-
-            var menuItem = new GameObject("PhysBone無効化");
-            var modularAvatarMenuItem = menuItem.AddComponent<ModularAvatarMenuItem>();
+            var modularAvatarMenuItem = physBonesSwitcher.gameObject.AddComponent<ModularAvatarMenuItem>();
 
             modularAvatarMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
             modularAvatarMenuItem.Control.parameter = new VRCExpressionsMenu.Control.Parameter
@@ -55,10 +50,6 @@ namespace MitarashiDango.AvatarUtils
                 name = PhysBonesSwitcherParameters.PBS_PHYS_BONES_OFF,
             };
             modularAvatarMenuItem.Control.value = 1;
-
-            menuItem.transform.parent = menuObject.transform;
-
-            menuObject.transform.parent = physBonesSwitcher.gameObject.transform;
         }
 
         private AnimatorController GeneratePhysBonesSwitcherAnimatorController()
