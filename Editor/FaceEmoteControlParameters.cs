@@ -6,6 +6,8 @@ namespace MitarashiDango.AvatarUtils
     public class FaceEmoteControlParameters
     {
         public static readonly string FEC_ON = "FEC_ON";
+        public static readonly string FEC_AUTO_SWITCH_TO_DANCE_MODE_ON = "FEC_AutoSwitchToDanceModeON";
+        public static readonly string FEC_DANCE_MODE_ON = "FEC_DanceModeON";
         public static readonly string FEC_FACE_EMOTE_LOCKER_ENABLED = "FEC_FaceEmoteLockerEnabled";
         public static readonly string FEC_FACE_EMOTE_LOCKER_CONTACT = "FEC_FaceEmoteLockerContact";
         public static readonly string FEC_FACE_EMOTE_LOCKED = "FEC_FaceEmoteLocked";
@@ -26,6 +28,22 @@ namespace MitarashiDango.AvatarUtils
                 {
                     nameOrPrefix = FEC_ON,
                     defaultValue = 1,
+                    syncType = ParameterSyncType.Bool,
+                    saved = true,
+                    localOnly = false,
+                },
+                new ParameterConfig
+                {
+                    nameOrPrefix = FEC_AUTO_SWITCH_TO_DANCE_MODE_ON,
+                    defaultValue = 1,
+                    syncType = ParameterSyncType.Bool,
+                    saved = true,
+                    localOnly = true,
+                },
+                new ParameterConfig
+                {
+                    nameOrPrefix = FEC_DANCE_MODE_ON,
+                    defaultValue = 0,
                     syncType = ParameterSyncType.Bool,
                     saved = true,
                     localOnly = false,
