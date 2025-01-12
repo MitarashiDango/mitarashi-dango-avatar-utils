@@ -22,7 +22,7 @@ namespace MitarashiDango.AvatarUtils
             var subMenuItems = new List<GameObject>
             {
                 GenerateToggleMenuItem("表情コントロールON", null, FaceEmoteControlParameters.FEC_ON, 1),
-                GenerateRadialPuppetMenuItem("表情固定・ロック時のジェスチャーウェイト調整", null, FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT, 1),
+                GenerateToggleMenuItem("表情ロックON", null, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED, 1),
                 GenerateFaceLockMenu(),
                 GenerateFaceGestureGroupSelectMenu(faceEmoteControl),
                 GenerateFaceSelectMenu(faceEmoteControl),
@@ -36,13 +36,14 @@ namespace MitarashiDango.AvatarUtils
 
         private GameObject GenerateFaceLockMenu()
         {
-            var subMenu = GenerateSubMenu("表情ロック設定", null);
+            var subMenu = GenerateSubMenu("動作設定", null);
 
             var subMenuItems = new List<GameObject>
             {
-                GenerateToggleMenuItem("表情ロックON", null, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKED, 1),
+                GenerateRadialPuppetMenuItem("表情固定・ロック時のジェスチャーウェイト調整", null, FaceEmoteControlParameters.FEC_FIXED_GESTURE_WEIGHT, 1),
                 GenerateToggleMenuItem("表情ロック用Contact Receiver ON", null, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_ENABLED, 1),
                 GenerateToggleMenuItem("Sit判定時にContact Receiverを自動OFF", null, FaceEmoteControlParameters.FEC_FACE_EMOTE_LOCKER_AUTO_DISABLE_ON_SIT, 1),
+                GenerateToggleMenuItem("ダンスモードへの自動切り替えON", null, FaceEmoteControlParameters.FEC_AUTO_SWITCH_TO_DANCE_MODE_ON, 1),
             };
 
             foreach (var subMenuItem in subMenuItems)
