@@ -19,19 +19,17 @@ namespace MitarashiDango.AvatarUtils
                 var layerTypeProperty = property.FindPropertyRelative("layerType");
                 var layerNameProperty = property.FindPropertyRelative("layerName");
                 var removeLayerProperty = property.FindPropertyRelative("removeLayer");
+                var replaceToDummyLayerProperty = property.FindPropertyRelative("replaceToDummyLayer");
+                var overwriteDefaultWeightProperty = property.FindPropertyRelative("overwriteDefaultWeight");
+                var defaultWeightProperty = property.FindPropertyRelative("defaultWeight");
+                var overwriteAvatarMaskProperty = property.FindPropertyRelative("overwriteAvatarMask");
+                var avatarMaskProperty = property.FindPropertyRelative("avatarMask");
+                var overwriteBlendingMode = property.FindPropertyRelative("overwriteBlendingMode");
+                var blendingMode = property.FindPropertyRelative("blendingMode");
+                var overwriteIkPass = property.FindPropertyRelative("overwriteIkPass");
+                var ikPass = property.FindPropertyRelative("ikPass");
 
-                var layerTypeRect = new Rect(position)
-                {
-                    height = EditorGUIUtility.singleLineHeight,
-                    width = position.width,
-                };
-                EditorGUI.PropertyField(layerTypeRect, layerTypeProperty, new GUIContent("レイヤー種別"));
-
-                var layerNamePopupRect = new Rect(layerTypeRect)
-                {
-                    y = layerTypeRect.y + layerTypeRect.height + EditorGUIUtility.standardVerticalSpacing,
-                    height = EditorGUIUtility.singleLineHeight
-                };
+                var rect = PutLayerTypePropertyField(position, layerTypeProperty);
 
                 var layerNames = new List<GUIContent>
                 {
@@ -39,38 +37,119 @@ namespace MitarashiDango.AvatarUtils
                 };
                 layerNames.AddRange(GetLayerNames(gameObject, (PlayableLayerType)layerTypeProperty.enumValueIndex));
 
-                var previousValue = 0;
-                var layerNameIndex = layerNames.FindIndex(value => value.text == layerNameProperty.stringValue);
-                if (layerNameIndex != -1)
+                rect = PutLayerNamePropertyFields(rect, layerNameProperty, layerNames);
+
+                rect = PutPropertyField(rect, removeLayerProperty, new GUIContent("レイヤーを削除"));
+
+                if (removeLayerProperty.boolValue)
                 {
-                    previousValue = layerNameIndex;
+                    PutPropertyField(rect, replaceToDummyLayerProperty, new GUIContent("削除時にダミーレイヤーで置き替え"));
                 }
-
-                var changedValue = EditorGUI.Popup(layerNamePopupRect, new GUIContent("レイヤー名"), previousValue, layerNames.ToArray());
-                if (changedValue != previousValue && changedValue != 0)
+                else
                 {
-                    layerNameProperty.stringValue = layerNames[changedValue].text;
+                    rect = PutPropertyField(rect, overwriteDefaultWeightProperty, new GUIContent("デフォルトウェイトの設定値を上書き"));
+                    if (overwriteDefaultWeightProperty.boolValue)
+                    {
+                        rect = PutPropertyField(rect, defaultWeightProperty, new GUIContent("デフォルトウェイト"));
+                    }
+
+                    rect = PutPropertyField(rect, overwriteAvatarMaskProperty, new GUIContent("アバターマスクの設定値を上書き"));
+                    if (overwriteAvatarMaskProperty.boolValue)
+                    {
+                        rect = PutPropertyField(rect, avatarMaskProperty, new GUIContent("アバターマスク"));
+                    }
+
+                    rect = PutPropertyField(rect, overwriteBlendingMode, new GUIContent("ブレンドモードの設定値を上書き"));
+                    if (overwriteBlendingMode.boolValue)
+                    {
+                        rect = PutPropertyField(rect, blendingMode, new GUIContent("ブレンドモード"));
+                    }
+
+                    rect = PutPropertyField(rect, overwriteIkPass, new GUIContent("IK Passの設定値を上書き"));
+                    if (overwriteIkPass.boolValue)
+                    {
+                        PutPropertyField(rect, ikPass, new GUIContent("IK Pass"));
+                    }
                 }
-
-                var layerNameRect = new Rect(layerNamePopupRect)
-                {
-                    y = layerNamePopupRect.y + layerNamePopupRect.height + EditorGUIUtility.standardVerticalSpacing,
-                    height = EditorGUIUtility.singleLineHeight
-                };
-                EditorGUI.PropertyField(layerNameRect, layerNameProperty, new GUIContent(" "));
-
-                var removeLayerRect = new Rect(layerNameRect)
-                {
-                    y = layerNameRect.y + layerNameRect.height + EditorGUIUtility.standardVerticalSpacing,
-                    height = EditorGUIUtility.singleLineHeight
-                };
-                EditorGUI.PropertyField(removeLayerRect, removeLayerProperty, new GUIContent("レイヤーを削除"));
             }
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight * 4 + EditorGUIUtility.standardVerticalSpacing * 3;
+            var height = EditorGUIUtility.singleLineHeight * 4 + EditorGUIUtility.standardVerticalSpacing * 3;
+
+            var removeLayerProperty = property.FindPropertyRelative("removeLayer");
+            if (removeLayerProperty.boolValue)
+            {
+                height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            }
+            else
+            {
+                var overwriteDefaultWeightProperty = property.FindPropertyRelative("overwriteDefaultWeight");
+                height += overwriteDefaultWeightProperty.boolValue ?
+                     (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 2 : EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+                var overwriteAvatarMaskProperty = property.FindPropertyRelative("overwriteAvatarMask");
+                height += overwriteAvatarMaskProperty.boolValue ?
+                     (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 2 : EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+                var overwriteBlendingMode = property.FindPropertyRelative("overwriteBlendingMode");
+                height += overwriteBlendingMode.boolValue ?
+                     (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 2 : EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+                var overwriteIkPass = property.FindPropertyRelative("overwriteIkPass");
+                height += overwriteIkPass.boolValue ?
+                     (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 2 : EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            }
+
+            return height;
+        }
+
+        private Rect PutLayerTypePropertyField(Rect position, SerializedProperty property)
+        {
+            var rect = new Rect(position)
+            {
+                height = EditorGUIUtility.singleLineHeight,
+                width = position.width,
+            };
+            EditorGUI.PropertyField(rect, property, new GUIContent("レイヤー種別"));
+            return rect;
+        }
+
+        private Rect PutLayerNamePropertyFields(Rect position, SerializedProperty property, List<GUIContent> layerNames)
+        {
+            var layerNamePopupRect = new Rect(position)
+            {
+                y = position.y + position.height + EditorGUIUtility.standardVerticalSpacing,
+                height = EditorGUIUtility.singleLineHeight
+            };
+
+            var previousValue = 0;
+            var layerNameIndex = layerNames.FindIndex(value => value.text == property.stringValue);
+            if (layerNameIndex != -1)
+            {
+                previousValue = layerNameIndex;
+            }
+
+            var changedValue = EditorGUI.Popup(layerNamePopupRect, new GUIContent("レイヤー名"), previousValue, layerNames.ToArray());
+            if (changedValue != previousValue && changedValue != 0)
+            {
+                property.stringValue = layerNames[changedValue].text;
+            }
+
+            return PutPropertyField(layerNamePopupRect, property, new GUIContent(" "));
+        }
+
+        private Rect PutPropertyField(Rect position, SerializedProperty property, GUIContent label)
+        {
+            var rect = new Rect(position)
+            {
+                y = position.y + position.height + EditorGUIUtility.standardVerticalSpacing,
+                height = EditorGUIUtility.singleLineHeight
+            };
+            EditorGUI.PropertyField(rect, property, label);
+
+            return rect;
         }
 
         private GameObject GetGameObject(SerializedProperty property)

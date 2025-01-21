@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using nadena.dev.ndmf;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -8,6 +9,11 @@ namespace MitarashiDango.AvatarUtils
 {
     public class AnimatorControllerModifierProcessor
     {
+        private AnimationClip blankAnimationClip = new AnimationClip
+        {
+            name = "blank"
+        };
+
         public void Run(BuildContext ctx)
         {
             var animatorControllerLayerModifiers = ctx.AvatarRootObject.GetComponentsInChildren<AnimatorControllerModifier>();
@@ -82,36 +88,68 @@ namespace MitarashiDango.AvatarUtils
         {
             for (var i = 0; i < customAnimLayers.Length; i++)
             {
-                var layer = customAnimLayers[i];
+                var customAnimLayer = customAnimLayers[i];
 
-                if (!modifierOptions.ContainsKey(layer.type))
+                if (!modifierOptions.ContainsKey(customAnimLayer.type))
                 {
                     continue;
                 }
 
-                if (layer.animatorController is AnimatorController c)
+                if (customAnimLayer.animatorController is AnimatorController ac)
                 {
-                    for (var j = 0; j < c.layers.Length;)
+                    ac.layers = ac.layers.ToList().Where(layer =>
                     {
-                        var targetLayer = c.layers[j];
-                        if (!modifierOptions[layer.type].ContainsKey(targetLayer.name))
+                        if (!modifierOptions[customAnimLayer.type].ContainsKey(layer.name))
                         {
-                            j++;
-                            continue;
+                            return true;
                         }
 
-                        var modifierOption = modifierOptions[layer.type][targetLayer.name];
+                        var modifierOption = modifierOptions[customAnimLayer.type][layer.name];
 
-                        if (modifierOption.removeLayer)
+                        return !modifierOption.removeLayer || (modifierOption.removeLayer && modifierOption.replaceToDummyLayer);
+                    })
+                    .Select((layer, index) =>
+                    {
+                        if (!modifierOptions[customAnimLayer.type].ContainsKey(layer.name))
                         {
-                            c.RemoveLayer(j);
-                            continue;
+                            return layer;
                         }
 
-                        j++;
-                    }
+                        var modifierOption = modifierOptions[customAnimLayer.type][layer.name];
+                        if (modifierOption.removeLayer && modifierOption.replaceToDummyLayer)
+                        {
+                            return CreateDummyLayer($"{layer.name} (Dummy)");
+                        }
+
+                        return new AnimatorControllerLayer()
+                        {
+                            name = layer.name,
+                            defaultWeight = modifierOption.overwriteDefaultWeight ? modifierOption.defaultWeight : layer.defaultWeight,
+                            avatarMask = modifierOption.overwriteAvatarMask ? modifierOption.avatarMask : layer.avatarMask,
+                            blendingMode = modifierOption.overwriteBlendingMode ? modifierOption.blendingMode : layer.blendingMode,
+                            iKPass = modifierOption.overwriteIkPass ? modifierOption.ikPass : layer.iKPass,
+                            stateMachine = layer.stateMachine,
+                            syncedLayerAffectsTiming = layer.syncedLayerAffectsTiming,
+                            syncedLayerIndex = layer.syncedLayerIndex,
+                        };
+                    }).ToArray();
                 }
             }
+        }
+
+        private AnimatorControllerLayer CreateDummyLayer(string name)
+        {
+            var stateMachine = new AnimatorStateMachine();
+            var state = stateMachine.AddState("Dummy State");
+            state.motion = blankAnimationClip;
+            state.writeDefaultValues = false;
+
+            return new AnimatorControllerLayer()
+            {
+                name = name,
+                stateMachine = stateMachine,
+                defaultWeight = 0
+            };
         }
     }
 }
