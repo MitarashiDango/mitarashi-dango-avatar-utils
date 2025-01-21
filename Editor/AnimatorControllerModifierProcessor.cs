@@ -118,7 +118,7 @@ namespace MitarashiDango.AvatarUtils
                         var modifierOption = modifierOptions[customAnimLayer.type][layer.name];
                         if (modifierOption.removeLayer && modifierOption.replaceToDummyLayer)
                         {
-                            return CreateDummyLayer($"{layer.name} (Dummy)");
+                            return CreateDummyLayer($"{layer.name} (Dummy)", layer);
                         }
 
                         return new AnimatorControllerLayer()
@@ -137,12 +137,13 @@ namespace MitarashiDango.AvatarUtils
             }
         }
 
-        private AnimatorControllerLayer CreateDummyLayer(string name)
+        private AnimatorControllerLayer CreateDummyLayer(string name, AnimatorControllerLayer oldLayer)
         {
             var stateMachine = new AnimatorStateMachine();
+
             var state = stateMachine.AddState("Dummy State");
             state.motion = blankAnimationClip;
-            state.writeDefaultValues = false;
+            state.writeDefaultValues = GetAnimatorStates(oldLayer.stateMachine).Exists(s => s.writeDefaultValues == true);
 
             return new AnimatorControllerLayer()
             {
@@ -150,6 +151,23 @@ namespace MitarashiDango.AvatarUtils
                 stateMachine = stateMachine,
                 defaultWeight = 0
             };
+        }
+
+        private List<AnimatorState> GetAnimatorStates(AnimatorStateMachine stateMachine)
+        {
+            var states = new List<AnimatorState>();
+
+            foreach (var childState in stateMachine.states)
+            {
+                states.Add(childState.state);
+            }
+
+            foreach (var childStateMachine in stateMachine.stateMachines)
+            {
+                states.AddRange(GetAnimatorStates(childStateMachine.stateMachine));
+            }
+
+            return states;
         }
     }
 }
