@@ -1,5 +1,7 @@
 using System;
+#if UNITY_EDITOR
 using UnityEditor.Animations;
+#endif
 using UnityEngine;
 
 namespace MitarashiDango.AvatarUtils
@@ -21,7 +23,9 @@ namespace MitarashiDango.AvatarUtils
         public AvatarMask avatarMask;
 
         public bool overwriteBlendingMode;
+#if UNITY_EDITOR
         public AnimatorLayerBlendingMode blendingMode;
+#endif
 
         public bool overwriteIkPass;
         public bool ikPass;
