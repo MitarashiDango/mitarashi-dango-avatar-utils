@@ -1,3 +1,4 @@
+using System.Linq;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
 using UnityEditor.Animations;
@@ -95,18 +96,94 @@ namespace MitarashiDango.AvatarUtils
                 frameRate = 60
             };
 
-            foreach (var vrcPhysBone in vrcPhysBones)
+            var physBonesAttachedObjects = vrcPhysBones
+                .Select(vrcPhysBone => vrcPhysBone.gameObject)
+                .Distinct()
+                .ToArray();
+
+            foreach (var physBonesAttachedObject in physBonesAttachedObjects)
             {
-                var path = MiscUtil.GetPathInHierarchy(vrcPhysBone.transform, ctx.AvatarRootObject.transform);
+                var physBones = physBonesAttachedObject.GetComponents<VRCPhysBone>();
 
-                var toEnableCurve = new AnimationCurve();
-                toEnableCurve.AddKey(0, 1);
+                if (physBones.Length == 1)
+                {
+                    var path = MiscUtil.GetPathInHierarchy(physBonesAttachedObject.transform, ctx.AvatarRootObject.transform);
 
-                var toDisableCurve = new AnimationCurve();
-                toDisableCurve.AddKey(0, 0);
+                    var toEnableCurve = new AnimationCurve();
+                    toEnableCurve.AddKey(0, 1);
 
-                toEnableAnimationClip.SetCurve(path, typeof(VRCPhysBone), "m_Enabled", toEnableCurve);
-                toDisableAnimationClip.SetCurve(path, typeof(VRCPhysBone), "m_Enabled", toDisableCurve);
+                    var toDisableCurve = new AnimationCurve();
+                    toDisableCurve.AddKey(0, 0);
+
+                    toEnableAnimationClip.SetCurve(path, typeof(VRCPhysBone), "m_Enabled", toEnableCurve);
+                    toDisableAnimationClip.SetCurve(path, typeof(VRCPhysBone), "m_Enabled", toDisableCurve);
+                }
+                else
+                {
+                    var attachedComponentsCount = physBonesAttachedObject.GetComponents<Component>().Where(c => c.GetType() != typeof(Transform)).Count();
+
+                    var path = "";
+                    if (physBones.Length == attachedComponentsCount)
+                    {
+                        // VRC Phys Boneだけアタッチされているゲームオブジェクトの場合、当該ゲームオブジェクト自体を操作する
+                        path = MiscUtil.GetPathInHierarchy(physBonesAttachedObject.transform, ctx.AvatarRootObject.transform);
+                    }
+                    else
+                    {
+                        // VRC Phys Bone以外のコンポーネントもアタッチされているゲームオブジェクトの場合、新たにゲームオブジェクトを作成し、VRC Phys Boneだけ新規作成したオブジェクトへ移動する
+                        var physBonesGameObject = new GameObject("$$PhysBones");
+                        physBonesGameObject.transform.SetParent(physBonesAttachedObject.transform);
+
+                        // VRC Phys Boneの各種設定値をコピーする
+                        foreach (var srcPhysBone in physBones)
+                        {
+                            var type = typeof(VRCPhysBone);
+                            var destPhysBone = physBonesGameObject.AddComponent<VRCPhysBone>();
+
+                            foreach (var field in type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance))
+                            {
+                                if (field.IsDefined(typeof(System.NonSerializedAttribute), true))
+                                {
+                                    continue;
+                                }
+
+                                field.SetValue(destPhysBone, field.GetValue(srcPhysBone));
+                            }
+
+                            foreach (var property in type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance))
+                            {
+                                if (!property.CanWrite || !property.CanRead || property.Name == "name")
+                                {
+                                    continue;
+                                }
+
+                                property.SetValue(destPhysBone, property.GetValue(srcPhysBone, null), null);
+                            }
+
+                            if (srcPhysBone.rootTransform == null)
+                            {
+                                destPhysBone.rootTransform = srcPhysBone.transform;
+                            }
+                        }
+
+                        // コピー元のVRC Phys Boneは消す
+                        foreach (var p in physBones)
+                        {
+                            Object.DestroyImmediate(p);
+                        }
+
+                        path = MiscUtil.GetPathInHierarchy(physBonesGameObject.transform, ctx.AvatarRootObject.transform);
+                    }
+
+                    var toEnableCurve = new AnimationCurve();
+                    toEnableCurve.AddKey(0, 1);
+
+                    var toDisableCurve = new AnimationCurve();
+                    toDisableCurve.AddKey(0, 0);
+
+                    toEnableAnimationClip.SetCurve(path, typeof(GameObject), "m_IsActive", toEnableCurve);
+                    toDisableAnimationClip.SetCurve(path, typeof(GameObject), "m_IsActive", toDisableCurve);
+                }
             }
 
             return (blankAnimationClip, toEnableAnimationClip, toDisableAnimationClip);
