@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -12,6 +13,9 @@ namespace MitarashiDango.AvatarUtils
         private int _zeroWeightBlendShapesIncludeOptionIndex;
         private int _vrcVisemeBlendShapesIncludeOptionIndex;
         private int _mmdBlendShapesIncludeOptionIndex;
+        private int _diffOptionIndex;
+        private AnimationClip _diffAnimationClip;
+        private BlendShapeSet _diffBlendShapeSet;
 
         [SerializeField]
         private string[] _excludeBlendShapeNames = new string[] { };
@@ -55,6 +59,13 @@ namespace MitarashiDango.AvatarUtils
                 new GUIContent("出力対象外とする"),
             };
 
+            var diffOptions = new GUIContent[]
+            {
+                new GUIContent("差分出力しない（条件に合致するシェイプキーを全て出力）"),
+                new GUIContent("指定したアニメーションクリップとの差分を検知したシェイプキーのみ出力"),
+                new GUIContent("指定したブレンドシェイプセットとの差分を検知したシェイプキーのみ出力"),
+            };
+
             _gameObject = (GameObject)EditorGUILayout.ObjectField(_gameObject, typeof(GameObject), true);
 
             using (var scrollViewScope = new EditorGUILayout.ScrollViewScope(_scrollPosition))
@@ -72,6 +83,19 @@ namespace MitarashiDango.AvatarUtils
                 EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNames"), new GUIContent("出力対象外とするシェイプキー"), true);
                 EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("出力対象外とするシェイプキーのプレフィックス"), true);
                 EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("出力対象外とするシェイプキーのサフィックス"), true);
+
+                _diffOptionIndex = EditorGUILayout.Popup(new GUIContent("差分出力設定"), _diffOptionIndex, diffOptions);
+
+                switch (_diffOptionIndex)
+                {
+                    case 1:
+                        EditorGUILayout.HelpBox("アニメーションクリップの場合、最終フレームの値で差分を取得します", MessageType.Info);
+                        _diffAnimationClip = (AnimationClip)EditorGUILayout.ObjectField(new GUIContent("差分取得元"), _diffAnimationClip, typeof(AnimationClip), true);
+                        break;
+                    case 2:
+                        _diffBlendShapeSet = (BlendShapeSet)EditorGUILayout.ObjectField(new GUIContent("差分取得元"), _diffBlendShapeSet, typeof(BlendShapeSet), true);
+                        break;
+                }
 
                 so.ApplyModifiedProperties();
 
@@ -124,6 +148,7 @@ namespace MitarashiDango.AvatarUtils
 
             var rootObject = _pathTypeIndex == 0 ? MiscUtil.GetAvatarRoot(_gameObject.transform) : _gameObject;
             var objectPath = MiscUtil.GetPathInHierarchy(_gameObject, rootObject);
+            var diffBlendShapes = GetBlendShapes();
 
             for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
             {
@@ -142,6 +167,11 @@ namespace MitarashiDango.AvatarUtils
 
                 var blendShapeWeight = skinnedMeshRenderer.GetBlendShapeWeight(i);
                 if (_zeroWeightBlendShapesIncludeOptionIndex == 1 && blendShapeWeight == 0)
+                {
+                    continue;
+                }
+
+                if (diffBlendShapes != null && diffBlendShapes.ContainsKey(blendShapeName) && diffBlendShapes[blendShapeName] == blendShapeWeight)
                 {
                     continue;
                 }
@@ -182,6 +212,12 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
+            if ((_diffOptionIndex == 1 && _diffAnimationClip == null) || (_diffOptionIndex == 2 && _diffBlendShapeSet == null))
+            {
+                EditorUtility.DisplayDialog("エラー", "差分取得元が設定されていません", "OK");
+                return;
+            }
+
             var filePath = EditorUtility.SaveFilePanelInProject("名前を付けて保存", $"AnimationClip_{_gameObject.name}", "anim", "アニメーションクリップの保存先を選択してください", "Assets");
             if (filePath == "")
             {
@@ -203,6 +239,7 @@ namespace MitarashiDango.AvatarUtils
 
             var rootObject = _pathTypeIndex == 0 ? MiscUtil.GetAvatarRoot(_gameObject.transform) : _gameObject;
             var objectPath = MiscUtil.GetPathInHierarchy(_gameObject, rootObject);
+            var diffBlendShapes = GetBlendShapes();
 
             for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
             {
@@ -221,6 +258,11 @@ namespace MitarashiDango.AvatarUtils
 
                 var blendShapeWeight = skinnedMeshRenderer.GetBlendShapeWeight(i);
                 if (_zeroWeightBlendShapesIncludeOptionIndex == 1 && blendShapeWeight == 0)
+                {
+                    continue;
+                }
+
+                if (diffBlendShapes != null && diffBlendShapes.ContainsKey(blendShapeName) && diffBlendShapes[blendShapeName] == blendShapeWeight)
                 {
                     continue;
                 }
@@ -247,6 +289,46 @@ namespace MitarashiDango.AvatarUtils
 
             AssetDatabase.Refresh();
             return;
+        }
+
+        private Dictionary<string, float> GetBlendShapes()
+        {
+            if (_diffOptionIndex == 1)
+            {
+                var blendShapes = GetBlendShapesFromAnimationClip(_diffAnimationClip, MiscUtil.GetPathInHierarchy(_gameObject, MiscUtil.GetAvatarRoot(_gameObject.transform)), _diffAnimationClip.length);
+                if (blendShapes.Count != 0)
+                {
+                    return blendShapes;
+                }
+
+                return GetBlendShapesFromAnimationClip(_diffAnimationClip, "", _diffAnimationClip.length);
+            }
+
+            if (_diffOptionIndex == 2)
+            {
+                return _diffBlendShapeSet.ToDictionary();
+            }
+
+            return null;
+        }
+
+        private Dictionary<string, float> GetBlendShapesFromAnimationClip(AnimationClip animationClip, string objectPath, float time)
+        {
+            var blendShapes = new Dictionary<string, float>();
+            var bindings = AnimationUtility.GetCurveBindings(animationClip);
+
+            foreach (var b in bindings)
+            {
+                if (b.path != objectPath && !b.propertyName.StartsWith("blendShape."))
+                {
+                    continue;
+                }
+
+                var curve = AnimationUtility.GetEditorCurve(animationClip, b);
+                blendShapes.Add(b.propertyName.Substring("blendShape.".Length), curve.Evaluate(time));
+            }
+
+            return blendShapes;
         }
     }
 }
