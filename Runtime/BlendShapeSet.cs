@@ -46,5 +46,17 @@ namespace MitarashiDango.AvatarUtils
         {
             return _blendShapes.Exists(blendShapes => blendShapes.name == name);
         }
+
+        public Dictionary<string, float> ToDictionary()
+        {
+            var dic = new Dictionary<string, float>();
+
+            foreach (var blendShape in _blendShapes)
+            {
+                dic.Add(blendShape.name, blendShape.weight);
+            }
+
+            return dic;
+        }
     }
 }
