@@ -14,8 +14,8 @@ namespace MitarashiDango.AvatarUtils
         private int _vrcVisemeBlendShapesIncludeOptionIndex;
         private int _mmdBlendShapesIncludeOptionIndex;
         private int _diffOptionIndex;
+        private int _diffSorucePathTypeIndex;
         private AnimationClip _diffAnimationClip;
-        private BlendShapeSet _diffBlendShapeSet;
 
         [SerializeField]
         private string[] _excludeBlendShapeNames = new string[] { };
@@ -63,7 +63,6 @@ namespace MitarashiDango.AvatarUtils
             {
                 new GUIContent("差分出力しない（条件に合致するシェイプキーを全て出力）"),
                 new GUIContent("指定したアニメーションクリップとの差分を検知したシェイプキーのみ出力"),
-                new GUIContent("指定したブレンドシェイプセットとの差分を検知したシェイプキーのみ出力"),
             };
 
             _gameObject = (GameObject)EditorGUILayout.ObjectField(_gameObject, typeof(GameObject), true);
@@ -86,15 +85,11 @@ namespace MitarashiDango.AvatarUtils
 
                 _diffOptionIndex = EditorGUILayout.Popup(new GUIContent("差分出力設定"), _diffOptionIndex, diffOptions);
 
-                switch (_diffOptionIndex)
+                if (_diffOptionIndex == 1)
                 {
-                    case 1:
-                        EditorGUILayout.HelpBox("アニメーションクリップの場合、最終フレームの値で差分を取得します", MessageType.Info);
-                        _diffAnimationClip = (AnimationClip)EditorGUILayout.ObjectField(new GUIContent("差分取得元"), _diffAnimationClip, typeof(AnimationClip), true);
-                        break;
-                    case 2:
-                        _diffBlendShapeSet = (BlendShapeSet)EditorGUILayout.ObjectField(new GUIContent("差分取得元"), _diffBlendShapeSet, typeof(BlendShapeSet), true);
-                        break;
+                    _diffAnimationClip = (AnimationClip)EditorGUILayout.ObjectField(new GUIContent("差分取得元"), _diffAnimationClip, typeof(AnimationClip), true);
+                    EditorGUILayout.HelpBox("複数フレームを持つアニメーションクリップの場合、最終フレーム時点の値で差分を取得します", MessageType.Info);
+                    _diffSorucePathTypeIndex = EditorGUILayout.Popup(new GUIContent("差分取得元のパス種別"), _diffSorucePathTypeIndex, pathTypeOptions);
                 }
 
                 so.ApplyModifiedProperties();
@@ -102,99 +97,9 @@ namespace MitarashiDango.AvatarUtils
                 var exportBlendShapeButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
                 if (GUI.Button(exportBlendShapeButtonRect, new GUIContent("エクスポート")))
                 {
-                    ExportBlendShapes();
-                }
-
-                var generateAnimationClipButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
-                if (GUI.Button(generateAnimationClipButtonRect, new GUIContent("アニメーションクリップ生成")))
-                {
                     ExportToAnimationClip();
                 }
             }
-        }
-
-        private void ExportBlendShapes()
-        {
-            if (_gameObject == null)
-            {
-                EditorUtility.DisplayDialog("エラー", "オブジェクトが指定されていません", "OK");
-                return;
-            }
-
-            var skinnedMeshRenderer = _gameObject.GetComponent<SkinnedMeshRenderer>();
-            if (skinnedMeshRenderer == null)
-            {
-                EditorUtility.DisplayDialog("エラー", "指定されたオブジェクトにSkinnedMeshRendererが存在しません", "OK");
-                return;
-            }
-
-            var filePath = EditorUtility.SaveFilePanelInProject("名前を付けて保存", $"AnimationClip_{_gameObject.name}", "asset", "ブレンドシェイプのエクスポート先を選択してください", "Assets");
-            if (filePath == "")
-            {
-                EditorUtility.DisplayDialog("情報", "キャンセルされました", "OK");
-                return;
-            }
-
-            var filename = Path.GetFileNameWithoutExtension(filePath);
-
-            EditorUtility.DisplayProgressBar("処理中", "", 0);
-
-            var skinnedMesh = skinnedMeshRenderer.sharedMesh;
-
-            var blendShapeSet = new BlendShapeSet
-            {
-                name = filename,
-            };
-
-            var rootObject = _pathTypeIndex == 0 ? MiscUtil.GetAvatarRoot(_gameObject.transform) : _gameObject;
-            var objectPath = MiscUtil.GetPathInHierarchy(_gameObject, rootObject);
-            var diffBlendShapes = GetBlendShapes();
-
-            for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
-            {
-                float progress = i / (float)skinnedMesh.blendShapeCount;
-                EditorUtility.DisplayProgressBar("処理中", $"{i} {skinnedMesh.blendShapeCount} ({(int)(progress * 100)}%)", progress);
-
-                var blendShapeName = skinnedMesh.GetBlendShapeName(i);
-                if (_excludeBlendShapeNames.ToList().Exists(name => blendShapeName == name)
-                    || _excludeBlendShapeNamesStartWith.ToList().Exists(name => name != "" && blendShapeName.StartsWith(name))
-                    || _excludeBlendShapeNamesEndWith.ToList().Exists(name => name != "" && blendShapeName.EndsWith(name))
-                    || (_vrcVisemeBlendShapesIncludeOptionIndex == 1 && blendShapeName.StartsWith("vrc."))
-                    || (_mmdBlendShapesIncludeOptionIndex == 1 && Constants.MMD_BLEND_SHAPE_NAMES.ToList().Exists(name => blendShapeName == name)))
-                {
-                    continue;
-                }
-
-                var blendShapeWeight = skinnedMeshRenderer.GetBlendShapeWeight(i);
-                if (_zeroWeightBlendShapesIncludeOptionIndex == 1 && blendShapeWeight == 0)
-                {
-                    continue;
-                }
-
-                if (diffBlendShapes != null && diffBlendShapes.ContainsKey(blendShapeName) && diffBlendShapes[blendShapeName] == blendShapeWeight)
-                {
-                    continue;
-                }
-
-                blendShapeSet.Set(blendShapeName, blendShapeWeight);
-            }
-
-            EditorUtility.ClearProgressBar();
-
-            // ファイル保存
-            var asset = AssetDatabase.LoadAssetAtPath(filePath, typeof(BlendShapeSet));
-            if (asset == null)
-            {
-                AssetDatabase.CreateAsset(blendShapeSet, filePath);
-            }
-            else
-            {
-                EditorUtility.CopySerialized(blendShapeSet, asset);
-                AssetDatabase.SaveAssets();
-            }
-
-            AssetDatabase.Refresh();
-            return;
         }
 
         private void ExportToAnimationClip()
@@ -212,9 +117,9 @@ namespace MitarashiDango.AvatarUtils
                 return;
             }
 
-            if ((_diffOptionIndex == 1 && _diffAnimationClip == null) || (_diffOptionIndex == 2 && _diffBlendShapeSet == null))
+            if (_diffOptionIndex == 1 && _diffAnimationClip == null)
             {
-                EditorUtility.DisplayDialog("エラー", "差分取得元が設定されていません", "OK");
+                EditorUtility.DisplayDialog("エラー", "差分取得元アニメーションクリップが指定されていません", "OK");
                 return;
             }
 
@@ -295,18 +200,15 @@ namespace MitarashiDango.AvatarUtils
         {
             if (_diffOptionIndex == 1)
             {
-                var blendShapes = GetBlendShapesFromAnimationClip(_diffAnimationClip, MiscUtil.GetPathInHierarchy(_gameObject, MiscUtil.GetAvatarRoot(_gameObject.transform)), _diffAnimationClip.length);
-                if (blendShapes.Count != 0)
+                if (_diffSorucePathTypeIndex == 0)
                 {
-                    return blendShapes;
+                    return GetBlendShapesFromAnimationClip(_diffAnimationClip, MiscUtil.GetPathInHierarchy(_gameObject, MiscUtil.GetAvatarRoot(_gameObject.transform)), _diffAnimationClip.length);
                 }
 
-                return GetBlendShapesFromAnimationClip(_diffAnimationClip, "", _diffAnimationClip.length);
-            }
-
-            if (_diffOptionIndex == 2)
-            {
-                return _diffBlendShapeSet.ToDictionary();
+                if (_diffSorucePathTypeIndex == 1)
+                {
+                    return GetBlendShapesFromAnimationClip(_diffAnimationClip, "", _diffAnimationClip.length);
+                }
             }
 
             return null;
