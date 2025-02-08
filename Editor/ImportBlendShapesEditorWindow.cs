@@ -168,16 +168,7 @@ namespace MitarashiDango.AvatarUtils
 
                 if (!isDirty)
                 {
-                    if (PrefabUtility.GetPrefabAssetType(skinnedMeshRenderer) == PrefabAssetType.NotAPrefab)
-                    {
-                        Undo.RegisterCompleteObjectUndo(skinnedMeshRenderer, "Import BlendShapes");
-                    }
-                    else
-                    {
-                        Undo.RecordObject(skinnedMeshRenderer, "Import BlendShapes");
-                        PrefabUtility.RecordPrefabInstancePropertyModifications(skinnedMeshRenderer);
-                    }
-
+                    RegisterUndo(skinnedMeshRenderer);
                     isDirty = true;
                 }
 
@@ -224,6 +215,19 @@ namespace MitarashiDango.AvatarUtils
             }
 
             return blendShapes;
+        }
+
+        private void RegisterUndo(Object obj)
+        {
+            if (PrefabUtility.GetPrefabAssetType(obj) == PrefabAssetType.NotAPrefab)
+            {
+                Undo.RegisterCompleteObjectUndo(obj, "Import BlendShapes");
+            }
+            else
+            {
+                Undo.RecordObject(obj, "Import BlendShapes");
+                PrefabUtility.RecordPrefabInstancePropertyModifications(obj);
+            }
         }
     }
 }
