@@ -28,6 +28,24 @@ namespace MitarashiDango.AvatarUtils
 
         private Vector2 _scrollPosition = Vector2.zero;
 
+        private GUIContent[] pathTypeOptions = new GUIContent[]
+        {
+                new GUIContent("アバタールートからのパス"),
+                new GUIContent("エクスポート対象オブジェクトからのパス"),
+        };
+
+        private GUIContent[] excludeOptions = new GUIContent[]
+        {
+                new GUIContent("エクスポート対象に含める"),
+                new GUIContent("エクスポート対象外とする"),
+        };
+
+        private GUIContent[] diffOptions = new GUIContent[]
+        {
+                new GUIContent("差分エクスポートしない（条件に合致するシェイプキーを全てエクスポート）"),
+                new GUIContent("指定したアニメーションクリップとの差分を検知したシェイプキーのみエクスポート"),
+        };
+
         [MenuItem("GameObject/MitarashiDango Avatar Utils/Export BlendShapes", false, 0)]
         internal static void OpenWindow()
         {
@@ -47,25 +65,7 @@ namespace MitarashiDango.AvatarUtils
 
         private void OnGUI()
         {
-            var pathTypeOptions = new GUIContent[]
-            {
-                new GUIContent("アバタールートからのパス"),
-                new GUIContent("このオブジェクトからのパス"),
-            };
-
-            var excludeOptions = new GUIContent[]
-            {
-                new GUIContent("出力対象に含める"),
-                new GUIContent("出力対象外とする"),
-            };
-
-            var diffOptions = new GUIContent[]
-            {
-                new GUIContent("差分出力しない（条件に合致するシェイプキーを全て出力）"),
-                new GUIContent("指定したアニメーションクリップとの差分を検知したシェイプキーのみ出力"),
-            };
-
-            _gameObject = (GameObject)EditorGUILayout.ObjectField(_gameObject, typeof(GameObject), true);
+            _gameObject = (GameObject)EditorGUILayout.ObjectField(new GUIContent("エクスポート対象オブジェクト"), _gameObject, typeof(GameObject), true);
 
             using (var scrollViewScope = new EditorGUILayout.ScrollViewScope(_scrollPosition))
             {
@@ -74,46 +74,46 @@ namespace MitarashiDango.AvatarUtils
                 var so = new SerializedObject(this);
                 so.Update();
 
-                _pathTypeIndex = EditorGUILayout.Popup(new GUIContent("パス出力モード"), _pathTypeIndex, pathTypeOptions);
+                _pathTypeIndex = EditorGUILayout.Popup(new GUIContent("パス種別"), _pathTypeIndex, pathTypeOptions);
                 _zeroWeightBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("値が0のシェイプキー"), _zeroWeightBlendShapesIncludeOptionIndex, excludeOptions);
                 _vrcVisemeBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("vrc.で始まるシェイプキー"), _vrcVisemeBlendShapesIncludeOptionIndex, excludeOptions);
-                _mmdBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("MMD用シェイプキー"), _mmdBlendShapesIncludeOptionIndex, excludeOptions);
+                _mmdBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("MMD関連のシェイプキー"), _mmdBlendShapesIncludeOptionIndex, excludeOptions);
 
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNames"), new GUIContent("出力対象外とするシェイプキー"), true);
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("出力対象外とするシェイプキーのプレフィックス"), true);
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("出力対象外とするシェイプキーのサフィックス"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNames"), new GUIContent("エクスポート対象外とするシェイプキー"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("エクスポート対象外とするシェイプキーのプレフィックス"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("エクスポート対象外とするシェイプキーのサフィックス"), true);
 
-                _diffOptionIndex = EditorGUILayout.Popup(new GUIContent("差分出力設定"), _diffOptionIndex, diffOptions);
+                _diffOptionIndex = EditorGUILayout.Popup(new GUIContent("差分エクスポート設定"), _diffOptionIndex, diffOptions);
 
                 if (_diffOptionIndex == 1)
                 {
                     _diffAnimationClip = (AnimationClip)EditorGUILayout.ObjectField(new GUIContent("差分取得元"), _diffAnimationClip, typeof(AnimationClip), true);
-                    EditorGUILayout.HelpBox("複数フレームを持つアニメーションクリップの場合、最終フレーム時点の値で差分を取得します", MessageType.Info);
+                    EditorGUILayout.HelpBox("複数フレームを持つアニメーションクリップの場合、最終フレーム時点の値で差分比較を行います", MessageType.Info);
                     _diffSorucePathTypeIndex = EditorGUILayout.Popup(new GUIContent("差分取得元のパス種別"), _diffSorucePathTypeIndex, pathTypeOptions);
                 }
 
                 so.ApplyModifiedProperties();
 
-                var exportBlendShapeButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
-                if (GUI.Button(exportBlendShapeButtonRect, new GUIContent("エクスポート")))
+                var exportButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
+                if (GUI.Button(exportButtonRect, new GUIContent("エクスポート")))
                 {
-                    ExportToAnimationClip();
+                    ExportBlendShapes();
                 }
             }
         }
 
-        private void ExportToAnimationClip()
+        private void ExportBlendShapes()
         {
             if (_gameObject == null)
             {
-                EditorUtility.DisplayDialog("エラー", "オブジェクトが指定されていません", "OK");
+                EditorUtility.DisplayDialog("エラー", "エクスポート対象オブジェクトが指定されていません", "OK");
                 return;
             }
 
             var skinnedMeshRenderer = _gameObject.GetComponent<SkinnedMeshRenderer>();
             if (skinnedMeshRenderer == null)
             {
-                EditorUtility.DisplayDialog("エラー", "指定されたオブジェクトにSkinnedMeshRendererが存在しません", "OK");
+                EditorUtility.DisplayDialog("エラー", "エクスポート対象オブジェクトにSkinnedMeshRendererが存在しません", "OK");
                 return;
             }
 

@@ -27,6 +27,24 @@ namespace MitarashiDango.AvatarUtils
 
         private Vector2 _scrollPosition = Vector2.zero;
 
+        private GUIContent[] importSourceTypeOptions = new GUIContent[]
+        {
+                new GUIContent("アニメーションクリップ"),
+                new GUIContent("ブレンドシェイプセット"),
+        };
+
+        private GUIContent[] pathTypeOptions = new GUIContent[]
+        {
+                new GUIContent("アバタールートからのパス"),
+                new GUIContent("インポート先オブジェクトからのパス"),
+        };
+
+        private GUIContent[] excludeOptions = new GUIContent[]
+        {
+                new GUIContent("インポート対象に含める"),
+                new GUIContent("インポート対象外とする"),
+        };
+
         [MenuItem("GameObject/MitarashiDango Avatar Utils/Import BlendShapes", false, 0)]
         internal static void OpenWindow()
         {
@@ -46,24 +64,6 @@ namespace MitarashiDango.AvatarUtils
 
         private void OnGUI()
         {
-            var importSourceTypeOptions = new GUIContent[]
-            {
-                new GUIContent("アニメーションクリップ"),
-                new GUIContent("ブレンドシェイプセット"),
-            };
-
-            var pathTypeOptions = new GUIContent[]
-            {
-                new GUIContent("アバタールートからのパス"),
-                new GUIContent("このオブジェクトからのパス"),
-            };
-
-            var excludeOptions = new GUIContent[]
-            {
-                new GUIContent("インポート対象に含める"),
-                new GUIContent("インポート対象外とする"),
-            };
-
             _gameObject = (GameObject)EditorGUILayout.ObjectField(new GUIContent("インポート先オブジェクト"), _gameObject, typeof(GameObject), true);
 
             using (var scrollViewScope = new EditorGUILayout.ScrollViewScope(_scrollPosition))
@@ -99,8 +99,8 @@ namespace MitarashiDango.AvatarUtils
 
                 so.ApplyModifiedProperties();
 
-                var generateButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
-                if (GUI.Button(generateButtonRect, new GUIContent("インポート")))
+                var importButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
+                if (GUI.Button(importButtonRect, new GUIContent("インポート")))
                 {
                     ImportBlendShapes();
                 }
