@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -8,6 +9,8 @@ namespace MitarashiDango.AvatarUtils
     {
         private GameObject _gameObject;
         private BlendShapeSet _blendShapeSet;
+        private AnimationClip _animationClip;
+        private int _importSourceTypeIndex;
         private int _pathTypeIndex;
         private int _zeroWeightBlendShapesIncludeOptionIndex;
         private int _vrcVisemeBlendShapesIncludeOptionIndex;
@@ -43,14 +46,25 @@ namespace MitarashiDango.AvatarUtils
 
         private void OnGUI()
         {
-            var excludeOptions = new GUIContent[]
+            var importSourceTypeOptions = new GUIContent[]
             {
-                new GUIContent("取り込み対象に含める"),
-                new GUIContent("取り込み対象外とする"),
+                new GUIContent("アニメーションクリップ"),
+                new GUIContent("ブレンドシェイプセット"),
             };
 
-            _gameObject = (GameObject)EditorGUILayout.ObjectField(_gameObject, typeof(GameObject), true);
-            _blendShapeSet = (BlendShapeSet)EditorGUILayout.ObjectField(_blendShapeSet, typeof(BlendShapeSet), true);
+            var pathTypeOptions = new GUIContent[]
+            {
+                new GUIContent("アバタールートからのパス"),
+                new GUIContent("このオブジェクトからのパス"),
+            };
+
+            var excludeOptions = new GUIContent[]
+            {
+                new GUIContent("インポート対象に含める"),
+                new GUIContent("インポート対象外とする"),
+            };
+
+            _gameObject = (GameObject)EditorGUILayout.ObjectField(new GUIContent("インポート先オブジェクト"), _gameObject, typeof(GameObject), true);
 
             using (var scrollViewScope = new EditorGUILayout.ScrollViewScope(_scrollPosition))
             {
@@ -59,18 +73,34 @@ namespace MitarashiDango.AvatarUtils
                 var so = new SerializedObject(this);
                 so.Update();
 
+                _importSourceTypeIndex = EditorGUILayout.Popup(new GUIContent("インポート元種別"), _importSourceTypeIndex, importSourceTypeOptions);
+
+                switch (_importSourceTypeIndex)
+                {
+                    case 0:
+                        _animationClip = (AnimationClip)EditorGUILayout.ObjectField(new GUIContent("インポート元オブジェクト"), _animationClip, typeof(AnimationClip), true);
+                        EditorGUILayout.HelpBox("複数フレームを持つアニメーションクリップの場合、最終フレーム時点の値をインポートします", MessageType.Info);
+                        break;
+                    case 1:
+                        _blendShapeSet = (BlendShapeSet)EditorGUILayout.ObjectField(new GUIContent("インポート元オブジェクト"), _blendShapeSet, typeof(BlendShapeSet), true);
+                        EditorGUILayout.HelpBox("BlendShape Setのサポートは近日中に削除されます", MessageType.Warning);
+                        break;
+                }
+
+                _pathTypeIndex = EditorGUILayout.Popup(new GUIContent("パス種別"), _pathTypeIndex, pathTypeOptions);
+
                 _zeroWeightBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("値が0のシェイプキー"), _zeroWeightBlendShapesIncludeOptionIndex, excludeOptions);
                 _vrcVisemeBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("vrc.で始まるシェイプキー"), _vrcVisemeBlendShapesIncludeOptionIndex, excludeOptions);
-                _mmdBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("MMD用シェイプキー"), _mmdBlendShapesIncludeOptionIndex, excludeOptions);
+                _mmdBlendShapesIncludeOptionIndex = EditorGUILayout.Popup(new GUIContent("MMD関連のシェイプキー"), _mmdBlendShapesIncludeOptionIndex, excludeOptions);
 
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNames"), new GUIContent("取り込み対象外とするシェイプキー"), true);
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("取り込み対象外とするシェイプキーのプレフィックス"), true);
-                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("取り込み対象外とするシェイプキーのサフィックス"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNames"), new GUIContent("インポート対象外とするシェイプキー"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesStartWith"), new GUIContent("インポート対象外とするシェイプキーのプレフィックス"), true);
+                EditorGUILayout.PropertyField(so.FindProperty("_excludeBlendShapeNamesEndWith"), new GUIContent("インポート対象外とするシェイプキーのサフィックス"), true);
 
                 so.ApplyModifiedProperties();
 
                 var generateButtonRect = EditorGUILayout.GetControlRect(GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
-                if (GUI.Button(generateButtonRect, new GUIContent("取り込み")))
+                if (GUI.Button(generateButtonRect, new GUIContent("インポート")))
                 {
                     ImportBlendShapes();
                 }
@@ -81,14 +111,20 @@ namespace MitarashiDango.AvatarUtils
         {
             if (_gameObject == null)
             {
-                EditorUtility.DisplayDialog("エラー", "オブジェクトが指定されていません", "OK");
+                EditorUtility.DisplayDialog("エラー", "インポート先オブジェクトが指定されていません", "OK");
+                return;
+            }
+
+            if ((_importSourceTypeIndex == 0 && _animationClip == null) || (_importSourceTypeIndex == 1 && _blendShapeSet == null))
+            {
+                EditorUtility.DisplayDialog("エラー", "インポート元オブジェクトが指定されていません", "OK");
                 return;
             }
 
             var skinnedMeshRenderer = _gameObject.GetComponent<SkinnedMeshRenderer>();
             if (skinnedMeshRenderer == null)
             {
-                EditorUtility.DisplayDialog("エラー", "指定されたオブジェクトにSkinnedMeshRendererが存在しません", "OK");
+                EditorUtility.DisplayDialog("エラー", "インポート先オブジェクトにSkinnedMeshRendererが存在しません", "OK");
                 return;
             }
 
@@ -96,14 +132,17 @@ namespace MitarashiDango.AvatarUtils
 
             var skinnedMesh = skinnedMeshRenderer.sharedMesh;
 
-            var animationClip = new AnimationClip()
-            {
-                frameRate = 60
-            };
-
             var rootObject = _pathTypeIndex == 0 ? MiscUtil.GetAvatarRoot(_gameObject.transform) : _gameObject;
             var objectPath = MiscUtil.GetPathInHierarchy(_gameObject, rootObject);
 
+            var blendShapes = GetBlendShapes();
+            if (blendShapes == null)
+            {
+                EditorUtility.ClearProgressBar();
+                return;
+            }
+
+            var isDirty = false;
             for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
             {
                 float progress = i / (float)skinnedMesh.blendShapeCount;
@@ -115,21 +154,76 @@ namespace MitarashiDango.AvatarUtils
                     || _excludeBlendShapeNamesEndWith.ToList().Exists(name => name != "" && blendShapeName.EndsWith(name))
                     || (_vrcVisemeBlendShapesIncludeOptionIndex == 1 && blendShapeName.StartsWith("vrc."))
                     || (_mmdBlendShapesIncludeOptionIndex == 1 && Constants.MMD_BLEND_SHAPE_NAMES.ToList().Exists(name => blendShapeName == name))
-                    || !_blendShapeSet.Exists(blendShapeName))
+                    || !blendShapes.ContainsKey(blendShapeName))
                 {
                     continue;
                 }
 
-                var blendShape = _blendShapeSet.Get(blendShapeName);
-                if (blendShape == null || _zeroWeightBlendShapesIncludeOptionIndex == 1 && blendShape.weight == 0)
+                var currentBlendShapeWeight = skinnedMeshRenderer.GetBlendShapeWeight(i);
+                var blendShapeWeight = blendShapes.GetValueOrDefault(blendShapeName, currentBlendShapeWeight);
+                if (blendShapeWeight == currentBlendShapeWeight || _zeroWeightBlendShapesIncludeOptionIndex == 1 && blendShapeWeight == 0)
                 {
                     continue;
                 }
 
-                skinnedMeshRenderer.SetBlendShapeWeight(i, blendShape.weight);
+                if (!isDirty)
+                {
+                    if (PrefabUtility.GetPrefabAssetType(skinnedMeshRenderer) == PrefabAssetType.NotAPrefab)
+                    {
+                        Undo.RegisterCompleteObjectUndo(skinnedMeshRenderer, "Import BlendShapes");
+                    }
+                    else
+                    {
+                        Undo.RecordObject(skinnedMeshRenderer, "Import BlendShapes");
+                        PrefabUtility.RecordPrefabInstancePropertyModifications(skinnedMeshRenderer);
+                    }
+
+                    isDirty = true;
+                }
+
+                skinnedMeshRenderer.SetBlendShapeWeight(i, blendShapeWeight);
             }
 
             EditorUtility.ClearProgressBar();
+        }
+
+        private Dictionary<string, float> GetBlendShapes()
+        {
+            if (_importSourceTypeIndex == 0)
+            {
+                if (_pathTypeIndex == 0)
+                {
+                    return GetBlendShapesFromAnimationClip(_animationClip, MiscUtil.GetPathInHierarchy(_gameObject, MiscUtil.GetAvatarRoot(_gameObject.transform)), _animationClip.length);
+                }
+
+                return GetBlendShapesFromAnimationClip(_animationClip, "", _animationClip.length);
+            }
+
+            if (_importSourceTypeIndex == 1)
+            {
+                return _blendShapeSet.ToDictionary();
+            }
+
+            return null;
+        }
+
+        private Dictionary<string, float> GetBlendShapesFromAnimationClip(AnimationClip animationClip, string objectPath, float time)
+        {
+            var blendShapes = new Dictionary<string, float>();
+            var bindings = AnimationUtility.GetCurveBindings(animationClip);
+
+            foreach (var b in bindings)
+            {
+                if (b.path != objectPath && !b.propertyName.StartsWith("blendShape."))
+                {
+                    continue;
+                }
+
+                var curve = AnimationUtility.GetEditorCurve(animationClip, b);
+                blendShapes.Add(b.propertyName.Substring("blendShape.".Length), curve.Evaluate(time));
+            }
+
+            return blendShapes;
         }
     }
 }
