@@ -8,17 +8,10 @@ namespace MitarashiDango.AvatarUtils
     public class AvatarRenderer : System.IDisposable
     {
         private PreviewRenderUtility _previewRenderUtility;
-
-        public Vector3 CameraScale;
-        public Vector3 CameraPosition;
-        public Quaternion CameraRotation;
-        public Color BackgroundColor;
-
-        public RenderTexture RenderTexture { get; private set; }
+        public RenderTexture renderTexture { get; private set; }
 
         public AvatarRenderer()
         {
-            ResetCameraSettings();
             InitializePreviewRenderUtility();
         }
 
@@ -35,7 +28,7 @@ namespace MitarashiDango.AvatarUtils
             }
         }
 
-        public Texture2D Render(GameObject avatarRootObject, int width, int height, Dictionary<string, float> defaultBlendShapes, Dictionary<string, float> animationClipBlendShapes, bool allowHDR)
+        public Texture2D Render(GameObject avatarRootObject, CameraSetting cameraSetting, int width, int height, Dictionary<string, float> defaultBlendShapes, Dictionary<string, float> animationClipBlendShapes, bool allowHDR)
         {
             var format = allowHDR ? DefaultFormat.HDR : DefaultFormat.LDR;
             var renderTexture = new RenderTexture(width, height, 32, format);
@@ -43,7 +36,7 @@ namespace MitarashiDango.AvatarUtils
             try
             {
                 renderTexture.hideFlags = HideFlags.HideAndDontSave;
-                Render(avatarRootObject, renderTexture, defaultBlendShapes, animationClipBlendShapes, allowHDR);
+                Render(avatarRootObject, cameraSetting, renderTexture, defaultBlendShapes, animationClipBlendShapes, allowHDR);
                 return RenderToTexture2D(renderTexture);
             }
             finally
@@ -52,12 +45,12 @@ namespace MitarashiDango.AvatarUtils
             }
         }
 
-        public void Render(GameObject avatarRootObject, RenderTexture renderTexture, Dictionary<string, float> defaultBlendShapes, Dictionary<string, float> animationClipBlendShapes, bool allowHDR)
+        public bool Render(GameObject avatarRootObject, CameraSetting cameraSetting, RenderTexture renderTexture, Dictionary<string, float> defaultBlendShapes, Dictionary<string, float> animationClipBlendShapes, bool allowHDR)
         {
             _previewRenderUtility.BeginPreview(new Rect(0, 0, renderTexture.width, renderTexture.height), GUIStyle.none);
 
-            SetupLights();
-            SetupCamera(renderTexture, allowHDR);
+            SetupDefaultLights();
+            SetupCamera(renderTexture, avatarRootObject, cameraSetting, allowHDR);
 
             if (avatarRootObject != null)
             {
@@ -66,28 +59,33 @@ namespace MitarashiDango.AvatarUtils
                 {
                     go.SetActive(true);
 
-                    var bodyGameObject = go.transform.Find("Body");
-                    if (bodyGameObject != null)
+                    var bodyObject = go.transform.Find("Body");
+                    if (bodyObject == null)
                     {
-                        var headGameObject = bodyGameObject.gameObject;
-                        if (headGameObject != null)
+                        return false;
+                    }
+
+                    var headObject = bodyObject.gameObject;
+                    if (headObject == null)
+                    {
+                        return false;
+                    }
+
+                    var skinnedMeshRenderer = headObject.GetComponent<SkinnedMeshRenderer>();
+                    if (skinnedMeshRenderer != null)
+                    {
+                        var skinnedMesh = skinnedMeshRenderer.sharedMesh;
+
+                        for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
                         {
-                            var skinnedMeshRenderer = headGameObject.GetComponent<SkinnedMeshRenderer>();
-                            if (skinnedMeshRenderer != null)
+                            var blendShapeName = skinnedMesh.GetBlendShapeName(i);
+                            if (animationClipBlendShapes != null && animationClipBlendShapes.ContainsKey(blendShapeName))
                             {
-                                var skinnedMesh = skinnedMeshRenderer.sharedMesh;
-                                for (var i = 0; i < skinnedMesh.blendShapeCount; i++)
-                                {
-                                    var blendShapeName = skinnedMesh.GetBlendShapeName(i);
-                                    if (animationClipBlendShapes.ContainsKey(blendShapeName))
-                                    {
-                                        skinnedMeshRenderer.SetBlendShapeWeight(i, animationClipBlendShapes[blendShapeName]);
-                                    }
-                                    else if (defaultBlendShapes.ContainsKey(blendShapeName))
-                                    {
-                                        skinnedMeshRenderer.SetBlendShapeWeight(i, defaultBlendShapes[blendShapeName]);
-                                    }
-                                }
+                                skinnedMeshRenderer.SetBlendShapeWeight(i, animationClipBlendShapes[blendShapeName]);
+                            }
+                            else if (defaultBlendShapes != null && defaultBlendShapes.ContainsKey(blendShapeName))
+                            {
+                                skinnedMeshRenderer.SetBlendShapeWeight(i, defaultBlendShapes[blendShapeName]);
                             }
                         }
                     }
@@ -112,6 +110,8 @@ namespace MitarashiDango.AvatarUtils
                     _previewRenderUtility.EndPreview();
                 }
             }
+
+            return true;
         }
 
         private Texture2D RenderToTexture2D(RenderTexture renderTexture)
@@ -133,18 +133,10 @@ namespace MitarashiDango.AvatarUtils
             }
         }
 
-        public void ResetCameraSettings()
-        {
-            CameraScale = new Vector3(1, 1, 1);
-            CameraPosition = new Vector3(0, 0, 0);
-            CameraRotation = Quaternion.Euler(0, 0, 0);
-            BackgroundColor = Color.white;
-        }
-
-        private void SetupCamera(RenderTexture renderTexture, bool allowHDR)
+        private void SetupCamera(RenderTexture renderTexture, GameObject avatarRootObject, CameraSetting cameraSetting, bool allowHDR)
         {
             _previewRenderUtility.camera.clearFlags = CameraClearFlags.SolidColor;
-            _previewRenderUtility.camera.backgroundColor = BackgroundColor;
+            _previewRenderUtility.camera.backgroundColor = cameraSetting.BackgroundColor;
             _previewRenderUtility.camera.depth = -1;
             _previewRenderUtility.camera.useOcclusionCulling = true;
             _previewRenderUtility.camera.allowMSAA = true;
@@ -154,11 +146,41 @@ namespace MitarashiDango.AvatarUtils
             _previewRenderUtility.camera.stereoConvergence = 10;
             _previewRenderUtility.camera.farClipPlane = 100;
             _previewRenderUtility.camera.nearClipPlane = 0.001f;
-            _previewRenderUtility.camera.transform.localScale = CameraScale;
-            _previewRenderUtility.camera.transform.position = CameraPosition;
-            _previewRenderUtility.camera.transform.rotation = CameraRotation;
+            _previewRenderUtility.camera.transform.localScale = cameraSetting.Scale;
+            _previewRenderUtility.camera.transform.rotation = cameraSetting.Rotation;
             _previewRenderUtility.camera.targetTexture = renderTexture;
             _previewRenderUtility.camera.pixelRect = new Rect(0, 0, renderTexture.width, renderTexture.height);
+            _previewRenderUtility.camera.transform.position = GetCameraPosition(avatarRootObject, cameraSetting.PositionOffset);
+        }
+
+        private Bounds GetObjectBounds(GameObject obj)
+        {
+            var headGameObject = obj.transform.Find("Body")?.gameObject;
+            Renderer[] renderers = headGameObject.GetComponentsInChildren<Renderer>();
+
+            if (renderers.Length == 0)
+            {
+                return new Bounds(obj.transform.position, Vector3.zero);
+            }
+
+            Bounds bounds = new Bounds(obj.transform.position, Vector3.zero);
+            foreach (Renderer renderer in renderers)
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+
+            return bounds;
+        }
+
+        private Vector3 GetCameraPosition(GameObject avatarRootObject, Vector3 positionOffset)
+        {
+            var bounds = GetObjectBounds(avatarRootObject);
+            var position = bounds.center;
+            var maxBoundsSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+            var cameraDistance = maxBoundsSize / (2.0f * Mathf.Tan(_previewRenderUtility.camera.fieldOfView * 0.5f * Mathf.Deg2Rad));
+            position -= _previewRenderUtility.camera.transform.forward * cameraDistance;
+            position += positionOffset;
+            return position;
         }
 
         public void InitializePreviewRenderUtility()
@@ -171,7 +193,7 @@ namespace MitarashiDango.AvatarUtils
             _previewRenderUtility = new PreviewRenderUtility();
         }
 
-        private void SetupLights()
+        private void SetupDefaultLights()
         {
             _previewRenderUtility.lights[0].color = new Color(1, 1, 1, 1f);
             _previewRenderUtility.lights[0].renderMode = LightRenderMode.Auto;
@@ -189,6 +211,30 @@ namespace MitarashiDango.AvatarUtils
             _previewRenderUtility.lights[1].shadowBias = 0.05f;
             _previewRenderUtility.lights[1].shadowNormalBias = 0.4f;
             _previewRenderUtility.lights[1].shadowNearPlane = 0.2f;
+        }
+
+        public class CameraSetting
+        {
+            public Vector3 Scale { get; set; }
+            public Vector3 PositionOffset { get; set; }
+            public Quaternion Rotation { get; set; }
+            public Color BackgroundColor { get; set; }
+
+            public CameraSetting()
+            {
+                Scale = new Vector3(1, 1, 1);
+                PositionOffset = new Vector3(0, 0, 0);
+                Rotation = Quaternion.Euler(0, 0, 0);
+                BackgroundColor = Color.white;
+            }
+
+            public CameraSetting(Vector3 scale, Vector3 positionOffset, Quaternion rotation, Color backgroundColor)
+            {
+                Scale = scale;
+                PositionOffset = positionOffset;
+                Rotation = rotation;
+                BackgroundColor = backgroundColor;
+            }
         }
     }
 }

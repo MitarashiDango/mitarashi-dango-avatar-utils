@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
-using VRC.SDK3.Avatars.Components;
 
 namespace MitarashiDango.AvatarUtils
 {
@@ -19,10 +18,7 @@ namespace MitarashiDango.AvatarUtils
         private Dictionary<string, float> _defaultBlendShapes = new Dictionary<string, float>();
         private Dictionary<string, float> _animationClipBlendShapes = new Dictionary<string, float>();
 
-        private float _xOffset = 0.0f;
-        private float _yOffset = 0;
-        private float _zOffset = 3f;
-        private Color _backgroundColor = Color.white;
+        private AvatarRenderer.CameraSetting _avatarRendererCameraSetting = new AvatarRenderer.CameraSetting();
 
         [MenuItem("Tools/MitarashiDango Avatar Utils/Avatar Icon Generator")]
         internal static void OpenWindow()
@@ -30,6 +26,20 @@ namespace MitarashiDango.AvatarUtils
             var window = GetWindow<AvatarIconGeneratorWindow>("Avatar Icon Generator");
             window.minSize = new Vector2(260, 484);
             window.Show();
+        }
+
+        private void OnEnable()
+        {
+            _avatarRendererCameraSetting.Rotation = Quaternion.Euler(0, 180, 0);
+        }
+
+        private void OnDestroy()
+        {
+            if (_avatarRenderer != null)
+            {
+                _avatarRenderer.Dispose();
+                _avatarRenderer = null;
+            }
         }
 
         private void OnGUI()
@@ -89,38 +99,36 @@ namespace MitarashiDango.AvatarUtils
             imageRect.width = PREVIEW_AREA_SIZE;
 
             EditorGUILayout.LabelField(new GUIContent("カメラ位置"));
-            var newXOffset = EditorGUILayout.Slider(_xOffset, -10, 10);
-            if (_xOffset != newXOffset)
+            var newXOffset = EditorGUILayout.Slider(_avatarRendererCameraSetting.PositionOffset.x, -10, 10);
+            if (_avatarRendererCameraSetting.PositionOffset.x != newXOffset)
             {
                 isTextureDirty = true;
-                _xOffset = newXOffset;
             }
 
-            var newYOffset = EditorGUILayout.Slider(_yOffset, -10, 10);
-            if (_yOffset != newYOffset)
+            var newYOffset = EditorGUILayout.Slider(_avatarRendererCameraSetting.PositionOffset.y, -10, 10);
+            if (_avatarRendererCameraSetting.PositionOffset.y != newYOffset)
             {
                 isTextureDirty = true;
-                _yOffset = newYOffset;
             }
 
-            var newZOffset = EditorGUILayout.Slider(_zOffset, -10, 10);
-            if (_zOffset != newZOffset)
+            var newZOffset = EditorGUILayout.Slider(_avatarRendererCameraSetting.PositionOffset.z, -10, 10);
+            if (_avatarRendererCameraSetting.PositionOffset.z != newZOffset)
             {
                 isTextureDirty = true;
-                _zOffset = newZOffset;
             }
 
             EditorGUILayout.LabelField(new GUIContent("背景色"));
-            var newBackgroundColor = EditorGUILayout.ColorField(_backgroundColor);
-            if (!newBackgroundColor.Equals(_backgroundColor))
+            var newBackgroundColor = EditorGUILayout.ColorField(_avatarRendererCameraSetting.BackgroundColor);
+            if (!newBackgroundColor.Equals(_avatarRendererCameraSetting.BackgroundColor))
             {
                 isTextureDirty = true;
-                _backgroundColor = newBackgroundColor;
             }
 
             if (isTextureDirty)
             {
-                RenderSampleTexture(_xOffset, _yOffset, _zOffset, _backgroundColor);
+                _avatarRendererCameraSetting.BackgroundColor = newBackgroundColor;
+                _avatarRendererCameraSetting.PositionOffset = new Vector3(newXOffset, newYOffset, newZOffset);
+                RenderSampleTexture();
             }
 
             if (_renderTexture != null)
@@ -140,7 +148,7 @@ namespace MitarashiDango.AvatarUtils
 
                 var filename = Path.GetFileNameWithoutExtension(filePath);
 
-                var texture = _avatarRenderer.Render(_gameObject, 512, 512, _defaultBlendShapes, _animationClipBlendShapes, false);
+                var texture = _avatarRenderer.Render(_gameObject, _avatarRendererCameraSetting, 512, 512, _defaultBlendShapes, _animationClipBlendShapes, false);
 
                 var png = texture.EncodeToPNG();
 
@@ -178,20 +186,8 @@ namespace MitarashiDango.AvatarUtils
             _avatarRenderer = new AvatarRenderer();
         }
 
-        private void RenderSampleTexture(float xOffset, float yOffset, float zOffset, Color backgroundColor)
+        private void RenderSampleTexture()
         {
-            if (_gameObject != null)
-            {
-                var avatarDescriptor = _gameObject.GetComponent<VRCAvatarDescriptor>();
-                if (avatarDescriptor != null)
-                {
-                    _avatarRenderer.BackgroundColor = backgroundColor;
-                    _avatarRenderer.CameraPosition = new Vector3(xOffset, avatarDescriptor.ViewPosition.y + yOffset, avatarDescriptor.ViewPosition.z + zOffset);
-                    _avatarRenderer.CameraRotation = Quaternion.Euler(0, 180, 0);
-                    _avatarRenderer.CameraScale = new Vector3(1, 1, 1);
-                }
-            }
-
             if (_renderTexture != null)
             {
                 Object.DestroyImmediate(_renderTexture);
@@ -204,7 +200,7 @@ namespace MitarashiDango.AvatarUtils
                 _renderTexture.hideFlags = HideFlags.HideAndDontSave;
             }
 
-            _avatarRenderer.Render(_gameObject, _renderTexture, _defaultBlendShapes, _animationClipBlendShapes, false);
+            _avatarRenderer.Render(_gameObject, _avatarRendererCameraSetting, _renderTexture, _defaultBlendShapes, _animationClipBlendShapes, false);
         }
 
         public void storeDefaultBlendShapes(GameObject go)
