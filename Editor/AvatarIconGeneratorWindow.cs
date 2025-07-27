@@ -20,7 +20,7 @@ namespace MitarashiDango.AvatarUtils
 
         private AvatarRenderer.CameraSetting _avatarRendererCameraSetting = new AvatarRenderer.CameraSetting();
 
-        [MenuItem("Tools/MitarashiDango Avatar Utils/Avatar Icon Generator")]
+        [MenuItem("Tools/MitarashiDango's Avatar Utils/Avatar Icon Generator")]
         internal static void OpenWindow()
         {
             var window = GetWindow<AvatarIconGeneratorWindow>("Avatar Icon Generator");
