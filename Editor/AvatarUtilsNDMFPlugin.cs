@@ -18,7 +18,6 @@ namespace MitarashiDango.AvatarUtils
         {
             ModifyAnimatorControllerProcess(ctx);
             FaceEmoteControlProcess(ctx);
-            PhysBonesSwitcherProcess(ctx);
         }
 
         private void ModifyAnimatorControllerProcess(BuildContext ctx)
@@ -30,12 +29,6 @@ namespace MitarashiDango.AvatarUtils
         private void FaceEmoteControlProcess(BuildContext ctx)
         {
             var processor = new FaceEmoteControlProcessor();
-            processor.Run(ctx);
-        }
-
-        private void PhysBonesSwitcherProcess(BuildContext ctx)
-        {
-            var processor = new PhysBonesSwitcherProcessor();
             processor.Run(ctx);
         }
     }
