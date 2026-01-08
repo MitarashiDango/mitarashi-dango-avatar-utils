@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using nadena.dev.ndmf;
+using nadena.dev.ndmf.vrchat;
 using UnityEditor.Animations;
 using UnityEngine;
 using static VRC.SDK3.Avatars.Components.VRCAvatarDescriptor;
@@ -23,7 +24,7 @@ namespace MitarashiDango.AvatarUtils
             }
 
             var layerModifyOptions = BuildLayerModifyOptions(animatorControllerLayerModifiers);
-            var avatarDescriptor = ctx.AvatarDescriptor;
+            var avatarDescriptor = ctx.VRChatAvatarDescriptor();
             ModifyAnimationLayers(avatarDescriptor.baseAnimationLayers, layerModifyOptions);
             ModifyAnimationLayers(avatarDescriptor.specialAnimationLayers, layerModifyOptions);
 
