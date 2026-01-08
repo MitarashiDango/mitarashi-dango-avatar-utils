@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "nadena.dev.ndmf",
+        "nadena.dev.ndmf.vrchat",
         "nadena.dev.ndmf.runtime",
         "nadena.dev.modular-avatar.core",
         "com.matcha-soft.vrchat-avatar-utils.runtime"
